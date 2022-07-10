@@ -42,7 +42,7 @@
   "select_utc": "请选择 UTC 时区",
   "oak_parse_error": "解析失败：请检查输入内容是否为橡树中心主题地址，或者重试",
   "weibo_parse_error": "解析失败：请检查输入内容是否为微博用户 ID，或者重试",
-  "twitter_parse_error": "解析失败：请检查输入内容是否为 Twiiter 用户 ID，或者重试",
+  "twitter_parse_error": "解析失败：请检查输入内容是否为 Twitter 用户 ID，或者重试",
   "rss_parse_error": "解析失败：请检查输入内容是否为 RSS/Atom 地址，或者重试",
   "youtube_parse_error": "解析失败：请检查输入内容是否为 YouTube 用户 ID，或者重试",
   "oak_validate_error": "校验失败：当前输入未以 oth: 开头",
