@@ -10,6 +10,11 @@
     left: 0;
   }
 
+  @include responsive(lg) {
+    border-left: 1px solid $borderOpaque;
+    border-right: 1px solid $borderOpaque;
+  }
+
   > div {
     display: flex;
     justify-content: space-around;
