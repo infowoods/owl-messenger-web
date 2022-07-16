@@ -20,10 +20,10 @@ export function logout(dispatch) {
     type: 'userInfo',
     userInfo: {},
   })
-  dispatch({
-    type: 'groupInfo',
-    groupInfo: {},
-  })
+  // dispatch({
+  //   type: 'groupInfo',
+  //   groupInfo: {},
+  // })
   console.log('logout')
   StorageUtil.del(OWL_USER + id)
   StorageUtil.del('mixin_token')
