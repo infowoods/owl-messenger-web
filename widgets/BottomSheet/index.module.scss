@@ -4,7 +4,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-width: 840px;
+  max-width: 680px;
   height: 100%;
   z-index: 99;
   background-color: rgba(0, 0, 0, 0.07);
@@ -24,6 +24,12 @@
     background-color: $backgroundPrimary;
     border-radius: 10px 10px 0 0;
     box-shadow: 0px 2px 20px $shadow;
+
+    @include responsive(lg) {
+      border-left: 1px solid $borderOpaque;
+      border-right: 1px solid $borderOpaque;
+    }
+
     .sheetTitle {
       display: flex;
       justify-content: space-between;

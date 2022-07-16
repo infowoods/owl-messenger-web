@@ -2,8 +2,8 @@
   position: fixed;
   bottom: 0;
   width: 100%;
-  max-width: 840px;
-  left: calc(50vw - 420px);
+  max-width: 680px;
+  left: calc(50vw - 340px);
   background-color: $backgroundPrimary;
 
   @include responsive(xs) {
