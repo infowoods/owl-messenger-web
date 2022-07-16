@@ -1,5 +1,5 @@
 .wrap {
-  max-width: 840px;
+  max-width: 680px;
   margin: 0 auto;
   padding: 0 10px 60px 10px;
   background: $backgroundPrimary;
@@ -67,7 +67,7 @@
 }
 
 .noTopBar {
-  max-width: 840px;
+  max-width: 680px;
   margin: 0 auto;
   min-height: 100vh;
   border-left: 1px solid $borderOpaque;
@@ -76,9 +76,8 @@
 }
 
 .notInit {
-  max-width: 840px;
+  max-width: 680px;
   margin: 0 auto;
-  // min-height: calc(100vh - 12px);
   min-height: 100vh;
   background: $backgroundPrimary;
 }
