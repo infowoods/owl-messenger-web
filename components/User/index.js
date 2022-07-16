@@ -105,7 +105,6 @@ function User() {
         return
       }
       if (error?.action === 'logout') {
-        toast.error(t('auth_expire'))
         logout(dispatch)
         router.push('/')
         return
