@@ -70,5 +70,6 @@
   "try_again": "Failed to copy, please try again",
   "will_expire": "Due soon",
   "renew": "Renewal",
-  "hot_now": "Hot Now"
+  "hot_now": "Hot Now",
+  "oak_desc": "Publish contents via your own topic"
 }

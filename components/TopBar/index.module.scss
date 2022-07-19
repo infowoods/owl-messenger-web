@@ -1,6 +1,7 @@
 .bar {
   padding-top: 12px;
   padding-bottom: 6px;
+
   .back {
     transform: rotate(180deg);
     font-size: 24px;
@@ -13,10 +14,13 @@
       border-radius: 50%;
     }
   }
+
   .icon {
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+
     span {
       color: $contentPrimary;
       font-weight: bold;
@@ -25,5 +29,49 @@
   }
   .iconPadding {
     padding-right: 32px;
+  }
+}
+
+.inactive, .active {
+  color: $contentPrimary;
+  font-size: 18px;
+  margin-left: 4px;
+}
+
+.inactive {
+  transform: rotate(90deg);
+}
+
+.active {
+  transform: rotate(-90deg);
+}
+
+.botWrap {
+  padding: 24px 14px 48px 14px;
+}
+
+.bot {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  &:hover {
+    p {
+      color: $accent !important;
+    }
+  }
+
+  img {
+    border-radius: 50%;
+  }
+
+  > div {
+    margin-left: 12px;
+    > p {
+      color: $contentSecondry;
+      &:first-child {
+        font-weight: bold;
+        color: $contentPrimary;
+      }
+    }
   }
 }

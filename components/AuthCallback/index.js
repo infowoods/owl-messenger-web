@@ -80,7 +80,7 @@ function AuthCallback() {
     <div className={styles.main}>
       <Head>
         <title>Owl Deliver</title>
-        <meta name="description" content="猫头鹰订阅器" />
+        <meta name="description" content="Owl Deliver" />
         <link rel="icon" href="/favicon.png" />
       </Head>
 
