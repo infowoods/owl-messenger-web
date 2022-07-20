@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import Icon from '../Icon'
 import styles from './index.module.scss'
 
-function BottomNav({ t }) {
+function BottomNav({ t, isLogin }) {
   const { pathname, push } = useRouter()
   const list = [
     {
@@ -26,7 +26,10 @@ function BottomNav({ t }) {
             className={`${
               pathname === item.href ? styles.active : styles.default
             }`}
-            onClick={() => push(item.href)}
+            onClick={() => {
+              if (!isLogin) return
+              push(item.href)
+            }}
           >
             <Icon type={item.icon} />
             <p>{t(item.name)}</p>

@@ -172,7 +172,7 @@ function Layout({ children }) {
       )}
       <div style={{ opacity: `${init ? '1' : '0'}` }}>
         {children}
-        {navHref.includes(pathname) && <BottomNav t={t} />}
+        {navHref.includes(pathname) && <BottomNav t={t} isLogin={isLogin} />}
       </div>
     </div>
   )
