@@ -41,7 +41,6 @@ function Layout({ children }) {
 
   const backLink = (path) => {
     switch (path) {
-      case '/user':
       case '/hot-topics':
         return '/'
       case '/settings':
