@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { getToken } from '../../utils/loginUtil'
 
-const OWL_API_HOST = 'https://owl-api.owldeliver.one/v1dev'
+const OWL_API_HOST = 'https://api.infowoods.com/v3'
 
 const owlrss = axios.create({
   baseURL: OWL_API_HOST,
@@ -96,6 +96,15 @@ const http = {
     const config = {
       url,
       method: 'delete',
+      ...options,
+    }
+    return request(config)
+  },
+
+  put: (url, options = {}) => {
+    const config = {
+      url,
+      method: 'put',
       ...options,
     }
     return request(config)
