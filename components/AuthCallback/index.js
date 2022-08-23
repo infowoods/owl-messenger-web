@@ -2,9 +2,9 @@ import { useEffect, useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 import { i18n } from 'next-i18next'
 import { ProfileContext } from '../../stores/useProfile'
-import { owlSignIn, checkGroup } from '../../services/api/owl'
+import { owlSignIn } from '../../services/api/owl'
 import storageUtil from '../../utils/storageUtil'
-import { getMixinContext } from '../../services/api/mixin'
+import { getMixinContext, getAccessToken, checkGroup } from '../../services/api/mixin'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import toast from 'react-hot-toast'
@@ -29,14 +29,18 @@ function AuthCallback() {
   useEffect(() => {
     const conversation_id = ctx.conversation_id || ''
 
-    const auth = async () => {
+    const auth = async (token) => {
+      console.log('auth: ', token)
       try {
         const params = {
-          code: query.code,
+          mixin_access_token: token,
           conversation_id: conversation_id,
         }
-        const data = (await owlSignIn(params)) || {}
+        const data = await owlSignIn(params)
+        console.log('data: ', data)
+
         if (data?.access_token) {
+          console.log('has ac tk')
           dispatch({
             type: 'userInfo',
             userInfo: data,
@@ -46,16 +50,26 @@ function AuthCallback() {
           if (ctx?.locale && ctx.locale !== 'zh-CN' && i18n.language !== 'en') {
             i18n.changeLanguage('en')
             push('/', '/', { locale: 'en' })
+            console.log('en')
           } else {
+            console.log('zh')
             push('/')
           }
         }
       } catch (error) {
         toast.error('Auth Failed')
         push('/')
+        console.log('err')
       }
     }
-    query?.code && auth()
+
+    const getToken = async () => {
+      const token = await getAccessToken(query.code)
+      token && auth(token)
+    }
+
+    query?.code && getToken()
+
   }, [query])
 
   useEffect(() => {
@@ -63,8 +77,8 @@ function AuthCallback() {
     res && setCtx(res)
     if (res?.conversation_id) {
       const initialFunc = async () => {
-        const data = await checkGroup({ conversation_id: res.conversation_id })
-        if (!data?.err_code) {
+        const data = await checkGroup(res.conversation_id)
+        if (data?.category === 'GROUP') {
           dispatch({
             type: 'groupInfo',
             groupInfo: data,

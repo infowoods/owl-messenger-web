@@ -19,10 +19,12 @@ import Loading from '../../widgets/Loading'
 
 import {
   getFollows,
+  getUnFollows,
   unfollowFeeds,
   parseTopic,
   subscribeTopic,
   checkOrder,
+  getUserBalance,
 } from '../../services/api/owl'
 
 import storageUtil from '../../utils/storageUtil'
@@ -39,7 +41,10 @@ function User() {
   const [empty, setEmpty] = useState(false)
   const [btnSelect, setBtnSelect] = useState('')
   const [feedList, setFeedList] = useState([])
+  const [unFollowList, setUnFollowList] = useState([])
+  const [balance, setBalance] = useState({})
   const [loading, setLoading] = useState(true)
+
   const [showSubscribe, setShowSubscribe] = useState(false)
   const [chargeCrypto, setChargeCrypto] = useState({})
   const [selectPeriod, setSelectPeriod] = useState('')
@@ -79,15 +84,12 @@ function User() {
   const getUserFollows = async () => {
     try {
       const followsList = await getFollows()
-      if (followsList.utc_offset?.toString()) {
+      if (followsList?.number?.toString()) {
         setOffset(followsList.utc_offset)
-        if (
-          !followsList.follows?.ing?.length &&
-          !followsList.follows?.history?.length
-        ) {
+        if (followsList?.number === 0) {
           setEmpty(true)
         } else {
-          setFeedList(followsList.follows)
+          setFeedList(followsList.subscriptions)
         }
         setLoading(false)
       } else {
@@ -96,14 +98,33 @@ function User() {
       }
     } catch (error) {
       setLoading(false)
-      if (error?.data?.message === 'no user data') {
-        setEmpty(true)
+      if (error?.action === 'logout') {
+        logout(dispatch)
+        router.push('/')
         return
       }
-      if (error?.data?.err_code === 'OWL-D100') {
-        setEmpty(true)
-        return
+      toast.error('Failed')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getUserUnFollows = async () => {
+    try {
+      const followsList = await getUnFollows()
+      if (followsList?.number?.toString()) {
+        if (followsList?.number === 0) {
+          setEmpty(true)
+        } else {
+          setUnFollowList(followsList.subscriptions)
+        }
+        setLoading(false)
+      } else {
+        toast.error('Error')
+        setLoading(false)
       }
+    } catch (error) {
+      setLoading(false)
       if (error?.action === 'logout') {
         logout(dispatch)
         router.push('/')
@@ -167,17 +188,16 @@ function User() {
     }
   }
 
-  const sourceType = (type) => {
-    switch (type.split(':')[0]) {
-      case 'RSS':
-        return 'RSS'
-      case 'ATOM':
-        return 'Atom'
-      case 'OTH':
-        return 'Oak Hub'
-      default:
-        break
+  const sourceType = (uri) => {
+    if (uri.slice(0, 4) === 'http') {
+        return 'RSS/Atom'
     }
+    return 'Channel'
+  }
+
+  const getBalance = async () => {
+    const data = await getUserBalance()
+    setBalance(data)
   }
 
   useEffect(() => {
@@ -201,6 +221,8 @@ function User() {
 
   useEffect(() => {
     getUserFollows()
+    getUserUnFollows()
+    getBalance()
   }, [])
 
   return (
@@ -216,37 +238,39 @@ function User() {
         <Loading size={40} className={styles.loading} />
       ) : (
         <>
-          {feedList?.ing && feedList?.ing.length > 0 && (
+          <div>
+            {JSON.stringify(balance)}
+          </div>
+
+          {feedList?.length > 0 && (
             <p className={styles.sectionTitle}># {t('following')}</p>
           )}
-          {feedList?.ing &&
-            feedList.ing.map((feed, index) => {
+          {feedList?.length > 0 &&
+            feedList.map((feed, index) => {
               const params = {
-                topic_id: feed.tid,
+                topic_id: feed.channel.id,
               }
-              const willExipre = timeDifference(feed.expire_ts, Date.now()) < 7
               return (
                 <Collapse
-                  title={feed.title}
-                  key={feed.tid + index}
-                  className={willExipre && styles.feedCollapse}
+                  title={feed.channel.title}
+                  key={feed.channel.id}
                 >
                   <>
-                    {feed.desc && (
+                    {feed.channel.description && (
                       <p className={styles.feedDesc}>
                         <span>
                           {t('desc')}
                           {t('colon')}
                         </span>
-                        {feed.desc}
+                        {feed.channel.description}
                       </p>
                     )}
                     <div
                       className={`${styles.detail} ${
-                        feed.desc && styles.increaseMargin
+                        feed.channel.description && styles.increaseMargin
                       }`}
                     >
-                      <div>
+                      {/* <div>
                         <p>
                           <span>
                             {t('push_date')}
@@ -268,63 +292,37 @@ function User() {
                           </span>
                           {convertTimestamp(feed.fetched_ts, offset)}
                         </p>
-                        {willExipre ? (
-                          <p className={styles.renew}>
-                            <span>
-                              {t('will_expire')}
-                              {t('colon')}
-                            </span>
-                            {convertTimestamp(feed.expire_ts, offset)}
-                          </p>
+                        <p>
+                          <span>
+                            {t('expire_date')}
+                            {t('colon')}
+                          </span>
+                          {convertTimestamp(feed.expire_ts, offset)}
+                        </p>
+                      </div> */}
+                      <button
+                        className={styles.button}
+                        onClick={() => {
+                          setBtnSelect(index + 'unfollow')
+                          handleUnfollow(params)
+                        }}
+                      >
+                        {btnSelect === index + 'unfollow' ? (
+                          <Loading size={18} className={styles.btnLoading} />
                         ) : (
-                          <p>
-                            <span>
-                              {t('expire_date')}
-                              {t('colon')}
-                            </span>
-                            {convertTimestamp(feed.expire_ts, offset)}
-                          </p>
+                          t('unfollow')
                         )}
-                      </div>
-                      {willExipre ? (
-                        <button
-                          className={`${styles.button} ${styles.buttonAccent}`}
-                          onClick={() => {
-                            setBtnSelect(index + 'renew')
-                            handleRefollow(feed.tid)
-                            setRefollowId(feed.tid)
-                          }}
-                        >
-                          {btnSelect === index + 'renew' ? (
-                            <Loading size={18} className={styles.btnLoading} />
-                          ) : (
-                            t('renew')
-                          )}
-                        </button>
-                      ) : (
-                        <button
-                          className={styles.button}
-                          onClick={() => {
-                            setBtnSelect(index + 'unfollow')
-                            handleUnfollow(params)
-                          }}
-                        >
-                          {btnSelect === index + 'unfollow' ? (
-                            <Loading size={18} className={styles.btnLoading} />
-                          ) : (
-                            t('unfollow')
-                          )}
-                        </button>
-                      )}
+                      </button>
                     </div>
                     <div className={styles.copy}>
                       <p>
                         <span>
-                          {t('source_uri')} ({sourceType(feed.source_type)})
+                          {/* {t('source_uri')} ({sourceType(feed.source_type)}) */}
+                          {t('source_uri')} {sourceType(feed.channel.uri)}
                           {t('colon')}
                         </span>
-                        <span onClick={() => copyText(feed.uri, toast, t)}>
-                          {feed.uri} <Icon type="copy" />
+                        <span onClick={() => copyText(feed.channel.uri, toast, t)}>
+                          {feed.channel.uri} <Icon type="copy" />
                         </span>
                       </p>
                     </div>
@@ -333,35 +331,28 @@ function User() {
               )
             })}
 
-          {feedList?.history && feedList?.history.length > 0 && (
+          {unFollowList.length > 0 && (
             <p className={styles.sectionTitle}># {t('history')}</p>
           )}
-          {feedList?.history &&
-            feedList?.history.map((feed, index) => {
+          {unFollowList.length > 0 &&
+            unFollowList.map((feed, index) => {
               return (
-                <Collapse title={feed.title} key={feed.tid + index}>
+                <Collapse title={feed.channel.title} key={feed.channel.id}>
                   <>
-                    {feed.desc && (
+                    {feed.channel.description && (
                       <p className={styles.feedDesc}>
                         <span>
                           {t('desc')}
                           {t('colon')}
                         </span>
-                        {feed.desc}
+                        {feed.channel.description}
                       </p>
                     )}
                     <div
                       className={`${styles.detail} ${
-                        feed.desc && styles.increaseMargin
+                        feed.channel.description && styles.increaseMargin
                       }`}
                     >
-                      <p>
-                        <span>
-                          {t('unfollow_reason')}
-                          {t('colon')}
-                        </span>
-                        {renderReason(feed.reason)}
-                      </p>
                       <button
                         className={`${styles.button} ${styles.buttonAccent}`}
                         onClick={() => {

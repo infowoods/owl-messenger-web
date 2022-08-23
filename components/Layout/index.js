@@ -13,7 +13,7 @@ import BottomNav from '../../widgets/BottomNav'
 import { ProfileContext } from '../../stores/useProfile'
 
 import { getMixinContext, reloadTheme } from '../../services/api/mixin'
-import { checkGroup } from '../../services/api/owl'
+import { checkGroup } from '../../services/api/mixin'
 
 import storageUtil from '../../utils/storageUtil'
 import { authLogin } from '../../utils/loginUtil'
@@ -29,7 +29,7 @@ function Layout({ children }) {
   const [platform, setPlatform] = useState(false)
   const isLogin = state.userInfo && state.userInfo.user_name
 
-  const navHref = ['/', '/user']
+  const navHref = ['/', '/discovery', '/user']
 
   const getBarColor = (path) => {
     reloadTheme(platform)
@@ -113,10 +113,8 @@ function Layout({ children }) {
           })
           setInit(true)
         } else {
-          const data = await checkGroup({
-            conversation_id: ctx.conversation_id,
-          })
-          if (!data?.err_code) {
+          const data = await checkGroup(ctx.conversation_id)
+          if (data?.category === 'GROUP') {
             dispatch({
               type: 'groupInfo',
               groupInfo: data,
@@ -151,15 +149,15 @@ function Layout({ children }) {
               {isLogin ? (
                 <div className={styles.avatar}>
                   <Avatar
-                    group={state.groupInfo?.is_group}
-                    imgSrc={state.userInfo?.user_icon}
+                    group={state.groupInfo?.category === 'GROUP'}
+                    imgSrc={state.userInfo?.avatar}
                     onClick={handleClick}
                   />
                 </div>
               ) : (
                 <div className={styles.login} onClick={() => authLogin()}>
                   <span>
-                    {state.groupInfo?.is_group ? t('owner_login') : t('login')}
+                    {state.groupInfo?.category === 'GROUP' ? t('owner_login') : t('login')}
                   </span>
                 </div>
               )}

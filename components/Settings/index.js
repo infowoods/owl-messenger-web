@@ -27,7 +27,9 @@ function Settings() {
     try {
       const data = await getUserSettings()
       if (data) {
-        data.utc.toString() && setUserUtc(data.utc) && setTempUtc(data.utc)
+        data.settings.utc.toString() &&
+          setUserUtc(data.settings.utc) &&
+          setTempUtc(data.settings.utc)
       } else {
         toast.error(t('get_settings_error'))
       }
@@ -43,9 +45,9 @@ function Settings() {
   }
 
   const handleUpdateSettings = async () => {
-    const params = { utc: tempUtc }
+    const params = { settings: { utc: tempUtc } }
     const data = await updateUserSettings(params)
-    if (data?.utc.ok) {
+    if (data?.user_id) {
       toast.success(t('setting_update'))
       setUserUtc(tempUtc)
     } else {

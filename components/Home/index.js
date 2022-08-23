@@ -89,29 +89,27 @@ function Home() {
       default:
         break
     }
-    const params = {
-      action: 'parse_uri',
-      uri: parseUrl,
-    }
+    const params = {uri: parseUrl}
     try {
       const res = await parseFeed(params)
-      if (res?.price) {
+      if (res?.id) {
         setFeedInfo(res)
-        const monPrice = formatAdd(
-          res.price.monthly,
-          res.service_charge.monthly
-        )
-        const yearPrice = formatAdd(res.price.yearly, res.service_charge.yearly)
-        setMonthlyPrice(monPrice)
-        setYearlyPrice(yearPrice)
-        setMonthHubPrice(formatNum(res.price.monthly))
-        setYearHubPrice(formatNum(res.price.yearly))
-        setMonthPushPrice(formatNum(res.service_charge.monthly))
-        setYearPushPrice(formatNum(res.service_charge.yearly))
-        setChargeCrypto(res.service_charge.currency)
+        // const monPrice = formatAdd(
+        //   res.price.monthly,
+        //   res.service_charge.monthly
+        // )
+        // const yearPrice = formatAdd(res.price.yearly, res.service_charge.yearly)
+        // setMonthlyPrice(monPrice)
+        // setYearlyPrice(yearPrice)
+        // setMonthHubPrice(formatNum(res.price.monthly))
+        // setYearHubPrice(formatNum(res.price.yearly))
+        // setMonthPushPrice(formatNum(res.service_charge.monthly))
+        // setYearPushPrice(formatNum(res.service_charge.yearly))
+        // setChargeCrypto(res.service_charge.currency)
         setLoading(false)
       }
     } catch (error) {
+      console.log('error: ', error)
       if (error?.action === 'logout') {
         toast.error(t('auth_expire'))
         setLoading(false)
@@ -155,7 +153,7 @@ function Home() {
           trimFeed.slice(0, 7) === 'http://'
         )
       case 'oak':
-        return trimFeed.slice(0, 4) === 'oth:'
+        return trimFeed.slice(0, 4) === 'och:'
       case 'weibo':
         const wReg = new RegExp(/^[A-Za-z0-9_]{3,20}$/)
         return wReg.test(trimFeed)
@@ -245,9 +243,9 @@ function Home() {
         />
       </form>
 
-      <Link href="/hot-topics">
+      {/* <Link href="/hot-topics">
         <a className={styles.hot}>{t('hot_now')} ⚡️</a>
-      </Link>
+      </Link> */}
 
       {/* 解析后源信息卡片 */}
       {loading ? (
@@ -256,25 +254,21 @@ function Home() {
           <span className={styles.loadingHint}>{t('loading_hint')}</span>
         </div>
       ) : (
-        feedInfo?.tid && (
+        feedInfo?.id && (
           <>
             <div className={styles.feedInfo}>
               <div className={styles.feedDesc}>
                 <div>
                   <p>{feedInfo.title}</p>
-                  {feedInfo.desc && (
+                  {feedInfo.description && (
                     <p>
                       {t('desc')}
                       {t('colon')}
-                      {feedInfo.desc}
+                      {feedInfo.description}
                     </p>
                   )}
                 </div>
-                <button
-                  onClick={() => {
-                    setShowSubscribe(true)
-                  }}
-                >
+                <button onClick={() => {subscribeTopic({ channel_id: feedInfo.id })}}>
                   {followBtnText}
                 </button>
               </div>
@@ -293,13 +287,12 @@ function Home() {
                   theme="dark"
                   content={
                     <span className={styles.help}>
-                      {monthHubPrice} {chargeCrypto.symbol} + {monthPushPrice}{' '}
-                      {chargeCrypto.symbol}
+                      {t('maybe_text')}
                     </span>
                   }
                 >
                   <p>
-                    {monthlyPrice} {chargeCrypto.symbol} / {t('month')}
+                    {t('min')} {feedInfo.price_per_info.pushing_fee.min} {t('acorn')} / {t('each_message')}
                     <Icon type="help-fill" />
                   </p>
                 </Tooltip>
@@ -309,13 +302,12 @@ function Home() {
                   theme="dark"
                   content={
                     <span className={styles.help}>
-                      {yearHubPrice} {chargeCrypto.symbol} + {yearPushPrice}{' '}
-                      {chargeCrypto.symbol}
+                      {t('maybe_video')}
                     </span>
                   }
                 >
                   <p>
-                    {yearlyPrice} {chargeCrypto.symbol} / {t('year')}
+                    {t('max')} {feedInfo.price_per_info.pushing_fee.max} {t('acorn')} / {t('each_message')}
                     <Icon type="help-fill" />
                   </p>
                 </Tooltip>

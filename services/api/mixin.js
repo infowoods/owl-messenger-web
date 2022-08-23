@@ -1,16 +1,18 @@
 import http from '../../services/http/mixin'
-import { MIXIN_CLIENT_ID } from '../../constants'
 import StorageUtil from '../../utils/storageUtil'
 
 export async function getAccessToken(code) {
-  const verifier = localStorage.getItem('code-verifier')
+  // const verifier = localStorage.getItem('code-verifier')
   const data = {
-    client_id: MIXIN_CLIENT_ID,
+    client_id: process.env.MIXIN_CLIENT_ID,
     code,
-    code_verifier: verifier,
+    client_secret: process.env.MIXIN_SECRET_KEY,
+    // code_verifier: verifier,
   }
   const res = await http.post('/oauth/token', { data })
-  return res.access_token
+  if (res?.access_token) {
+    return res.access_token
+  }
 }
 
 export function getUser(id) {
@@ -27,7 +29,7 @@ export function getProfile() {
  * @returns
  * 判断是否群组
  */
- export function checkGroup(id) {
+export function checkGroup(id) {
   return http.get(`/conversations/${id}`)
 }
 

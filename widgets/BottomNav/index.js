@@ -11,6 +11,11 @@ function BottomNav({ t }) {
       name: 'home',
     },
     {
+      href: '/discovery',
+      icon: 'search',
+      name: 'find',
+    },
+    {
       href: '/user',
       icon: 'user',
       name: 'me',

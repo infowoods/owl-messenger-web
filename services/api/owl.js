@@ -2,7 +2,7 @@ import http from '../../services/http/owl'
 
 /**
  *
- * @param {code} code 授权机器人后mixin返回的code
+ * @param {mixin_access_token} String
  * @param {conversation_id} 标识群组
  * @returns
  * 登录获取owl令牌和用户信息
@@ -13,7 +13,12 @@ export function owlSignIn(data) {
 
 // 获取用户订阅列表
 export function getFollows(data) {
-  return http.get('/subscriptions', { data })
+  return http.get('/subscriptions?enable=true', { data })
+}
+
+// 获取用户退订列表
+export function getUnFollows(data) {
+  return http.get('/subscriptions?enable=false', { data })
 }
 
 /**
@@ -53,13 +58,18 @@ export function parseTopic(channel_id) {
  * @returns
  * 申请关注
  */
-export function subscribeTopic(channel_id) {
-  return http.post(`subscriptions/${channel_id}`)
+export function subscribeTopic(data) {
+  return http.post('subscriptions', { data })
 }
 
 // 获取用户设置
 export function getUserSettings(data) {
   return http.get('/users/me?settings', { data })
+}
+
+// 获取用户信息
+export function getUserBalance() {
+  return http.get('/users/me?wallets')
 }
 
 /**
@@ -69,7 +79,7 @@ export function getUserSettings(data) {
  * 更改用户设置
  */
 export function updateUserSettings(data) {
-  return http.put('/user/me', { settings: { data } })
+  return http.put('/users/me', { data })
 }
 
 /**

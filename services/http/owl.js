@@ -70,7 +70,7 @@ owlrss.interceptors.response.use(
 
 async function request(options) {
   const res = await owlrss.request(options)
-  return Promise.resolve(res.data)
+  return Promise.resolve(res)
 }
 
 const http = {
