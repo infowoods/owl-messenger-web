@@ -1,0 +1,65 @@
+.main {
+  min-height: calc(100vh - 210px);
+  @include responsive(xs) {
+    min-height: calc(100vh - 180px);
+  }
+}
+
+.sectionTitle {
+  color: $contentPrimary;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.group {
+  margin: 12px 0 8px 0;
+}
+
+.searchWrap {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.searchIcon {
+  color: $contentInversePrimary;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  >i {
+    background-color: $backgroundInversePrimary;
+    padding: 12px;
+    border-radius: 50%;
+    margin-left: 4px;
+  }
+}
+
+.input {
+  margin: 0 auto;
+  flex: 1;
+  border-radius: 18px;
+  background-color: $backgroundPrimary;
+}
+
+.card {
+  padding: 12px 18px;
+  background-color: $backgroundPrimary;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  border-radius: 8px;
+  color: $accent;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.copy {
+  overflow-x: hidden;
+}

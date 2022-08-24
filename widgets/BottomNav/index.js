@@ -12,8 +12,8 @@ function BottomNav({ t }) {
     },
     {
       href: '/discovery',
-      icon: 'search',
-      name: 'find',
+      icon: 'search-fill',
+      name: 'discovery',
     },
     {
       href: '/user',

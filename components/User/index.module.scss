@@ -64,6 +64,42 @@
   font-size: 18px;
 }
 
+.balanceWrap {
+  border: 2px dotted $borderOpaque;
+  border-radius: 8px;
+  padding: 12px 18px;
+  margin: 10px 0;
+}
+
+.balance {
+  display: flex;
+  margin-bottom: 10px;
+  >p {
+    font-size: 16px;
+    color: $contentPrimary;
+
+    >span {
+      color: $contentSecondry;
+      font-size: 15px;
+    }
+
+    &:first-child {
+      margin-right: 18px;
+    }
+  }
+}
+
+.infoRemark {
+  color: $contentTertiary;
+  font-size: 12px;
+}
+
+.confirmSheet {
+  >div {
+    padding-bottom: 16px;
+  }
+}
+
 .detail {
   display: flex;
   justify-content: space-between;
@@ -98,17 +134,17 @@
 }
 
 .button {
-  background: $backgroundSecondary;
+  background: transparent;
   border: none;
-  padding: 6px 8px;
+  padding: 0;
   border-radius: 8px;
-  color: $contentPrimary;
+  color: $contentSecondry;
   font-size: 14px;
   cursor: pointer;
 }
 
 .buttonAccent {
-  background: $backgroundLightAccent;
+  color: $accent;
 }
 
 .copy {

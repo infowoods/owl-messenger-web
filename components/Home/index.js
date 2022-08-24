@@ -2,22 +2,27 @@ import { useEffect, useContext, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
+
 import { ProfileContext } from '../../stores/useProfile'
+
 import toast from 'react-hot-toast'
 const OwlToast = dynamic(() => import('../../widgets/OwlToast'))
 const Overlay = dynamic(() => import('../../widgets/Overlay'))
-const QrCodeSheet = dynamic(() => import('./QrCodeSheet'))
-const PriceSheet = dynamic(() => import('./PriceSheet'))
 const FeedTypeSheet = dynamic(() => import('./FeedTypeSheet'))
+
 import Icon from '../../widgets/Icon'
 import Tooltip from '../../widgets/Tooltip'
 import Input from '../../widgets/Input'
 import Loading from '../../widgets/Loading'
+
 import { feedOptions, subscribeOptions } from './config'
+
 import { authLogin, logout } from '../../utils/loginUtil'
 import { formatNum, formatAdd } from '../../utils/numberUtil'
-import { parseFeed, subscribeTopic, checkOrder } from '../../services/api/owl'
 import storageUtil from '../../utils/storageUtil'
+
+import { parseFeed, subscribeTopic, checkOrder } from '../../services/api/owl'
+
 import styles from './index.module.scss'
 
 function Home() {
@@ -28,7 +33,6 @@ function Home() {
 
   const [feed, setFeed] = useState('')
   const [show, setShow] = useState(false)
-  const [showSubscribe, setShowSubscribe] = useState(false)
   const [check, setCheck] = useState(false)
   const defaultType = {
     type: 'oak',
@@ -39,19 +43,11 @@ function Home() {
   const [feedType, setFeedType] = useState(defaultType)
   const [feedInfo, setFeedInfo] = useState({})
   const [feedError, setFeedError] = useState('')
-  const [monthlyPrice, setMonthlyPrice] = useState(0)
-  const [yearlyPrice, setYearlyPrice] = useState(0)
-  const [monthHubPrice, setMonthHubPrice] = useState(0)
-  const [yearHubPrice, setYearHubPrice] = useState(0)
-  const [monthPushPrice, setMonthPushPrice] = useState(0)
-  const [yearPushPrice, setYearPushPrice] = useState(0)
-  const [chargeCrypto, setChargeCrypto] = useState({})
-  const [selectPeriod, setSelectPeriod] = useState('')
+
   const [loading, setLoading] = useState(false)
   const [orderId, setOrderId] = useState('')
   const [intervalId, setIntervalId] = useState(null)
   const [followBtnText, setFollowBtnText] = useState(t('follow'))
-  const [payUrl, setPayUrl] = useState('')
 
   const prefix = <Icon type="search" className={styles.searchIcon} />
 
@@ -66,7 +62,6 @@ function Home() {
 
   const handleClear = () => {
     setFeedInfo({})
-    setSelectPeriod('')
     setFeedError('')
     setFollowBtnText(t('follow'))
   }
@@ -94,18 +89,6 @@ function Home() {
       const res = await parseFeed(params)
       if (res?.id) {
         setFeedInfo(res)
-        // const monPrice = formatAdd(
-        //   res.price.monthly,
-        //   res.service_charge.monthly
-        // )
-        // const yearPrice = formatAdd(res.price.yearly, res.service_charge.yearly)
-        // setMonthlyPrice(monPrice)
-        // setYearlyPrice(yearPrice)
-        // setMonthHubPrice(formatNum(res.price.monthly))
-        // setYearHubPrice(formatNum(res.price.yearly))
-        // setMonthPushPrice(formatNum(res.service_charge.monthly))
-        // setYearPushPrice(formatNum(res.service_charge.yearly))
-        // setChargeCrypto(res.service_charge.currency)
         setLoading(false)
       }
     } catch (error) {
@@ -118,29 +101,6 @@ function Home() {
       }
       setFeedError(error?.data?.message || `${feedType.type}_parse_error`)
       setLoading(false)
-    }
-  }
-
-  const handleSubscribe = async (period) => {
-    const params = {
-      action: 'follow',
-      tid: feedInfo.tid,
-      period: period,
-    }
-    try {
-      const res = (await subscribeTopic(params)) || {}
-      if (res?.payment_uri) {
-        if (storageUtil.get('platform') === 'browser') {
-          setPayUrl(res.payment_uri)
-        } else {
-          window.open(res.payment_uri)
-        }
-        setShowSubscribe(false)
-        res?.order_id && setOrderId(res.order_id)
-        setCheck(true)
-      }
-    } catch (error) {
-      toast.error(error?.data.message || 'Failed')
     }
   }
 
@@ -197,7 +157,6 @@ function Home() {
           toast.success(t('subcribe_success'))
           setCheck(false)
           setOrderId('')
-          setSelectPeriod('')
           setFollowBtnText(t('following'))
         }
       }, 3000)
@@ -292,7 +251,7 @@ function Home() {
                   }
                 >
                   <p>
-                    {t('min')} {feedInfo.price_per_info.pushing_fee.min} {t('acorn')} / {t('each_message')}
+                    {t('min')}{feedInfo.price_per_info.pushing_fee.min}{t('acorn')} / {t('each_message')}
                     <Icon type="help-fill" />
                   </p>
                 </Tooltip>
@@ -307,7 +266,7 @@ function Home() {
                   }
                 >
                   <p>
-                    {t('max')} {feedInfo.price_per_info.pushing_fee.max} {t('acorn')} / {t('each_message')}
+                    {t('max')}{feedInfo.price_per_info.pushing_fee.max}{t('acorn')} / {t('each_message')}
                     <Icon type="help-fill" />
                   </p>
                 </Tooltip>
@@ -338,48 +297,11 @@ function Home() {
         setShow={setShow}
       />
 
-      {/* 订阅价格选项 */}
-      <PriceSheet
-        t={t}
-        show={showSubscribe}
-        withConfirm={true}
-        confirmTitle={t('select_plan')}
-        confirmText={t('pay')}
-        onClose={() => {
-          setSelectPeriod('')
-          setShowSubscribe(false)
-        }}
-        onCancel={() => {
-          setSelectPeriod('')
-          setShowSubscribe(false)
-        }}
-        onConfirm={() => handleSubscribe(selectPeriod)}
-        options={subscribeOptions(monthlyPrice, yearlyPrice)}
-        selectPeriod={selectPeriod}
-        chargeCrypto={chargeCrypto}
-        setSelectPeriod={setSelectPeriod}
-      />
-
       <Overlay
         t={t}
         desc={t('checking_pay')}
         visible={check}
         onCancel={() => setCheck(false)}
-      />
-
-      <QrCodeSheet
-        t={t}
-        show={payUrl}
-        id={payUrl}
-        onClose={() => {
-          setPayUrl('')
-        }}
-        onCancel={() => {
-          setPayUrl('')
-        }}
-        onConfirm={() => {
-          setPayUrl('')
-        }}
       />
 
       <OwlToast />

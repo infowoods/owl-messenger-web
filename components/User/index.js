@@ -7,11 +7,9 @@ import toast from 'react-hot-toast'
 import { ProfileContext } from '../../stores/useProfile'
 
 const OwlToast = dynamic(() => import('../../widgets/OwlToast'))
-const PriceSheet = dynamic(() => import('../Home/PriceSheet'))
 const QrCodeSheet = dynamic(() => import('../Home/QrCodeSheet'))
 const Overlay = dynamic(() => import('../../widgets/Overlay'))
-
-import { subscribeOptions } from '../Home/config'
+const BottomSheet = dynamic(() => import('../../widgets/BottomSheet'))
 
 import Icon from '../../widgets/Icon'
 import Collapse from '../../widgets/Collapse'
@@ -21,14 +19,12 @@ import {
   getFollows,
   getUnFollows,
   unfollowFeeds,
-  parseTopic,
-  subscribeTopic,
+  refollowFeeds,
   checkOrder,
   getUserBalance,
 } from '../../services/api/owl'
 
 import storageUtil from '../../utils/storageUtil'
-import { convertTimestamp, timeDifference } from '../../utils/timeUtil'
 import { copyText } from '../../utils/copyUtil'
 import { logout } from '../../utils/loginUtil'
 
@@ -44,48 +40,18 @@ function User() {
   const [unFollowList, setUnFollowList] = useState([])
   const [balance, setBalance] = useState({})
   const [loading, setLoading] = useState(true)
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [unfoChannel, setUnfoChannel] = useState('')
 
-  const [showSubscribe, setShowSubscribe] = useState(false)
-  const [chargeCrypto, setChargeCrypto] = useState({})
-  const [selectPeriod, setSelectPeriod] = useState('')
-  const [monthlyPrice, setMonthlyPrice] = useState(0)
-  const [yearlyPrice, setYearlyPrice] = useState(0)
-  const [refollowId, setRefollowId] = useState('')
   const [orderId, setOrderId] = useState('')
   const [check, setCheck] = useState(false)
   const [intervalId, setIntervalId] = useState(null)
   const [payUrl, setPayUrl] = useState('')
-  const [offset, setOffset] = useState(null)
-
-  const renderReason = (val) => {
-    if (val === 'cancel') {
-      return t('manual_cancel')
-    } else if (val === 'expired') {
-      return t('feed_expired')
-    }
-  }
-
-  const handleUnfollow = async (params) => {
-    try {
-      const res = await unfollowFeeds(params)
-      if (res.topic_id) {
-        toast.success(t('unfollow_success'))
-        setBtnSelect('')
-        getUserFollows()
-      }
-    } catch (error) {
-      if (error?.action === 'logout') {
-        logout(dispatch)
-        router.push('/')
-      }
-    }
-  }
 
   const getUserFollows = async () => {
     try {
       const followsList = await getFollows()
       if (followsList?.number?.toString()) {
-        setOffset(followsList.utc_offset)
         if (followsList?.number === 0) {
           setEmpty(true)
         } else {
@@ -136,58 +102,6 @@ function User() {
     }
   }
 
-  const handleRefollow = async (tid) => {
-    const params = {
-      action: 'query',
-      tid: tid,
-    }
-    try {
-      const res = (await parseTopic(params)) || {}
-      if (res?.price) {
-        const monPrice = (
-          Number(res.price.monthly) + Number(res.service_charge.monthly)
-        )
-          .toFixed(8)
-          .replace(/\.?0+$/, '')
-        const yearPrice = (
-          Number(res.price.yearly) + Number(res.service_charge.yearly)
-        )
-          .toFixed(8)
-          .replace(/\.?0+$/, '')
-        setMonthlyPrice(monPrice)
-        setYearlyPrice(yearPrice)
-        setChargeCrypto(res.service_charge.currency)
-        setBtnSelect('')
-        setShowSubscribe(true)
-      }
-    } catch (error) {
-      toast.error('Failed')
-    }
-  }
-
-  const handleSubscribe = async (period) => {
-    const params = {
-      action: 'follow',
-      tid: refollowId,
-      period: period,
-    }
-    try {
-      const res = (await subscribeTopic(params)) || {}
-      if (res?.payment_uri) {
-        if (storageUtil.get('platform') === 'browser') {
-          setPayUrl(res.payment_uri)
-        } else {
-          window.open(res.payment_uri)
-        }
-        setShowSubscribe(false)
-        res?.order_id && setOrderId(res.order_id)
-        setCheck(true)
-      }
-    } catch (error) {
-      toast.error(error?.data.message || 'Failed')
-    }
-  }
-
   const sourceType = (uri) => {
     if (uri.slice(0, 4) === 'http') {
         return 'RSS/Atom'
@@ -208,7 +122,6 @@ function User() {
           toast.success(t('subcribe_success'))
           setCheck(false)
           setOrderId('')
-          setSelectPeriod('')
           getUserFollows()
         }
       }, 3000)
@@ -239,7 +152,14 @@ function User() {
       ) : (
         <>
           <div>
-            {JSON.stringify(balance)}
+            <p className={styles.sectionTitle}># {t('my_balance')}</p>
+            <div className={styles.balanceWrap}>
+              <div className={styles.balance}>
+                <p>gINFO: <span>{balance?.wallets?.hazelnut}</span></p>
+                <p>INFO: <span>{balance?.wallets?.acorn}</span></p>
+              </div>
+              <p className={styles.infoRemark}>{t('info_remark')}</p>
+            </div>
           </div>
 
           {feedList?.length > 0 && (
@@ -265,59 +185,9 @@ function User() {
                         {feed.channel.description}
                       </p>
                     )}
-                    <div
-                      className={`${styles.detail} ${
-                        feed.channel.description && styles.increaseMargin
-                      }`}
-                    >
-                      {/* <div>
-                        <p>
-                          <span>
-                            {t('push_date')}
-                            {t('colon')}
-                          </span>
-                          {convertTimestamp(feed.pushed_ts, offset)}
-                        </p>
-                        <p>
-                          <span>
-                            {t('update_date')}
-                            {t('colon')}
-                          </span>
-                          {convertTimestamp(feed.updated_ts, offset)}
-                        </p>
-                        <p>
-                          <span>
-                            {t('crawl_date')}
-                            {t('colon')}
-                          </span>
-                          {convertTimestamp(feed.fetched_ts, offset)}
-                        </p>
-                        <p>
-                          <span>
-                            {t('expire_date')}
-                            {t('colon')}
-                          </span>
-                          {convertTimestamp(feed.expire_ts, offset)}
-                        </p>
-                      </div> */}
-                      <button
-                        className={styles.button}
-                        onClick={() => {
-                          setBtnSelect(index + 'unfollow')
-                          handleUnfollow(params)
-                        }}
-                      >
-                        {btnSelect === index + 'unfollow' ? (
-                          <Loading size={18} className={styles.btnLoading} />
-                        ) : (
-                          t('unfollow')
-                        )}
-                      </button>
-                    </div>
                     <div className={styles.copy}>
                       <p>
                         <span>
-                          {/* {t('source_uri')} ({sourceType(feed.source_type)}) */}
                           {t('source_uri')} {sourceType(feed.channel.uri)}
                           {t('colon')}
                         </span>
@@ -325,6 +195,22 @@ function User() {
                           {feed.channel.uri} <Icon type="copy" />
                         </span>
                       </p>
+                    </div>
+
+                    <div
+                      className={`${styles.detail} ${
+                        feed.channel.description && styles.increaseMargin
+                      }`}
+                    >
+                      <button
+                        className={styles.button}
+                        onClick={() => {
+                          setShowConfirm(true)
+                          setUnfoChannel(feed.channel.id)
+                        }}
+                      >
+                        {t('unfollow')}
+                      </button>
                     </div>
                   </>
                 </Collapse>
@@ -355,10 +241,11 @@ function User() {
                     >
                       <button
                         className={`${styles.button} ${styles.buttonAccent}`}
-                        onClick={() => {
+                        onClick={async () => {
                           setBtnSelect(index + 'refollow')
-                          handleRefollow(feed.tid)
-                          setRefollowId(feed.tid)
+                          await refollowFeeds(feed.channel.id)
+                          getUserFollows()
+                          getUserUnFollows()
                         }}
                       >
                         {btnSelect === index + 'refollow' ? (
@@ -375,25 +262,20 @@ function User() {
         </>
       )}
 
-      <PriceSheet
+      <BottomSheet
         t={t}
-        show={showSubscribe}
-        withConfirm={true}
-        confirmTitle={t('select_plan')}
-        confirmText={t('pay')}
-        onClose={() => {
-          setSelectPeriod('')
-          setShowSubscribe(false)
+        className={styles.confirmSheet}
+        show={showConfirm}
+        withConfirm
+        confirmTitle={t('confirm_unfollow')}
+        onConfirm={async () => {
+          await unfollowFeeds(unfoChannel)
+          setShowConfirm(false)
+          getUserFollows()
+          getUserUnFollows()
         }}
-        onCancel={() => {
-          setSelectPeriod('')
-          setShowSubscribe(false)
-        }}
-        onConfirm={() => handleSubscribe(selectPeriod)}
-        options={subscribeOptions(monthlyPrice, yearlyPrice)}
-        selectPeriod={selectPeriod}
-        chargeCrypto={chargeCrypto}
-        setSelectPeriod={setSelectPeriod}
+        onClose={() => setShowConfirm(false)}
+        onCancel={() => setShowConfirm(false)}
       />
 
       <Overlay

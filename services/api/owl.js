@@ -13,12 +13,12 @@ export function owlSignIn(data) {
 
 // 获取用户订阅列表
 export function getFollows(data) {
-  return http.get('/subscriptions?enable=true', { data })
+  return http.get('/subscriptions?enabled=true', { data })
 }
 
 // 获取用户退订列表
 export function getUnFollows(data) {
-  return http.get('/subscriptions?enable=false', { data })
+  return http.get('/subscriptions?enabled=false', { data })
 }
 
 /**
@@ -27,8 +27,18 @@ export function getUnFollows(data) {
  * @returns
  * 取消关注Feed
  */
-export function unfollowFeeds(data) {
-  return http.post('/subscriptions', { data })
+export function unfollowFeeds(channel_id, data = { enabled: false }) {
+  return http.put(`/subscriptions/${channel_id}`, { data })
+}
+
+/**
+ *
+ * @param {channel_id} String
+ * @returns
+ * 取消关注Feed
+ */
+export function refollowFeeds(channel_id, data = { enabled: true }) {
+  return http.put(`/subscriptions/${channel_id}`, { data })
 }
 
 /**
@@ -50,6 +60,19 @@ export function parseFeed(data) {
  */
 export function parseTopic(channel_id) {
   return http.get(`/channels/${channel_id}`)
+}
+
+/**
+ *
+ * @param {source} String
+ * @param {text} String
+ * @param {limit} Number optional
+ * @param {continuous_key} String optional
+ * @returns
+ * 搜索源
+ */
+export function searchSource(data) {
+  return http.post('/channels/search', { data })
 }
 
 /**
