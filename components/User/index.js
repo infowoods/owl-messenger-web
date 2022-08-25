@@ -155,8 +155,8 @@ function User() {
             <p className={styles.sectionTitle}># {t('my_balance')}</p>
             <div className={styles.balanceWrap}>
               <div className={styles.balance}>
-                <p>gINFO: <span>{balance?.wallets?.hazelnut}</span></p>
-                <p>INFO: <span>{balance?.wallets?.acorn}</span></p>
+                <p>gNUT: <span>{balance?.wallets?.gNUT}</span></p>
+                <p>NUT: <span>{balance?.wallets?.NUT}</span></p>
               </div>
               <p className={styles.infoRemark}>{t('info_remark')}</p>
             </div>

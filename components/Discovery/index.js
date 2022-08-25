@@ -15,6 +15,7 @@ function Discovery() {
   const [searchVal, setSearchVal] = useState('')
   const [searchRes, setSearchRes] = useState([])
   const [searchLoading, setSearchLoading] = useState(false)
+  const [empty, setEmpty] = useState(false)
 
   const placeholder = (type) => {
     switch (type) {
@@ -43,7 +44,7 @@ function Discovery() {
           checked={searchType === 'channel'}
           readOnly
         />
-        <label htmlFor="channel">Channel</label>
+        <label htmlFor="channel">{t('channel')}</label>
 
         <input
           type="radio"
@@ -53,12 +54,11 @@ function Discovery() {
           checked={searchType === 'weibo'}
           readOnly
         />
-        <label htmlFor="weibo">Weibo</label>
+        <label htmlFor="weibo">{t('weibo')}</label>
       </div>
 
       {/* 搜索框 */}
       <div className={styles.searchWrap}>
-        {/* <div className={styles.searchIcon}><Icon type="search" /></div> */}
         <form className={styles.search} action=".">
           <Input
             className={styles.input}
@@ -66,14 +66,19 @@ function Discovery() {
             placeholder={placeholder(searchType)}
             value={searchVal}
             onChange={(val) => setSearchVal(val)}
-            onClear={() => setSearchRes([])}
+            onClear={() => {
+              setSearchRes([])
+              setEmpty(false)
+            }}
             // onKeyDown={(e) => handleKeyDown(e)}
           />
         </form>
 
         <div className={styles.searchIcon}>
           {searchLoading ? (
-            <Loading />
+            <div className={styles.loadingWrap}>
+              <Loading size={18} className={styles.searchLoading} />
+            </div>
           ) : (
             <Icon
               type="search"
@@ -85,7 +90,9 @@ function Discovery() {
                   text: searchVal,
                 })
                 setSearchLoading(false)
-                setSearchRes(data.channels)
+                if (data.channels.length > 0) {
+                  setSearchRes(data.channels)
+                } else setEmpty(true)
               }}
             />
           )}
@@ -94,33 +101,39 @@ function Discovery() {
 
       <div>
         {searchRes.length > 0 &&
-          searchRes.map((item, idx) => {
+          searchRes.map((item) => {
             return (
               <div key={item.id} className={styles.card}>
-                <p>{item.title}</p>
-                <p>{item.description}</p>
-                <div>
+                <p className={styles.channelTitle}>{item.title}</p>
+                <p className={styles.channelDesc}>{t('desc')}{t('colon')}{item.description}</p>
+                <div className={styles.channelFee}>
                   <p>
                     {t('channel_fee')}
-                    {item.price_per_info.channel_fee}
+                    {item.price_per_info.channel_fee} NUT
                   </p>
-                  <p>
-                    {t('min')}
-                    {item.price_per_info.pushing_fee.min}
-                  </p>
-                  <p>
-                    {t('min')}
-                    {item.price_per_info.pushing_fee.max}
-                  </p>
+                  <div>
+                    <p>
+                      {t('min')}
+                      {item.price_per_info.pushing_fee.min} NUT
+                    </p>
+                    <p>
+                      {t('min')}
+                      {item.price_per_info.pushing_fee.max} NUT
+                    </p>
+                  </div>
                 </div>
-                <p className={styles.copy}>{item.uri}</p>
+                <p className={styles.copy}>{t('source_uri')}{t('colon')}{item.uri}</p>
                 <button className={styles.button}>{t('follow')}</button>
               </div>
             )
           })}
+          {
+            empty && <p className={styles.empty}>🧶 {t('no_search_result')}</p>
+          }
       </div>
 
       <p className={styles.sectionTitle}># {t('channel_list')}</p>
+      <p className={styles.channelDesc}>👨‍💻‍ {t('coming_soon')}</p>
     </div>
   )
 }

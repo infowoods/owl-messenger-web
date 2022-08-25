@@ -36,6 +36,29 @@
   }
 }
 
+.loadingWrap {
+  margin-left: 4px;
+  background-color: $contentPrimary;
+  border-radius: 50%;
+  // width: 42px;
+  // height: 42px;
+}
+
+.searchLoading {
+  margin: 12px;
+  >div {
+    border: 2px solid $contentInversePrimary;
+    border-left-color: transparent;
+  }
+}
+
+.empty {
+  color: $contentSecondry;
+  font-size: 15px;
+  padding-left: 4px;
+  margin-bottom: 12px;
+}
+
 .input {
   margin: 0 auto;
   flex: 1;
@@ -50,6 +73,38 @@
   margin-bottom: 12px;
 }
 
+.channelTitle {
+  font-size: 15px;
+  color: $contentPrimary;
+  font-weight: bold;
+}
+
+.channelDesc {
+  color: $contentSecondry;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.channelFee {
+  font-size: 14px;
+  margin-top: 6px;
+  color: $contentSecondry;
+  >div {
+    display: flex;
+    >p {
+      &:first-child {
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+.copy {
+  margin-top: 6px;
+  font-size: 14px;
+  overflow-x: hidden;
+}
+
 .button {
   background: transparent;
   border: none;
@@ -58,8 +113,8 @@
   color: $accent;
   font-size: 14px;
   cursor: pointer;
-}
-
-.copy {
-  overflow-x: hidden;
+  margin-top: 12px;
+  &:hover {
+    font-weight: bold;
+  }
 }
