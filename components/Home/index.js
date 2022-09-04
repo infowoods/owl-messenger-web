@@ -1,7 +1,7 @@
 import { useEffect, useContext, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import dynamic from 'next/dynamic'
-import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import { ProfileContext } from '../../stores/useProfile'
 
@@ -26,6 +26,7 @@ import styles from './index.module.scss'
 function Home() {
   const { t } = useTranslation('common')
   const [state, dispatch] = useContext(ProfileContext)
+  const { push } = useRouter()
   const isLogin = state.userInfo && state.userInfo.user_name
   // console.log('homepage state:', state)
 
@@ -201,9 +202,18 @@ function Home() {
         />
       </form>
 
-      <Link href="/discovery">
-        <a className={styles.hot}>{t('hot_now')}</a>
-      </Link>
+      {
+        !feedInfo?.id && !loading &&
+        <p className={styles.hot} onClick={() => {
+          if (isLogin) push('/discovery')
+          else {
+            toast('Login first', { icon: '💁' })
+            return
+          }
+        }}>
+          <a>{t('hot_now')} &#8594;</a>
+        </p>
+      }
 
       {/* 解析后源信息卡片 */}
       {loading ? (
@@ -255,29 +265,35 @@ function Home() {
               </p>
               <div>
                 <Tooltip
-                  position="center"
-                  theme="dark"
-                  content={
-                    <span className={styles.help}>
-                      {t('maybe_text')}
-                    </span>
-                  }
-                >
+                    position="center"
+                    theme="dark"
+                    content={
+                      <span className={styles.help}>
+                        {t('channel_fee_desc')}
+                      </span>
+                    }
+                  >
                   <p>
-                    {t('min')}{feedInfo.price_per_info.pushing_fee.min} NUT / {t('each_message')}
+                    {t('channel_fee')} {feedInfo.price_per_info.channel_fee} NUT
                     <Icon type="help-fill" />
                   </p>
                 </Tooltip>
-                <div className={styles.divider}></div>
+              </div>
+              <div>
+                <span>{t('push_fee')}</span>
                 <Tooltip
                   position="center"
                   theme="dark"
                   content={
                     <span className={styles.help}>
-                      {t('maybe_video')}
+                      {t('min_max_desc')}
                     </span>
                   }
                 >
+                  <p>
+                    {t('min')}{feedInfo.price_per_info.pushing_fee.min} NUT / {t('each_message')}
+                  </p>
+                  <div className={styles.divider}></div>
                   <p>
                     {t('max')}{feedInfo.price_per_info.pushing_fee.max} NUT / {t('each_message')}
                     <Icon type="help-fill" />

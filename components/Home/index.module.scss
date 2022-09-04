@@ -208,20 +208,26 @@
   div {
     display: flex;
     align-items: center;
+    > span {
+      font-size: 12px;
+      line-height: 20px;
+      color: $contentSecondry;
+      margin-right: 6px;
+    }
     p {
       font-size: 12px;
-      line-height: 16px;
+      line-height: 20px;
       color: $contentSecondry;
       cursor: pointer;
       > i {
         font-size: 14px;
-        line-height: 16px;
+        line-height: 20px;
         vertical-align: middle;
         margin-left: 4px;
       }
     }
     .divider {
-      border-left: 1px solid $contentPrimary;
+      border-left: 1px solid $contentSecondry;
       height: 14px;
       margin: 0 10px;
     }
@@ -235,17 +241,17 @@
 }
 
 .hot {
-  display: block;
-  max-width: 520px;
   font-size: 14px;
-  font-weight: bold;
   font-style: italic;
   color: $contentNotice;
-  max-width: 520px;
   margin: 12px auto 0 auto;
   padding: 0 16px;
-  &:hover {
-    color: $contentAccent;
+  max-width: 520px;
+  >a {
+    cursor: pointer;
+    &:active {
+      opacity: 0.7;;
+    }
   }
 }
 

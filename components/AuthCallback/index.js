@@ -36,6 +36,7 @@ function AuthCallback() {
     const auth = async (token) => {
       try {
         const params = {
+          app: 'owl',
           mixin_access_token: token,
           conversation_id: conversation_id,
         }

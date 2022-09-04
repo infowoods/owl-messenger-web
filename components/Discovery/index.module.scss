@@ -40,6 +40,10 @@
   border-radius: 50%;
 }
 
+.hotLoading {
+  margin-top: 48px;
+}
+
 .searchLoading {
   margin: 12px;
   >div {
@@ -102,7 +106,7 @@
     display: flex;
     >p {
       &:nth-child(2) {
-        margin: 0 8px;
+        margin-right: 8px;
       }
     }
   }

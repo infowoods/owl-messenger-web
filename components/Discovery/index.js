@@ -31,7 +31,7 @@ const Card = ({ t, item }) => {
           {item.price_per_info.channel_fee} NUT
         </p>
         <div>
-          <span>{t('push_fee')}{t('colon')}</span>
+          <span>{t('push_fee')}</span>
           <p>
             {t('min')}
             {item.price_per_info.pushing_fee.min} NUT
@@ -86,6 +86,7 @@ function Discovery() {
   const [searchVal, setSearchVal] = useState('')
   const [searchRes, setSearchRes] = useState([])
   const [hotList, setHotList] = useState([])
+  const [loading, setLoading] = useState(false)
   const [searchLoading, setSearchLoading] = useState(false)
   const [empty, setEmpty] = useState(false)
   const typeList = ['channel', 'weibo', 'twitter']
@@ -96,6 +97,8 @@ function Discovery() {
         return t('channel_search_ph')
       case 'weibo':
         return t('weibo_search_ph')
+      case 'twitter':
+        return t('twitter_search_ph')
       default:
         break
     }
@@ -124,7 +127,9 @@ function Discovery() {
 
   useEffect(() => {
     const getHotList = async() => {
+      setLoading(true)
       const data = await getHotCollections()
+      setLoading(false)
       data?.channels && setHotList(data.channels)
     }
     getHotList()
@@ -206,13 +211,16 @@ function Discovery() {
 
       {/* hot collections */}
       <p className={styles.sectionTitle}># {t('channel_list')}</p>
-      <div className={styles.collections}>
-        {
-          hotList.length > 0 && hotList.map((item) => (
-            <Card t={t} item={item} />
-          ))
-        }
-      </div>
+      {
+        loading ? <Loading className={styles.hotLoading} /> :
+        <div className={styles.collections}>
+          {
+            hotList.length > 0 && hotList.map((item) => (
+              <Card t={t} item={item} />
+            ))
+          }
+        </div>
+      }
 
       <OwlToast />
     </div>
