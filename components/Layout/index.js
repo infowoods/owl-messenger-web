@@ -138,7 +138,7 @@ function Layout({ children }) {
   return (
     <div className={`${styles.wrap} ${pathname !== '/' && styles.bgGray}`}>
       <Head>
-        <title>Owl Deliver</title>
+        <title>Owl Messenger</title>
         <meta name="description" content="猫头鹰订阅器" />
         <meta name="theme-color" content={getBarColor(pathname)} />
         <link rel="icon" href="/favicon.png" />

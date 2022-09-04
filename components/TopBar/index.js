@@ -22,7 +22,7 @@ function TopBar(props) {
       )}
       <div className={`${styles.icon} ${url && styles.iconPadding}`}>
         <Image src="/favicon.png" alt="favico" width={28} height={28} />
-        <span>Owl Deliver</span>
+        <span>Owl Messenger</span>
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-# 🦉 Frontend of Owl Deliver
+# 🦉 Frontend of Owl Messenger
 
 > A notifier based on [Mixin Messenger](https://www.mixin.one/mm), bot ID: 7000102034.
 

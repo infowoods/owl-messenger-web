@@ -94,7 +94,7 @@ function AuthCallback() {
   return (
     <div className={styles.main}>
       <Head>
-        <title>Owl Deliver</title>
+        <title>Owl Messenger</title>
         <meta name="description" content="猫头鹰订阅器" />
         <link rel="icon" href="/favicon.png" />
       </Head>
