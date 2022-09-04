@@ -1,14 +1,18 @@
 import { useEffect, useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 import { i18n } from 'next-i18next'
-import { ProfileContext } from '../../stores/useProfile'
-import { owlSignIn } from '../../services/api/owl'
-import storageUtil from '../../utils/storageUtil'
-import { getMixinContext, getAccessToken, checkGroup } from '../../services/api/mixin'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import toast from 'react-hot-toast'
 const OwlToast = dynamic(() => import('../../widgets/OwlToast'))
+
+import { ProfileContext } from '../../stores/useProfile'
+
+import { owlSignIn, checkGroup } from '../../services/api/owl'
+import { getMixinContext, getAccessToken } from '../../services/api/mixin'
+
+import storageUtil from '../../utils/storageUtil'
+
 import styles from './index.module.scss'
 
 function AuthCallback() {
@@ -30,17 +34,14 @@ function AuthCallback() {
     const conversation_id = ctx.conversation_id || ''
 
     const auth = async (token) => {
-      console.log('auth: ', token)
       try {
         const params = {
           mixin_access_token: token,
           conversation_id: conversation_id,
         }
         const data = await owlSignIn(params)
-        console.log('data: ', data)
 
         if (data?.access_token) {
-          console.log('has ac tk')
           dispatch({
             type: 'userInfo',
             userInfo: data,
@@ -50,16 +51,13 @@ function AuthCallback() {
           if (ctx?.locale && ctx.locale !== 'zh-CN' && i18n.language !== 'en') {
             i18n.changeLanguage('en')
             push('/', '/', { locale: 'en' })
-            console.log('en')
           } else {
-            console.log('zh')
             push('/')
           }
         }
       } catch (error) {
         toast.error('Auth Failed')
         push('/')
-        console.log('err')
       }
     }
 
@@ -77,8 +75,11 @@ function AuthCallback() {
     res && setCtx(res)
     if (res?.conversation_id) {
       const initialFunc = async () => {
-        const data = await checkGroup(res.conversation_id)
-        if (data?.category === 'GROUP') {
+        const data = await checkGroup({
+          app: 'owl',
+          conversation_id: res.conversation_id
+        })
+        if (data?.is_group) {
           dispatch({
             type: 'groupInfo',
             groupInfo: data,

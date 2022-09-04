@@ -23,16 +23,6 @@ export function getProfile() {
   return http.get('/me')
 }
 
-/**
- *
- * @param {conversation_id} String
- * @returns
- * 判断是否群组
- */
-export function checkGroup(id) {
-  return http.get(`/conversations/${id}`)
-}
-
 export function loginFunc(token) {
   StorageUtil.set('mixin_token', token)
 }

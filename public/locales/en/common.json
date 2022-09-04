@@ -38,6 +38,7 @@
   "month": "month",
   "year": "year",
   "follow": "Subscribe",
+  "already_follow": "Subscribed",
   "unfollow": "Unsubscribe",
   "unfollow_reason": "Unsubscribed reason",
   "refollow": "Subscribe",

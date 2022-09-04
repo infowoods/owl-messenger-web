@@ -34,7 +34,8 @@ function User() {
   const { t } = useTranslation('common')
   const [, dispatch] = useContext(ProfileContext)
   const router = useRouter()
-  const [empty, setEmpty] = useState(false)
+  const [followEmpty, setFollowEmpty] = useState(false)
+  const [unfollowEmpty, setUnfollowEmpty] = useState(false)
   const [btnSelect, setBtnSelect] = useState('')
   const [feedList, setFeedList] = useState([])
   const [unFollowList, setUnFollowList] = useState([])
@@ -53,8 +54,10 @@ function User() {
       const followsList = await getFollows()
       if (followsList?.number?.toString()) {
         if (followsList?.number === 0) {
-          setEmpty(true)
+          setFollowEmpty(true)
+          setFeedList([])
         } else {
+          setFollowEmpty(false)
           setFeedList(followsList.subscriptions)
         }
         setLoading(false)
@@ -80,8 +83,10 @@ function User() {
       const followsList = await getUnFollows()
       if (followsList?.number?.toString()) {
         if (followsList?.number === 0) {
-          setEmpty(true)
+          setUnfollowEmpty(true)
+          setUnFollowList([])
         } else {
+          setUnfollowEmpty(false)
           setUnFollowList(followsList.subscriptions)
         }
         setLoading(false)
@@ -140,30 +145,27 @@ function User() {
 
   return (
     <div className={styles.main}>
-      {empty && (
-        <div className={styles.empty}>
-          <Icon type="ufo" />
-          <p>{t('no_records')}</p>
+      <div>
+        <p className={styles.sectionTitle}># {t('my_balance')}</p>
+        <div className={styles.balanceWrap}>
+          <div className={styles.balance}>
+            <p>gNUT: <span>{balance?.wallets?.gNUT}</span></p>
+            <p>NUT: <span>{balance?.wallets?.NUT}</span></p>
+          </div>
+          <p className={styles.infoRemark}>{t('info_remark')}</p>
         </div>
-      )}
+      </div>
 
       {loading ? (
         <Loading size={40} className={styles.loading} />
       ) : (
         <>
-          <div>
-            <p className={styles.sectionTitle}># {t('my_balance')}</p>
-            <div className={styles.balanceWrap}>
-              <div className={styles.balance}>
-                <p>gNUT: <span>{balance?.wallets?.gNUT}</span></p>
-                <p>NUT: <span>{balance?.wallets?.NUT}</span></p>
-              </div>
-              <p className={styles.infoRemark}>{t('info_remark')}</p>
+          <p className={styles.sectionTitle}># {t('following')}</p>
+          {followEmpty && (
+            <div className={styles.empty}>
+              <Icon type="ufo" />
+              <p>{t('no_records')}</p>
             </div>
-          </div>
-
-          {feedList?.length > 0 && (
-            <p className={styles.sectionTitle}># {t('following')}</p>
           )}
           {feedList?.length > 0 &&
             feedList.map((feed, index) => {
@@ -198,9 +200,7 @@ function User() {
                     </div>
 
                     <div
-                      className={`${styles.detail} ${
-                        feed.channel.description && styles.increaseMargin
-                      }`}
+                      className={`${styles.detail} ${styles.increaseMargin}`}
                     >
                       <button
                         className={styles.button}
@@ -217,8 +217,12 @@ function User() {
               )
             })}
 
-          {unFollowList.length > 0 && (
-            <p className={styles.sectionTitle}># {t('history')}</p>
+          <p className={styles.sectionTitle}># {t('history')}</p>
+          {unfollowEmpty && (
+            <div className={styles.empty}>
+              <Icon type="ufo" />
+              <p>{t('no_records')}</p>
+            </div>
           )}
           {unFollowList.length > 0 &&
             unFollowList.map((feed, index) => {

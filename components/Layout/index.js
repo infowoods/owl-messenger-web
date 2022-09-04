@@ -13,7 +13,7 @@ import BottomNav from '../../widgets/BottomNav'
 import { ProfileContext } from '../../stores/useProfile'
 
 import { getMixinContext, reloadTheme } from '../../services/api/mixin'
-import { checkGroup } from '../../services/api/mixin'
+import { checkGroup } from '../../services/api/owl'
 
 import storageUtil from '../../utils/storageUtil'
 import { authLogin } from '../../utils/loginUtil'
@@ -113,14 +113,20 @@ function Layout({ children }) {
           })
           setInit(true)
         } else {
-          const data = await checkGroup(ctx.conversation_id)
-          if (data?.category === 'GROUP') {
-            dispatch({
-              type: 'groupInfo',
-              groupInfo: data,
+          try {
+            const data = await checkGroup({
+              app: 'owl',
+              conversation_id: ctx.conversation_id
             })
-            setInit(true)
-          }
+            if (data?.is_group) {
+              dispatch({
+                type: 'groupInfo',
+                groupInfo: data,
+              })
+              setInit(true)
+            }
+          } catch (error) {}
+          setInit(true)
         }
       }
       initialFunc()
@@ -171,7 +177,7 @@ function Layout({ children }) {
       )}
       <div style={{ opacity: `${init ? '1' : '0'}` }}>
         {children}
-        {navHref.includes(pathname) && <BottomNav t={t} />}
+        {navHref.includes(pathname) && <BottomNav t={t} isLogin={isLogin} />}
       </div>
     </div>
   )

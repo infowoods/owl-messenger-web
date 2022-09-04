@@ -15,11 +15,9 @@ import Tooltip from '../../widgets/Tooltip'
 import Input from '../../widgets/Input'
 import Loading from '../../widgets/Loading'
 
-import { feedOptions, subscribeOptions } from './config'
+import { feedOptions } from './config'
 
 import { authLogin, logout } from '../../utils/loginUtil'
-import { formatNum, formatAdd } from '../../utils/numberUtil'
-import storageUtil from '../../utils/storageUtil'
 
 import { parseFeed, subscribeTopic, checkOrder } from '../../services/api/owl'
 
@@ -48,6 +46,7 @@ function Home() {
   const [orderId, setOrderId] = useState('')
   const [intervalId, setIntervalId] = useState(null)
   const [followBtnText, setFollowBtnText] = useState(t('follow'))
+  const [followLoading, setFollowLoading] = useState(false)
 
   const prefix = <Icon type="search" className={styles.searchIcon} />
 
@@ -90,9 +89,9 @@ function Home() {
       if (res?.id) {
         setFeedInfo(res)
         setLoading(false)
+        if (res.subscription?.enabled) setFollowBtnText(t('already_follow'))
       }
     } catch (error) {
-      console.log('error: ', error)
       if (error?.action === 'logout') {
         toast.error(t('auth_expire'))
         setLoading(false)
@@ -202,9 +201,9 @@ function Home() {
         />
       </form>
 
-      {/* <Link href="/hot-topics">
-        <a className={styles.hot}>{t('hot_now')} ⚡️</a>
-      </Link> */}
+      <Link href="/discovery">
+        <a className={styles.hot}>{t('hot_now')}</a>
+      </Link>
 
       {/* 解析后源信息卡片 */}
       {loading ? (
@@ -227,8 +226,22 @@ function Home() {
                     </p>
                   )}
                 </div>
-                <button onClick={() => {subscribeTopic({ channel_id: feedInfo.id })}}>
-                  {followBtnText}
+                <button onClick={async() => {
+                  if (followBtnText === t('already_follow')) return
+                  setFollowLoading(true)
+                  try {
+                    const res = await subscribeTopic({ channel_id: feedInfo.id })
+                    if (res?.enabled) {
+                      setFollowBtnText(t('already_follow'))
+                    }
+                  } catch (error) {
+                    toast.error('Error')
+                  }
+                  setFollowLoading(false)
+                }}>
+                  {
+                    followLoading ? <Loading className={styles.followLoading} size={19} /> : followBtnText
+                  }
                 </button>
               </div>
             </div>
@@ -251,7 +264,7 @@ function Home() {
                   }
                 >
                   <p>
-                    {t('min')}{feedInfo.price_per_info.pushing_fee.min}{t('acorn')} / {t('each_message')}
+                    {t('min')}{feedInfo.price_per_info.pushing_fee.min} NUT / {t('each_message')}
                     <Icon type="help-fill" />
                   </p>
                 </Tooltip>
@@ -266,7 +279,7 @@ function Home() {
                   }
                 >
                   <p>
-                    {t('max')}{feedInfo.price_per_info.pushing_fee.max}{t('acorn')} / {t('each_message')}
+                    {t('max')}{feedInfo.price_per_info.pushing_fee.max} NUT / {t('each_message')}
                     <Icon type="help-fill" />
                   </p>
                 </Tooltip>

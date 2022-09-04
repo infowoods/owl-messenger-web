@@ -10,23 +10,18 @@ function Button(props) {
     size,
     disabled,
     loading,
-    withArrow,
-    prefix,
-    suffix,
     ...others
   } = props
 
   return (
     <button
-      className={`${styles.button} ${styles.type} ${styles.size} ${
-        styles.loading && styles.loading
-      } ${className}`}
+      className={`${styles.button} ${styles[type]} ${styles[size]} ${className}`}
       disabled={disabled}
       {...others}
     >
-      {children}
-
-      {loading && <Loading />}
+      {
+        loading ? <Loading className={styles.loading} size={17} /> : children
+      }
     </button>
   )
 }
@@ -36,17 +31,13 @@ Button.defaultProps = {
   size: 'small',
   loading: false,
   disabled: false,
-  withArrow: false,
 }
 
 Button.propTypes = {
-  type: PropTypes.oneOf(['primary', 'floating', 'secondary', 'text']),
-  size: PropTypes.oneOf(['large', 'medium', 'small']),
+  type: PropTypes.oneOf(['primary', 'text']),
+  size: PropTypes.oneOf(['large', 'small']),
   disabled: PropTypes.bool,
   loading: PropTypes.bool,
-  withArrow: PropTypes.bool,
-  suffix: PropTypes.node,
-  prefix: PropTypes.node,
 }
 
 export default Button

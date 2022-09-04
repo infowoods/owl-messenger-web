@@ -38,6 +38,7 @@
   "month": "月",
   "year": "年",
   "follow": "订 阅",
+  "already_follow": "已订阅",
   "unfollow": "取消订阅",
   "unfollow_reason": "取关原因",
   "refollow": "再次订阅",

@@ -11,6 +11,17 @@ export function owlSignIn(data) {
   return http.post('/oauth/mixin', { data })
 }
 
+/**
+ *
+ * @param {app} String
+ * @param {conversation_id}
+ * @returns
+ * check if is group
+ */
+export function checkGroup(data) {
+  return http.post('/oauth/mixin/is_group', { data })
+}
+
 // 获取用户订阅列表
 export function getFollows(data) {
   return http.get('/subscriptions?enabled=true', { data })
@@ -49,6 +60,15 @@ export function refollowFeeds(channel_id, data = { enabled: true }) {
  */
 export function parseFeed(data) {
   return http.post('/channels/parse', { data })
+}
+
+/**
+ *
+ * @returns
+ * get hot collections
+ */
+export function getHotCollections() {
+  return http.get('/collections/hot')
 }
 
 /**
