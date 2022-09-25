@@ -1,3 +1,4 @@
+import useSWR from 'swr'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import dynamic from 'next/dynamic'
@@ -8,11 +9,24 @@ import Input from '../../widgets/Input'
 import Icon from '../../widgets/Icon'
 import Loading from '../../widgets/Loading'
 
-import { searchSource, getHotCollections, subscribeTopic } from '../../services/api/owl'
+import {
+  searchSource,
+  getCollection,
+  subscribeChannel,
+} from '../../services/api/owl'
 
 import { copyText } from '../../utils/copyUtil'
 
 import styles from './index.module.scss'
+
+function useHotCollection() {
+  const { data, error } = useSWR('hot', getCollection)
+  return {
+    data: data,
+    isLoading: !error && !data,
+    isError: error,
+  }
+}
 
 const Card = ({ t, item }) => {
   const [followBtnText, setFollowBtnText] = useState(t('follow'))
@@ -44,13 +58,15 @@ const Card = ({ t, item }) => {
       </div>
       <p className={styles.channelDesc}>
         <span>
-          {t('desc')}{t('colon')}
+          {t('desc')}
+          {t('colon')}
         </span>
         {item.description}
       </p>
       <p className={styles.copy}>
         <span>
-          {t('source_uri')}{t('colon')}
+          {t('source_uri')}
+          {t('colon')}
         </span>
         <span onClick={() => copyText(item.uri, toast, t)}>
           {item.uri} <Icon type="copy" />
@@ -62,7 +78,7 @@ const Card = ({ t, item }) => {
           if (followBtnText === t('already_follow')) return
           setFollowLoading(true)
           try {
-            const res = await subscribeTopic({ channel_id: item.id })
+            const res = await subscribeChannel(item.id)
             if (res?.enabled) {
               setFollowBtnText(t('already_follow'))
             }
@@ -72,9 +88,11 @@ const Card = ({ t, item }) => {
           setFollowLoading(false)
         }}
       >
-        {
-          followLoading ? <Loading className={styles.followLoading} size={16} /> : followBtnText
-        }
+        {followLoading ? (
+          <Loading className={styles.followLoading} size={16} />
+        ) : (
+          followBtnText
+        )}
       </button>
     </div>
   )
@@ -85,11 +103,12 @@ function Discovery() {
   const [searchType, setSearchType] = useState('channel')
   const [searchVal, setSearchVal] = useState('')
   const [searchRes, setSearchRes] = useState([])
-  const [hotList, setHotList] = useState([])
+
   const [loading, setLoading] = useState(false)
   const [searchLoading, setSearchLoading] = useState(false)
   const [empty, setEmpty] = useState(false)
   const typeList = ['channel', 'weibo', 'twitter']
+  const hotCollection = useHotCollection()
 
   const placeholder = (type) => {
     switch (type) {
@@ -112,7 +131,7 @@ function Discovery() {
     }
   }
 
-  const handleSearch = async() => {
+  const handleSearch = async () => {
     if (!searchVal) return
     setSearchLoading(true)
     const data = await searchSource({
@@ -126,9 +145,9 @@ function Discovery() {
   }
 
   useEffect(() => {
-    const getHotList = async() => {
+    const getHotList = async () => {
       setLoading(true)
-      const data = await getHotCollections()
+      const data = await getCollection()
       setLoading(false)
       data?.channels && setHotList(data.channels)
     }
@@ -144,23 +163,19 @@ function Discovery() {
         className={styles.group}
         onChange={(e) => setSearchType(e.target.value)}
       >
-        {
-          typeList.map(item => (
-            <React.Fragment key={item}>
-              <input
-                type="radio"
-                id={item}
-                name="searchType"
-                value={item}
-                checked={searchType === item}
-                readOnly
-              />
-              <label htmlFor={item}>
-                {t(item)}
-              </label>
-            </React.Fragment>
-          ))
-        }
+        {typeList.map((item) => (
+          <React.Fragment key={item}>
+            <input
+              type="radio"
+              id={item}
+              name="searchType"
+              value={item}
+              checked={searchType === item}
+              readOnly
+            />
+            <label htmlFor={item}>{t(item)}</label>
+          </React.Fragment>
+        ))}
       </div>
 
       {/* 搜索框 */}
@@ -200,27 +215,22 @@ function Discovery() {
       {/* Search Result */}
       <div>
         {searchRes.length > 0 &&
-          searchRes.map((item) => (
-            <Card t={t} item={item} />
-          ))
-        }
-        {
-          empty && <p className={styles.empty}>🧶 {t('no_search_result')}</p>
-        }
+          searchRes.map((item) => <Card key={item.id} t={t} item={item} />)}
+        {empty && <p className={styles.empty}>🧶 {t('no_search_result')}</p>}
       </div>
 
       {/* hot collections */}
       <p className={styles.sectionTitle}># {t('channel_list')}</p>
-      {
-        loading ? <Loading className={styles.hotLoading} /> :
+      {hotCollection?.isLoading ? (
+        <Loading className={styles.hotLoading} />
+      ) : (
         <div className={styles.collections}>
-          {
-            hotList.length > 0 && hotList.map((item) => (
-              <Card t={t} item={item} />
-            ))
-          }
+          {hotCollection?.data?.channels &&
+            hotCollection.data.channels.map((item) => (
+              <Card key={item.id} t={t} item={item} />
+            ))}
         </div>
-      }
+      )}
 
       <OwlToast />
     </div>

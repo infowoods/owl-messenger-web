@@ -1,4 +1,4 @@
-import HotTopics from '../components/HotTopics'
+import HotChannels from '../components/HotChannels'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 const i18nConfig = require('../next-i18next.config')
 
@@ -10,4 +10,4 @@ export async function getStaticProps({ locale }) {
   }
 }
 
-export default HotTopics
+export default HotChannels

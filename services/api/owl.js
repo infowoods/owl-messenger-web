@@ -64,11 +64,15 @@ export function parseFeed(data) {
 
 /**
  *
+ * @param {collection_id} String optional
  * @returns
- * get hot collections
+ * get collection
  */
-export function getHotCollections() {
-  return http.get('/collections/hot')
+export function getCollection(collection_id) {
+  if (!collection_id) {
+    throw 'collection_id is empty'
+  }
+  return http.get(`/collections/${collection_id}`)
 }
 
 /**

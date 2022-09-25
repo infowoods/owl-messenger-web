@@ -21,11 +21,11 @@ import { authLogin, logout } from '../../utils/loginUtil'
 import storageUtil from '../../utils/storageUtil'
 
 import { getHotTopics } from '../../services/api/owl'
-import { subscribeTopic, checkOrder } from '../../services/api/owl'
+import { subscribeChannel, checkOrder } from '../../services/api/owl'
 
 import styles from './index.module.scss'
 
-function HotTopics() {
+function HotChannels() {
   const { t } = useTranslation('common')
   const [state, dispatch] = useContext(ProfileContext)
   const isLogin = state.userInfo && state.userInfo.user_name
@@ -106,7 +106,8 @@ function HotTopics() {
       period: period,
     }
     try {
-      const res = (await subscribeTopic(params)) || {}
+      const res = (await subscribeChannel(feedInfo.tid)) || {}
+
       if (res?.payment_uri) {
         if (storageUtil.get('platform') === 'browser') {
           setPayUrl(res.payment_uri)
@@ -212,4 +213,4 @@ function HotTopics() {
   )
 }
 
-export default HotTopics
+export default HotChannels

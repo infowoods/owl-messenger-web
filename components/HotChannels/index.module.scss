@@ -30,7 +30,7 @@
 
     &:last-of-type {
       font-size: 14px;
-      color: $contentSecondry;
+      color: $contentSecondary;
       margin-bottom: 4px;
       > span {
         color: $contentPrimary;
@@ -52,10 +52,10 @@
     }
     &:last-child {
       cursor: pointer;
-      color: $contentSecondry;
+      color: $contentSecondary;
       i {
         line-height: 21px;
-        color: $contentSecondry;
+        color: $contentSecondary;
         vertical-align: middle;
       }
     }
@@ -67,7 +67,7 @@
   border: none;
   padding: 6px 42px;
   border-radius: 8px;
-  color: $contentSecondry;
+  color: $contentSecondary;
   font-size: 14px;
   cursor: pointer;
   margin: 4px 0;
