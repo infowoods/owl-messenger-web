@@ -1,13 +1,14 @@
 # 🦉 Frontend of Owl Messenger
 
-> A notifier based on [Mixin Messenger](https://www.mixin.one/mm), bot ID: 7000102034.
+> A notifier based on [Mixin Messenger](https://www.mixin.one/mm), Bot ID: 7000102034.
 
-## Supported subscriptions:
+## Supported subscriptions
 
-- Oak Hub topic
+- Oak Channel
 - RSS/Atom feed
 - Twitter
 - Weibo
+- Mirror.xyz
 - to do...
 
 ## Features
@@ -16,4 +17,3 @@
 - Dark theme
 - Support Mixin messenger group subscription
 - Pay with crypto (BTC, XIN, etc)
-- Configurable time zone

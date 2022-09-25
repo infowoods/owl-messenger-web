@@ -8,18 +8,16 @@ import { ProfileContext } from '../../stores/useProfile'
 import toast from 'react-hot-toast'
 const OwlToast = dynamic(() => import('../../widgets/OwlToast'))
 const Overlay = dynamic(() => import('../../widgets/Overlay'))
-const FeedTypeSheet = dynamic(() => import('./FeedTypeSheet'))
+const UriSampleSheet = dynamic(() => import('./UriSampleSheet'))
 
 import Icon from '../../widgets/Icon'
 import Tooltip from '../../widgets/Tooltip'
 import Input from '../../widgets/Input'
 import Loading from '../../widgets/Loading'
 
-import { feedOptions } from './config'
-
 import { authLogin, logout } from '../../utils/loginUtil'
 
-import { parseFeed, subscribeTopic, checkOrder } from '../../services/api/owl'
+import { parseFeed, subscribeChannel, checkOrder } from '../../services/api/owl'
 
 import styles from './index.module.scss'
 
@@ -30,67 +28,48 @@ function Home() {
   const isLogin = state.userInfo && state.userInfo.user_name
   // console.log('homepage state:', state)
 
-  const [feed, setFeed] = useState('')
+  const [source_uri, setSourceUri] = useState('')
   const [show, setShow] = useState(false)
   const [check, setCheck] = useState(false)
-  const defaultType = {
-    type: 'oak',
-    icon: 'oak-leaf',
-    name: t('oak'),
-    placeholder: t('oak_ph'),
-  }
-  const [feedType, setFeedType] = useState(defaultType)
+
   const [feedInfo, setFeedInfo] = useState({})
   const [feedError, setFeedError] = useState('')
+  const [uriError, setUriError] = useState(false)
 
   const [loading, setLoading] = useState(false)
   const [orderId, setOrderId] = useState('')
   const [intervalId, setIntervalId] = useState(null)
-  const [followBtnText, setFollowBtnText] = useState(t('follow'))
+  const [subscribeBtnText, setSubscribeBtnText] = useState(t('subscribe'))
   const [followLoading, setFollowLoading] = useState(false)
 
   const prefix = <Icon type="search" className={styles.searchIcon} />
 
-  const handleSearch = (val) => {
+  const handleInput = (val) => {
     if (!val) {
+      setSourceUri('')
       setFeedInfo({})
       setFeedError('')
-      setFollowBtnText(t('follow'))
+      setSubscribeBtnText(t('subscribe'))
     }
-    setFeed(val)
+    setSourceUri(val)
+    validateSourceUri()
   }
 
   const handleClear = () => {
     setFeedInfo({})
     setFeedError('')
-    setFollowBtnText(t('follow'))
+    setSubscribeBtnText(t('subscribe'))
   }
 
-  const parseExternalFeed = async (feed) => {
-    let parseUrl
-    switch (feedType.type) {
-      case 'rss':
-        parseUrl = feed
-        break
-      case 'oak':
-        parseUrl = feed
-        break
-      case 'weibo':
-        parseUrl = 'https://weibo.com/' + feed
-        break
-      case 'twitter':
-        parseUrl = 'https://twitter.com/' + feed
-        break
-      default:
-        break
-    }
-    const params = {uri: parseUrl}
+  const parseSourceURI = async (uri) => {
+    const params = { uri: uri }
     try {
       const res = await parseFeed(params)
       if (res?.id) {
+        console.log(res)
         setFeedInfo(res)
         setLoading(false)
-        if (res.subscription?.enabled) setFollowBtnText(t('already_follow'))
+        if (res.subscription?.enabled) setSubscribeBtnText(t('already_follow'))
       }
     } catch (error) {
       if (error?.action === 'logout') {
@@ -99,52 +78,53 @@ function Home() {
         logout(dispatch)
         return
       }
-      setFeedError(error?.data?.message || `${feedType.type}_parse_error`)
+      console.log(error)
+      setFeedError(error?.message || t('parsing_error_uri'))
       setLoading(false)
     }
   }
 
-  const inputValidate = (feed) => {
-    const trimFeed = feed.trim()
-    switch (feedType.type) {
-      case 'rss':
-        return (
-          trimFeed.slice(0, 8) === 'https://' ||
-          trimFeed.slice(0, 7) === 'http://'
-        )
-      case 'oak':
-        return trimFeed.slice(0, 4) === 'och:'
-      case 'weibo':
-        const wReg = new RegExp(/^[A-Za-z0-9_]{3,20}$/)
-        return wReg.test(trimFeed)
-      case 'twitter':
-        const tReg = new RegExp(/^[A-Za-z0-9_]{4,15}$/)
-        return tReg.test(trimFeed)
-      default:
-        return
+  const validateSourceUri = () => {
+    const regularURI = source_uri.trim().toLowerCase()
+    if (
+      regularURI.startsWith('och://') ||
+      regularURI.startsWith('http://') ||
+      regularURI.startsWith('https://')
+    ) {
+      setUriError(false)
+      return regularURI
+    } else {
+      setUriError(true)
+      return
     }
   }
 
-  const handleParse = async (feed) => {
+  const handleParse = async () => {
     setFeedInfo({})
     setFeedError('')
-    setFollowBtnText(t('follow'))
-    if (inputValidate(feed)) {
+    setSubscribeBtnText(t('subscribe'))
+    if (validateSourceUri()) {
       setLoading(true)
-      parseExternalFeed(feed)
+      parseSourceURI(source_uri)
     } else {
-      setFeedError(`${feedType.type}_validate_error`)
+      setFeedError(t('validation_error_uri'))
     }
   }
 
   const handleKeyDown = (e) => {
     const enterPressed = e.keyCode === 13
     if (enterPressed && !isLogin) {
-      authLogin()
+      if (isLogin) push('/discovery')
+      else {
+        toast(t('login_first'), { icon: '💁' })
+        e.preventDefault()
+        return
+      }
+      // authLogin()
       return
     }
     if (enterPressed && isLogin) {
-      handleParse(feed)
+      handleParse(source_uri)
       e.target.blur()
     }
   }
@@ -157,7 +137,7 @@ function Home() {
           toast.success(t('subcribe_success'))
           setCheck(false)
           setOrderId('')
-          setFollowBtnText(t('following'))
+          setSubscribeBtnText(t('following'))
         }
       }, 3000)
       setIntervalId(orderInterval)
@@ -169,51 +149,55 @@ function Home() {
 
   return (
     <div className={styles.main}>
-      {/* 搜索类型选择 */}
-      <div className={styles.options}>
-        <span>
-          {t('current_type')}
-          {t('colon')}
-        </span>
-        <div
-          className={`${show && styles.optionsActive}`}
-          onClick={() => setShow(true)}
-        >
-          <Icon type={feedType.icon} className={styles.curIcon} />
-          <span>{feedType.name}</span>
-          <Icon
-            type="triangle-flat"
-            className={`${styles.triangle} ${show && styles.triangleActive}`}
-          />
-        </div>
-      </div>
-
-      {/* 搜索框 */}
+      {/* 信息源地址输入框 */}
       <form className={styles.search} action=".">
         <Input
           className={styles.input}
           type="search"
           prefix={prefix}
-          placeholder={feedType.placeholder}
-          value={feed}
-          onChange={handleSearch}
+          placeholder={t('uri_here')}
+          value={source_uri}
+          onChange={handleInput}
           onClear={handleClear}
           onKeyDown={(e) => handleKeyDown(e)}
         />
       </form>
 
-      {
-        !feedInfo?.id && !loading &&
-        <p className={styles.hot} onClick={() => {
-          if (isLogin) push('/discovery')
-          else {
-            toast('Login first', { icon: '💁' })
-            return
-          }
-        }}>
-          <a>{t('hot_now')} &#8594;</a>
-        </p>
-      }
+      {/* 实时告知 URI 格式错误 */}
+      {!feedError && uriError && source_uri && source_uri.length > 7 && (
+        <div className={styles.errorInfo}>
+          <Icon type="info-fill" />
+          <p>✘ {t('Invalid URI')}</p>
+        </div>
+      )}
+
+      {/* 解析错误 */}
+      {feedError && (
+        <div className={styles.errorInfo}>
+          <Icon type="info-fill" />
+          <p>{feedError.indexOf(' ') >= 0 ? feedError : t(feedError)}</p>
+        </div>
+      )}
+
+      {/* 信息源地址案例（无解析结果时） */}
+      {!feedInfo?.id && !loading && (
+        <>
+          <UriSampleSheet t={t} />
+
+          <p
+            className={styles.hot}
+            onClick={() => {
+              if (isLogin) push('/discovery')
+              else {
+                toast(t('login_first'), { icon: '💁' })
+                return
+              }
+            }}
+          >
+            <a>{t('hot_now')} &#8594;</a>
+          </p>
+        </>
+      )}
 
       {/* 解析后源信息卡片 */}
       {loading ? (
@@ -236,95 +220,108 @@ function Home() {
                     </p>
                   )}
                 </div>
-                <button onClick={async() => {
-                  if (followBtnText === t('already_follow')) return
-                  setFollowLoading(true)
-                  try {
-                    const res = await subscribeTopic({ channel_id: feedInfo.id })
-                    if (res?.enabled) {
-                      setFollowBtnText(t('already_follow'))
+                <button
+                  onClick={async () => {
+                    if (subscribeBtnText === t('already_follow')) return
+                    setFollowLoading(true)
+                    try {
+                      const res = await subscribeChannel(feedInfo.id)
+                      console.log(res)
+                      if (res?.enabled) {
+                        setSubscribeBtnText(t('already_follow'))
+                      }
+                    } catch (error) {
+                      console.log(error)
+                      toast.error('Error')
                     }
-                  } catch (error) {
-                    toast.error('Error')
-                  }
-                  setFollowLoading(false)
-                }}>
-                  {
-                    followLoading ? <Loading className={styles.followLoading} size={19} /> : followBtnText
-                  }
+                    setFollowLoading(false)
+                  }}
+                >
+                  {followLoading ? (
+                    <Loading className={styles.followLoading} size={19} />
+                  ) : (
+                    subscribeBtnText
+                  )}
                 </button>
               </div>
             </div>
             <div className={styles.feedPrice}>
-              <p>
-                {t('subcribe_price')}
-                <span>
-                  {t('price_desc')}
-                  {t('colon')}
-                </span>
-              </p>
-              <div>
-                <Tooltip
-                    position="center"
-                    theme="dark"
-                    content={
-                      <span className={styles.help}>
-                        {t('channel_fee_desc')}
-                      </span>
-                    }
-                  >
-                  <p>
-                    {t('channel_fee')} {feedInfo.price_per_info.channel_fee} NUT
-                    <Icon type="help-fill" />
-                  </p>
-                </Tooltip>
-              </div>
-              <div>
-                <span>{t('push_fee')}</span>
+              <div className={styles.price}>
                 <Tooltip
                   position="center"
                   theme="dark"
                   content={
                     <span className={styles.help}>
-                      {t('min_max_desc')}
+                      {t('channel_info_price')}
+                      {': '}
+                      {feedInfo.price_per_info.channel_fee}
+                      {', '}
+                      {t('pushing_info_price')}
+                      {': '}
+                      {feedInfo.price_per_info.pushing_fee.min}
+                      {' ~ '}
+                      {feedInfo.price_per_info.pushing_fee.max}
                     </span>
                   }
                 >
                   <p>
-                    {t('min')}{feedInfo.price_per_info.pushing_fee.min} NUT / {t('each_message')}
-                  </p>
-                  <div className={styles.divider}></div>
-                  <p>
-                    {t('max')}{feedInfo.price_per_info.pushing_fee.max} NUT / {t('each_message')}
+                    {t('price_per_info')}
+                    {': '}
+                    {parseFloat(feedInfo.price_per_info.channel_fee) +
+                      parseFloat(feedInfo.price_per_info.pushing_fee.min)}
+                    {' ~ '}
+                    {parseFloat(feedInfo.price_per_info.channel_fee) +
+                      parseFloat(feedInfo.price_per_info.pushing_fee.max)}
+                    {' NUT / '}
+                    {t('per_info')}
                     <Icon type="help-fill" />
                   </p>
                 </Tooltip>
+              </div>
+
+              <div className={styles.how_to_charge}>
+                <p>{t('how_to_charge')}</p>
+                <span>
+                  {t('price_per_info')} {' = '}
+                  <span>
+                    <Tooltip
+                      position="center"
+                      theme="dark"
+                      content={
+                        <span className={styles.help}>
+                          {t('channel_fee_desc')}
+                        </span>
+                      }
+                    >
+                      <span>
+                        {t('channel_info_price')}
+                        <Icon type="help-fill" />
+                      </span>
+                    </Tooltip>
+                  </span>
+                  {' + '}
+                  <span>
+                    <Tooltip
+                      position="center"
+                      theme="dark"
+                      content={
+                        <span className={styles.help}>
+                          {t('pushing_fee_desc')}
+                        </span>
+                      }
+                    >
+                      <span>
+                        {t('pushing_info_price')}
+                        <Icon type="help-fill" />
+                      </span>
+                    </Tooltip>
+                  </span>
+                </span>
               </div>
             </div>
           </>
         )
       )}
-
-      {/* 解析错误 */}
-      {feedError && (
-        <div className={styles.errorInfo}>
-          <Icon type="info-fill" />
-          <p>{feedError.indexOf(' ') >= 0 ? feedError : t(feedError)}</p>
-        </div>
-      )}
-
-      {/* 搜索源选项 */}
-      <FeedTypeSheet
-        t={t}
-        show={show}
-        onClose={() => setShow(false)}
-        feedOptions={feedOptions(t)}
-        feedType={feedType}
-        setFeedType={setFeedType}
-        setFeedInfo={setFeedInfo}
-        setFeedError={setFeedError}
-        setShow={setShow}
-      />
 
       <Overlay
         t={t}

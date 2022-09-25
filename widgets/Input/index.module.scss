@@ -19,7 +19,7 @@
 }
 
 .label {
-  color: $contentSecondry;
+  color: $contentSecondary;
   font-size: 12px;
   line-height: 18px;
 }
@@ -51,7 +51,7 @@
       -webkit-text-fill-color: $contentPrimary !important;
     }
     &::placeholder {
-      color: $contentSecondry;
+      color: $contentSecondary;
     }
   }
 }
@@ -59,7 +59,7 @@
 .clear {
   font-size: 24px;
   cursor: pointer;
-  color: $contentSecondry;
+  color: $contentSecondary;
 }
 
 .disabled,

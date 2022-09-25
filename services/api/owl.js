@@ -99,9 +99,10 @@ export function searchSource(data) {
  *
  * @param {channel_id} String
  * @returns
- * 申请关注
+ * 订阅频道
  */
-export function subscribeTopic(data) {
+export function subscribeChannel(channel_id) {
+  let data = { channel_id }
   return http.post('subscriptions', { data })
 }
 

@@ -68,7 +68,6 @@ function AuthCallback() {
     }
 
     query?.code && getToken()
-
   }, [query])
 
   useEffect(() => {
@@ -78,7 +77,7 @@ function AuthCallback() {
       const initialFunc = async () => {
         const data = await checkGroup({
           app: 'owl',
-          conversation_id: res.conversation_id
+          conversation_id: res.conversation_id,
         })
         if (data?.is_group) {
           dispatch({

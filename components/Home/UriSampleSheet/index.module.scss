@@ -1,0 +1,19 @@
+
+.uriSample {
+  max-width: 520px;
+  margin: 14px auto 12px auto;
+  padding: 16px;
+  border-radius: 8px;
+  background: $backgroundSecondary;
+
+  font-size: 14px;
+
+  .title{
+    font-weight: bold;
+    margin-left: -1em;
+  }
+
+  > li {
+    list-style: none;
+  }
+}
