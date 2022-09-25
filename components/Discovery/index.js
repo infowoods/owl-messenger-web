@@ -33,29 +33,13 @@ const Card = ({ t, item }) => {
   const [followLoading, setFollowLoading] = useState(false)
 
   useEffect(() => {
-    if (item.subscription?.enabled) setFollowBtnText(t('already_follow'))
+    if (item.subscription?.enabled) setFollowBtnText(t('subscribed'))
   }, [item])
 
   return (
     <div key={item.id} className={styles.card}>
       <p className={styles.channelTitle}>{item.title}</p>
-      <div className={styles.channelFee}>
-        <p>
-          {t('channel_fee')}
-          {item.price_per_info.channel_fee} NUT
-        </p>
-        <div>
-          <span>{t('push_fee')}</span>
-          <p>
-            {t('min')}
-            {item.price_per_info.pushing_fee.min} NUT
-          </p>
-          <p>
-            {t('max')}
-            {item.price_per_info.pushing_fee.max} NUT
-          </p>
-        </div>
-      </div>
+
       <p className={styles.channelDesc}>
         <span>
           {t('desc')}
@@ -65,35 +49,79 @@ const Card = ({ t, item }) => {
       </p>
       <p className={styles.copy}>
         <span>
-          {t('source_uri')}
+          {t('channel_uri')}
           {t('colon')}
         </span>
         <span onClick={() => copyText(item.uri, toast, t)}>
           {item.uri} <Icon type="copy" />
         </span>
       </p>
-      <button
-        className={styles.button}
-        onClick={async () => {
-          if (followBtnText === t('already_follow')) return
-          setFollowLoading(true)
-          try {
-            const res = await subscribeChannel(item.id)
-            if (res?.enabled) {
-              setFollowBtnText(t('already_follow'))
+
+      {/* Price */}
+      <div className={styles.channelFee}>
+        <p className={styles.infoPrice}>
+          <span>
+            {t('price_per_info')}
+            {': '}
+          </span>
+          {Math.round(
+            (parseFloat(item.price_per_info.channel_fee) +
+              parseFloat(item.price_per_info.pushing_fee.min)) *
+              1000
+          ) / 1000}
+          {' ~ '}
+          {Math.round(
+            (parseFloat(item.price_per_info.channel_fee) +
+              parseFloat(item.price_per_info.pushing_fee.max)) *
+              1000
+          ) / 1000}
+          {' NUT'}
+        </p>
+        <p className={styles.priceDetail}>
+          {'('}
+          {t('channel_info_price')}
+          {': '}
+          {item.price_per_info.channel_fee == 0
+            ? t('free_price')
+            : `${item.price_per_info.channel_fee} NUT`}
+          {', '}
+          {t('pushing_info_price')}
+          {': '}
+          {item.price_per_info.pushing_fee.min}
+          {' ~ '}
+          {item.price_per_info.pushing_fee.max}
+          {' NUT)'}
+        </p>
+      </div>
+
+      {/* Button of Subscribe */}
+      {item.subscription.enabled ? (
+        <span>✓ {t('subscribed')}</span>
+      ) : (
+        <button
+          className={styles.button}
+          onClick={async () => {
+            if (followBtnText === t('subscribed')) return
+            setFollowLoading(true)
+            try {
+              const res = await subscribeChannel(item.id)
+              if (res?.enabled) {
+                setFollowBtnText(t('subscribed'))
+              }
+              setFollowLoading(false)
+            } catch (err) {
+              toast.error(t(err?.message))
+              setFollowLoading(false)
             }
-          } catch (error) {
-            toast.error('Error')
-          }
-          setFollowLoading(false)
-        }}
-      >
-        {followLoading ? (
-          <Loading className={styles.followLoading} size={16} />
-        ) : (
-          followBtnText
-        )}
-      </button>
+          }}
+        >
+          {followLoading ? (
+            <Loading className={styles.followLoading} size={16} />
+          ) : (
+            followBtnText
+          )}
+        </button>
+      )}
     </div>
   )
 }
@@ -104,7 +132,6 @@ function Discovery() {
   const [searchVal, setSearchVal] = useState('')
   const [searchRes, setSearchRes] = useState([])
 
-  const [loading, setLoading] = useState(false)
   const [searchLoading, setSearchLoading] = useState(false)
   const [empty, setEmpty] = useState(false)
   const typeList = ['channel', 'weibo', 'twitter']
@@ -133,26 +160,23 @@ function Discovery() {
 
   const handleSearch = async () => {
     if (!searchVal) return
+    setEmpty(false)
     setSearchLoading(true)
-    const data = await searchSource({
-      source: searchType,
-      text: searchVal,
-    })
-    setSearchLoading(false)
-    if (data.channels.length > 0) {
-      setSearchRes(data.channels)
-    } else setEmpty(true)
-  }
-
-  useEffect(() => {
-    const getHotList = async () => {
-      setLoading(true)
-      const data = await getCollection()
-      setLoading(false)
-      data?.channels && setHotList(data.channels)
+    try {
+      const data = await searchSource(searchType, searchVal)
+      if (data.channels.length > 0) {
+        setSearchRes(data.channels)
+      } else {
+        setEmpty(true)
+        setSearchRes([])
+      }
+      setSearchLoading(false)
+    } catch (err) {
+      toast.error(t(err?.message))
+      setSearchLoading(false)
+      return
     }
-    getHotList()
-  }, [])
+  }
 
   return (
     <div className={styles.main}>
@@ -180,7 +204,7 @@ function Discovery() {
 
       {/* 搜索框 */}
       <div className={styles.searchWrap}>
-        <form className={styles.search} action=".">
+        <form className={styles.searchForm} action=".">
           <Input
             className={styles.input}
             type="search"
@@ -188,7 +212,7 @@ function Discovery() {
             value={searchVal}
             onChange={(val) => {
               if (!val) {
-                setSearchRes({})
+                setSearchRes([])
                 setEmpty(false)
               }
               setSearchVal(val)
@@ -219,12 +243,12 @@ function Discovery() {
         {empty && <p className={styles.empty}>🧶 {t('no_search_result')}</p>}
       </div>
 
-      {/* hot collections */}
-      <p className={styles.sectionTitle}># {t('channel_list')}</p>
+      {/* hot collection */}
+      <p className={styles.sectionTitle}># {t('hot_channels')}</p>
       {hotCollection?.isLoading ? (
         <Loading className={styles.hotLoading} />
       ) : (
-        <div className={styles.collections}>
+        <div className={styles.collection}>
           {hotCollection?.data?.channels &&
             hotCollection.data.channels.map((item) => (
               <Card key={item.id} t={t} item={item} />

@@ -95,7 +95,8 @@ export function parseTopic(channel_id) {
  * @returns
  * 搜索源
  */
-export function searchSource(data) {
+export function searchSource(searchType, searchVal) {
+  let data = { source: searchType, text: searchVal }
   return http.post('/channels/search', { data })
 }
 
