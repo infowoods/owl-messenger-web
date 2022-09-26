@@ -1,0 +1,172 @@
+.main {
+  min-height: calc(100vh - 110px);
+}
+
+.avatar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 6px;
+  margin-bottom: 12px;
+  div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    i {
+      vertical-align: middle;
+      font-size: 28px;
+      color: $contentPrimary;
+      cursor: pointer;
+      padding: 4px;
+      margin-right: 12px;
+      &:hover {
+        background: $borderOpaque;
+        border-radius: 50%;
+      }
+    }
+    img {
+      border-radius: 50%;
+    }
+  }
+}
+
+.loading {
+  margin-top: 25%;
+}
+
+.btnLoading {
+  padding: 1px 18px;
+  div {
+    border-width: 2px;
+  }
+}
+
+.empty {
+  text-align: center;
+  padding: 0 12px;
+  padding-bottom: 18px;
+  margin-top: 48px;
+  > i {
+    font-size: 68px;
+    text-align: center;
+    color: $contentSecondary;
+    padding-left: 6px; // more visual center
+  }
+  > p {
+    font-size: 16px;
+    color: $contentPrimary;
+  }
+}
+
+.sectionTitle {
+  color: $contentPrimary;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.walletsWrap {
+  border: 2px dotted $borderOpaque;
+  border-radius: 8px;
+  padding: 12px 18px;
+  margin: 10px 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.wallet {
+  display: block;
+  padding: 0.3em 0;
+
+  .nut_icon {
+    opacity: 0.5;
+  }
+
+  .val {
+    font-weight: bold;
+    margin: 0 0.25em;
+  }
+
+  i {
+    color: $contentSecondary;
+    margin-left: 0.15em;
+  }
+}
+
+.channelCard {
+  .button {
+    background: transparent;
+    padding: 6px 10px;
+    border-radius: 8px;
+    color: $notice;
+    border: 1px solid $notice;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .button:disabled {
+    color: $contentSecondary;
+    border: 1px solid $contentSecondary;
+    cursor: default;
+  }
+}
+
+.confirmSheet {
+  > div {
+    padding-bottom: 16px;
+  }
+}
+
+.detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  p {
+    span {
+      color: $contentPrimary;
+    }
+    &:nth-child(2) {
+      padding-top: 4px;
+    }
+    &:nth-child(3) {
+      padding: 4px 0;
+    }
+  }
+}
+.increaseMargin {
+  margin-top: 10px;
+}
+.renew {
+  span {
+    color: $notice !important;
+  }
+}
+
+.feedDesc {
+  line-height: 18px;
+  span {
+    color: $contentPrimary;
+    font-size: 14px;
+  }
+}
+
+.buttonAccent {
+  color: $accent;
+}
+
+.copy {
+  margin-top: 12px;
+  overflow-x: hidden;
+  span {
+    &:first-child {
+      color: $contentPrimary;
+      font-size: 14px;
+    }
+    &:last-child {
+      cursor: pointer;
+      i {
+        color: $contentSecondary;
+        vertical-align: middle;
+      }
+    }
+  }
+}

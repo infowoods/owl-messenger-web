@@ -38,7 +38,7 @@
       }
       &:last-child {
         font-size: 14px;
-        color: $contentSecondry;
+        color: $contentSecondary;
         > span {
           font-weight: bold;
           padding: 0 2px;
@@ -89,7 +89,7 @@
       }
       div {
         &:first-child {
-          color: $contentSecondry;
+          color: $contentSecondary;
           font-size: 12px;
         }
         &:nth-child(2) {
