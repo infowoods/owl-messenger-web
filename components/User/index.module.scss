@@ -49,7 +49,7 @@
   > i {
     font-size: 68px;
     text-align: center;
-    color: $contentSecondry;
+    color: $contentSecondary;
     padding-left: 6px; // more visual center
   }
   > p {
@@ -64,38 +64,37 @@
   font-size: 18px;
 }
 
-.balanceWrap {
+.walletsWrap {
   border: 2px dotted $borderOpaque;
   border-radius: 8px;
   padding: 12px 18px;
   margin: 10px 0;
+
+  display: flex;
+  flex-direction: column;
 }
 
-.balance {
-  display: flex;
-  margin-bottom: 10px;
-  >p {
-    font-size: 16px;
-    color: $contentPrimary;
+.wallet {
+  display: block;
+  padding: 0.3em 0;
 
-    >span {
-      color: $contentSecondry;
-      font-size: 15px;
-    }
+  .nut_icon {
+    opacity: 0.5;
+  }
 
-    &:first-child {
-      margin-right: 18px;
-    }
+  .val {
+    font-weight: bold;
+    margin: 0 0.25em;
+  }
+
+  i {
+    color: $contentSecondary;
+    margin-left: 0.15em;
   }
 }
 
-.infoRemark {
-  color: $contentTertiary;
-  font-size: 12px;
-}
-
 .confirmSheet {
-  >div {
+  > div {
     padding-bottom: 16px;
   }
 }
@@ -163,7 +162,7 @@
     &:last-child {
       cursor: pointer;
       i {
-        color: $contentSecondry;
+        color: $contentSecondary;
         vertical-align: middle;
       }
     }

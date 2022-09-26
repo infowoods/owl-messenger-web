@@ -1,5 +1,9 @@
 import http from '../../services/http/owl'
 
+// ==============================================
+// AUTH
+// ==============================================
+
 /**
  *
  * @param {mixin_access_token} String
@@ -22,35 +26,41 @@ export function checkGroup(data) {
   return http.post('/oauth/mixin/is_group', { data })
 }
 
+// ==============================================
+// SUBSCRIPTIONS
+// ==============================================
+
 // 获取用户订阅列表
-export function getFollows(data) {
+export function getSubscriptions(data) {
   return http.get('/subscriptions?enabled=true', { data })
 }
 
 // 获取用户退订列表
-export function getUnFollows(data) {
+export function getSubscriptionHistory(data) {
   return http.get('/subscriptions?enabled=false', { data })
 }
 
-/**
- *
+/** 订阅频道
  * @param {channel_id} String
  * @returns
- * 取消关注Feed
  */
-export function unfollowFeeds(channel_id, data = { enabled: false }) {
-  return http.put(`/subscriptions/${channel_id}`, { data })
+export function subscribeChannel(channel_id) {
+  let data = { channel_id }
+  return http.post('subscriptions', { data })
 }
 
-/**
- *
+/** 退订频道
  * @param {channel_id} String
  * @returns
- * 取消关注Feed
  */
-export function refollowFeeds(channel_id, data = { enabled: true }) {
-  return http.put(`/subscriptions/${channel_id}`, { data })
+export function unsubscribeChannel(channel_id) {
+  let data = { channel_id }
+  return http.delete('subscriptions', { data })
 }
+
+// ==============================================
+// CHANNELS & COLLECTIONS
+// ==============================================
 
 /**
  *
@@ -100,16 +110,9 @@ export function searchSource(searchType, searchVal) {
   return http.post('/channels/search', { data })
 }
 
-/**
- *
- * @param {channel_id} String
- * @returns
- * 订阅频道
- */
-export function subscribeChannel(channel_id) {
-  let data = { channel_id }
-  return http.post('subscriptions', { data })
-}
+// ==============================================
+// USERS
+// ==============================================
 
 // 获取用户设置
 export function getUserSettings(data) {
@@ -117,7 +120,7 @@ export function getUserSettings(data) {
 }
 
 // 获取用户信息
-export function getUserBalance() {
+export function getUserWallets() {
   return http.get('/users/me?wallets')
 }
 
@@ -130,6 +133,10 @@ export function getUserBalance() {
 export function updateUserSettings(data) {
   return http.put('/users/me', { data })
 }
+
+// ==============================================
+// ORDERS
+// ==============================================
 
 /**
  *
