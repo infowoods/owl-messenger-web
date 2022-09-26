@@ -9,20 +9,18 @@ import { Tooltip } from '@nextui-org/react'
 import { ProfileContext } from '../../stores/useProfile'
 
 const OwlToast = dynamic(() => import('../../widgets/OwlToast'))
-const QrCodeSheet = dynamic(() => import('../Home/QrCodeSheet'))
-const Overlay = dynamic(() => import('../../widgets/Overlay'))
-const BottomSheet = dynamic(() => import('../../widgets/BottomSheet'))
 
 import Icon from '../../widgets/Icon'
 import Collapse from '../../widgets/Collapse'
 import Loading from '../../widgets/Loading'
 
+// TODO: 改版，将 User 页改成用户内容的索引页，索引卡片。
+//  点击卡片进入到子页（子页进行实际内容的加载和展示）
+//  子页：我的钱包/余额，我的账单，我的订阅，订阅历史
+
 import {
   getSubscriptions,
-  getSubscriptionHistory,
   unsubscribeChannel,
-  subscribeChannel,
-  checkOrder,
   getUserWallets,
 } from '../../services/api/owl'
 
@@ -49,12 +47,7 @@ function useMyWallets() {
 }
 
 function useMySubscriptions() {
-  return {
-    data: null,
-    isLoading: false,
-    isError: true,
-  }
-  const { data, error } = useSWR('hot', getSubscriptions)
+  const { data, error } = useSWR('subscriptions?enabled', getSubscriptions)
   if (error) {
     // wait to test logout error
     console.log(error)
@@ -69,37 +62,30 @@ function useMySubscriptions() {
   }
 }
 
+function toUnsubscribeChannel(event, t, channel_id, channel_index) {
+  event.target.innerHTML = t('unsubscribing')
+  event.target.disabled = true
+
+  const card = document.querySelector(`div[data_id='${channel_id}']`)
+
+  unsubscribeChannel(channel_id)
+    .then(() => {
+      toast.success(t('unsubscribe_success'))
+      card.style.display = 'none'
+    })
+    .catch((error) => {
+      toast.error(error.message)
+      event.target.disabled = false
+    })
+}
+
 function User() {
   const { t } = useTranslation('common')
   const [, dispatch] = useContext(ProfileContext)
   const router = useRouter()
-  const [btnSelect, setBtnSelect] = useState('')
-  const [showConfirm, setShowConfirm] = useState(false)
-
-  const [orderId, setOrderId] = useState('')
-  const [check, setCheck] = useState(false)
-  const [intervalId, setIntervalId] = useState(null)
-  const [payUrl, setPayUrl] = useState('')
 
   const mySubscriptions = useMySubscriptions()
   const myWallets = useMyWallets()
-
-  useEffect(() => {
-    if (check) {
-      const orderInterval = setInterval(async () => {
-        const res = await checkOrder(orderId)
-        if (res?.paid?.amount) {
-          toast.success(t('subscribe_success'))
-          setCheck(false)
-          setOrderId('')
-        }
-      }, 3000)
-      setIntervalId(orderInterval)
-    } else {
-      setOrderId('')
-      intervalId && clearInterval(intervalId)
-    }
-  }, [check])
 
   return (
     <div className={styles.main}>
@@ -112,7 +98,7 @@ function User() {
           <>
             <div className={styles.wallet}>
               <span>
-                <span className={styles.nut_icon}>🌰</span>
+                <span className={styles.nut_icon}>👛</span>
                 <span className={styles.val}>
                   {myWallets.data.wallets.gNUT}
                 </span>
@@ -127,7 +113,7 @@ function User() {
 
             <div className={styles.wallet}>
               <span>
-                <span className={styles.nut_icon}>🌰</span>
+                <span className={styles.nut_icon}>👛</span>
                 <span className={styles.val}>{myWallets.data.wallets.NUT}</span>
                 {'NUT'}
               </span>
@@ -156,11 +142,12 @@ function User() {
         )}
       </div>
 
-      {mySubscriptions.isLoading ? (
+      {mySubscriptions.isLoading && (
         <Loading size={40} className={styles.loading} />
-      ) : (
+      )}
+      {mySubscriptions.data && (
         <>
-          <p className={styles.sectionTitle}># {t('following')}</p>
+          <p className={styles.sectionTitle}># {t('my_subscription')}</p>
           {!mySubscriptions.data?.subscriptions && (
             <div className={styles.empty}>
               <Icon type="ufo" />
@@ -168,43 +155,44 @@ function User() {
             </div>
           )}
           {mySubscriptions?.data?.subscriptions?.length > 0 &&
-            mySubscriptions.data.subscriptions.map((feed, index) => {
-              const params = {
-                topic_id: feed.channel.id,
-              }
+            mySubscriptions.data.subscriptions.map((item, index) => {
               return (
-                <Collapse title={feed.channel.title} key={feed.channel.id}>
+                <Collapse
+                  className={styles.channelCard}
+                  title={item.channel.title}
+                  key={item.channel.id}
+                  data_id={item.channel.id}
+                >
                   <>
-                    {feed.channel.description && (
+                    {item.channel.description && (
                       <p className={styles.feedDesc}>
                         <span>
                           {t('desc')}
                           {t('colon')}
                         </span>
-                        {feed.channel.description}
+                        {item.channel.description}
                       </p>
                     )}
                     <div className={styles.copy}>
                       <p>
                         <span>
-                          {t('channel_uri')} {feed.channel.uri}
+                          {t('channel_uri')}
                           {t('colon')}
                         </span>
                         <span
-                          onClick={() => copyText(feed.channel.uri, toast, t)}
+                          onClick={() => copyText(item.channel.uri, toast, t)}
                         >
-                          {feed.channel.uri} <Icon type="copy" />
+                          {item.channel.uri} <Icon type="copy" />
                         </span>
                       </p>
                     </div>
-
                     <div
                       className={`${styles.detail} ${styles.increaseMargin}`}
                     >
                       <button
                         className={styles.button}
-                        onClick={() => {
-                          toUnsubscribeChannel(feed.channel.id)
+                        onClick={(event) => {
+                          toUnsubscribeChannel(event, t, item.channel.id, index)
                         }}
                       >
                         {t('unfollow')}
@@ -216,44 +204,6 @@ function User() {
             })}
         </>
       )}
-
-      <BottomSheet
-        t={t}
-        className={styles.confirmSheet}
-        show={showConfirm}
-        withConfirm
-        confirmTitle={t('confirm_unfollow')}
-        onConfirm={async () => {
-          await unsubscribeChannel(unfoChannel)
-          setShowConfirm(false)
-          getUserFollows()
-          getUserUnFollows()
-        }}
-        onClose={() => setShowConfirm(false)}
-        onCancel={() => setShowConfirm(false)}
-      />
-
-      <Overlay
-        t={t}
-        desc={t('checking_pay')}
-        visible={check}
-        onCancel={() => setCheck(false)}
-      />
-
-      <QrCodeSheet
-        t={t}
-        show={payUrl}
-        id={payUrl}
-        onClose={() => {
-          setPayUrl('')
-        }}
-        onCancel={() => {
-          setPayUrl('')
-        }}
-        onConfirm={() => {
-          setPayUrl('')
-        }}
-      />
 
       <OwlToast />
     </div>

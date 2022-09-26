@@ -31,13 +31,13 @@ export function checkGroup(data) {
 // ==============================================
 
 // 获取用户订阅列表
-export function getSubscriptions(data) {
-  return http.get('/subscriptions?enabled=true', { data })
+export function getSubscriptions() {
+  return http.get('/subscriptions?enabled=true')
 }
 
 // 获取用户退订列表
-export function getSubscriptionHistory(data) {
-  return http.get('/subscriptions?enabled=false', { data })
+export function getSubscriptionHistory() {
+  return http.get('/subscriptions?enabled=false')
 }
 
 /** 订阅频道

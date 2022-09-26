@@ -6,7 +6,7 @@
     font-weight: bold;
     span {
       font-size: 12px;
-      color: $contentSecondry;
+      color: $contentSecondary;
       margin-left: 12px;
     }
   }
@@ -33,7 +33,7 @@
     background: $backgroundPrimary;
     padding: 0 18px;
     border-radius: 0 0 8px 8px;
-    color: $contentSecondry;
+    color: $contentSecondary;
     .child {
       border-top: 1px solid $borderOpaque;
       padding: 10px 0 14px 0;
