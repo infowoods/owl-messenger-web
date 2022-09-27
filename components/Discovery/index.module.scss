@@ -170,8 +170,8 @@
 }
 
 .button {
-  // background: transparent;
-  background: $backgroundPrimary;
+  background: transparent;
+  // background: $backgroundPrimary;
   color: $accent;
   padding: 8px 16px;
   margin: 0.1em;
@@ -183,6 +183,13 @@
     background: $accent;
     color: $backgroundPrimary;
   }
+}
+
+.button:disabled {
+  color: $contentSecondary;
+  border: 1px solid $contentSecondary;
+  cursor: default;
+  pointer-events: none;
 }
 
 // .collection {

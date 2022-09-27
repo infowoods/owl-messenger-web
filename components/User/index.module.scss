@@ -102,11 +102,16 @@
     border: 1px solid $notice;
     font-size: 14px;
     cursor: pointer;
+    &:hover {
+      background: $notice;
+      color: $backgroundPrimary;
+    }
   }
   .button:disabled {
     color: $contentSecondary;
     border: 1px solid $contentSecondary;
     cursor: default;
+    pointer-events: none;
   }
 }
 

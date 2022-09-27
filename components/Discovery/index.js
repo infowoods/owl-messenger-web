@@ -28,101 +28,98 @@ function useHotCollection() {
   }
 }
 
+function toSubscribeChannel(event, t, channel_id) {
+  event.target.innerHTML = t('subscribing')
+  // <Loading className={styles.followLoading} size={16} />
+  event.target.disabled = true
+
+  subscribeChannel(channel_id)
+    .then(() => {
+      toast.success(t('subscribe_success'))
+      event.target.innerHTML = '✓' + t('subscribed')
+    })
+    .catch((error) => {
+      toast.error(error.message)
+      event.target.disabled = false
+      event.target.innerHTML = t('subscribe')
+    })
+}
+
 const Card = ({ t, item }) => {
-  const [followBtnText, setFollowBtnText] = useState(t('follow'))
-  const [followLoading, setFollowLoading] = useState(false)
-
-  useEffect(() => {
-    if (item.subscription?.enabled) setFollowBtnText(t('subscribed'))
-  }, [item])
-
   return (
-    <div key={item.id} className={styles.card}>
-      <p className={styles.channelTitle}>{item.title}</p>
+    <>
+      <div key={item.id} className={styles.card}>
+        <p className={styles.channelTitle}>{item.title}</p>
 
-      <p className={styles.channelDesc}>
-        <span>
-          {t('desc')}
-          {t('colon')}
-        </span>
-        {item.description}
-      </p>
-      <p className={styles.copy}>
-        <span>
-          {t('channel_uri')}
-          {t('colon')}
-        </span>
-        <span onClick={() => copyText(item.uri, toast, t)}>
-          {item.uri} <Icon type="copy" />
-        </span>
-      </p>
-
-      {/* Price */}
-      <div className={styles.channelFee}>
-        <p className={styles.infoPrice}>
+        <p className={styles.channelDesc}>
           <span>
-            {t('price_per_info')}
-            {': '}
+            {t('desc')}
+            {t('colon')}
           </span>
-          {Math.round(
-            (parseFloat(item.price_per_info.channel_fee) +
-              parseFloat(item.price_per_info.pushing_fee.min)) *
-              1000
-          ) / 1000}
-          {' ~ '}
-          {Math.round(
-            (parseFloat(item.price_per_info.channel_fee) +
-              parseFloat(item.price_per_info.pushing_fee.max)) *
-              1000
-          ) / 1000}
-          {' NUT'}
+          {item.description}
         </p>
-        <p className={styles.priceDetail}>
-          {'('}
-          {t('channel_info_price')}
-          {': '}
-          {item.price_per_info.channel_fee == 0
-            ? t('free_price')
-            : `${item.price_per_info.channel_fee} NUT`}
-          {', '}
-          {t('pushing_info_price')}
-          {': '}
-          {item.price_per_info.pushing_fee.min}
-          {' ~ '}
-          {item.price_per_info.pushing_fee.max}
-          {' NUT)'}
+        <p className={styles.copy}>
+          <span>
+            {t('channel_uri')}
+            {t('colon')}
+          </span>
+          <span onClick={() => copyText(item.uri, toast, t)}>
+            {item.uri} <Icon type="copy" />
+          </span>
         </p>
-      </div>
 
-      {/* Button of Subscribe */}
-      {item.subscription.enabled ? (
-        <span>✓ {t('subscribed')}</span>
-      ) : (
-        <button
-          className={styles.button}
-          onClick={async () => {
-            if (followBtnText === t('subscribed')) return
-            setFollowLoading(true)
-            try {
-              const res = await subscribeChannel(item.id)
-              if (res?.enabled) {
-                setFollowBtnText(t('subscribed'))
-              }
-              setFollowLoading(false)
-            } catch (err) {
-              toast.error(t(err?.message))
-              setFollowLoading(false)
-            }
-          }}
-        >
-          {followLoading ? (
-            <Loading className={styles.followLoading} size={16} />
-          ) : (
-            followBtnText
-          )}
-        </button>
-      )}
-    </div>
+        {/* Price */}
+        <div className={styles.channelFee}>
+          <p className={styles.infoPrice}>
+            <span>
+              {t('price_per_info')}
+              {': '}
+            </span>
+            {Math.round(
+              (parseFloat(item.price_per_info.channel_fee) +
+                parseFloat(item.price_per_info.pushing_fee.min)) *
+                1000
+            ) / 1000}
+            {' ~ '}
+            {Math.round(
+              (parseFloat(item.price_per_info.channel_fee) +
+                parseFloat(item.price_per_info.pushing_fee.max)) *
+                1000
+            ) / 1000}
+            {' NUT'}
+          </p>
+          <p className={styles.priceDetail}>
+            {'('}
+            {t('channel_info_price')}
+            {': '}
+            {item.price_per_info.channel_fee == 0
+              ? t('free_price')
+              : `${item.price_per_info.channel_fee} NUT`}
+            {', '}
+            {t('pushing_info_price')}
+            {': '}
+            {item.price_per_info.pushing_fee.min}
+            {' ~ '}
+            {item.price_per_info.pushing_fee.max}
+            {' NUT)'}
+          </p>
+        </div>
+
+        {/* Button of Subscribe */}
+        {item.subscription.enabled ? (
+          <span>✓ {t('subscribed')}</span>
+        ) : (
+          <button
+            className={styles.button}
+            onClick={(event) => {
+              toSubscribeChannel(event, t, item.id)
+            }}
+          >
+            {t('subscribe')}
+          </button>
+        )}
+      </div>
+    </>
   )
 }
 
