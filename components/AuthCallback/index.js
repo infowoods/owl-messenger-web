@@ -12,8 +12,8 @@ import { owlSignIn, checkGroup } from '../../services/api/owl'
 import { getMixinContext, getAccessToken } from '../../services/api/mixin'
 
 import storageUtil from '../../utils/storageUtil'
-
 import styles from './index.module.scss'
+import { APP_NAME } from '../../constants'
 
 function AuthCallback() {
   const [ctx, setCtx] = useState({})
@@ -36,7 +36,7 @@ function AuthCallback() {
     const auth = async (token) => {
       try {
         const params = {
-          app: 'owl',
+          app: APP_NAME,
           mixin_access_token: token,
           conversation_id: conversation_id,
         }
@@ -76,7 +76,7 @@ function AuthCallback() {
     if (res?.conversation_id) {
       const initialFunc = async () => {
         const data = await checkGroup({
-          app: 'owl',
+          app: APP_NAME,
           conversation_id: res.conversation_id,
         })
         if (data?.is_group) {

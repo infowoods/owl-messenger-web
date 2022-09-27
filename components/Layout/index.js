@@ -2,21 +2,20 @@ import { useState, useEffect, useContext } from 'react'
 import { useRouter } from 'next/router'
 import { i18n, useTranslation } from 'next-i18next'
 import Head from 'next/head'
-
 import TopBar from '../TopBar'
-
 import Avatar from '../../widgets/Avatar'
 import Icon from '../../widgets/Icon'
 import Loading from '../../widgets/Loading'
 import BottomNav from '../../widgets/BottomNav'
 
 import { ProfileContext } from '../../stores/useProfile'
-
 import { getMixinContext, reloadTheme } from '../../services/api/mixin'
 import { checkGroup } from '../../services/api/owl'
 
 import storageUtil from '../../utils/storageUtil'
 import { authLogin } from '../../utils/loginUtil'
+
+import { APP_NAME, APP_TITLE } from '../../constants'
 
 import styles from './index.module.scss'
 
@@ -42,7 +41,7 @@ function Layout({ children }) {
   const backLink = (path) => {
     switch (path) {
       case '/user':
-      case '/hot-topics':
+      case '/hot-channels':
         return '/'
       case '/settings':
         return '/user'
@@ -54,7 +53,7 @@ function Layout({ children }) {
   const avatarLink = (path) => {
     switch (path) {
       case '/':
-      case '/hot-topics':
+      case '/hot-channels':
         return '/user'
       default:
         break
@@ -115,8 +114,8 @@ function Layout({ children }) {
         } else {
           try {
             const data = await checkGroup({
-              app: 'owl',
-              conversation_id: ctx.conversation_id
+              app: APP_NAME,
+              conversation_id: ctx.conversation_id,
             })
             if (data?.is_group) {
               dispatch({
@@ -138,8 +137,8 @@ function Layout({ children }) {
   return (
     <div className={`${styles.wrap} ${pathname !== '/' && styles.bgGray}`}>
       <Head>
-        <title>Owl Messenger</title>
-        <meta name="description" content="猫头鹰订阅器" />
+        <title>{t(APP_TITLE)}</title>
+        <meta name="description" content={t(APP_TITLE)} />
         <meta name="theme-color" content={getBarColor(pathname)} />
         <link rel="icon" href="/favicon.png" />
       </Head>
@@ -149,9 +148,6 @@ function Layout({ children }) {
           <TopBar url={backLink(pathname)} />
           <div className={styles.avatarWrap}>
             <div>
-              {pathname === '/user' && (
-                <Icon type="settings-fill" onClick={() => push('/settings')} />
-              )}
               {isLogin ? (
                 <div className={styles.avatar}>
                   <Avatar
@@ -161,11 +157,15 @@ function Layout({ children }) {
                   />
                 </div>
               ) : (
-                <div className={styles.login} onClick={() => authLogin()}>
-                  <span>
-                    {state.groupInfo?.category === 'GROUP' ? t('owner_login') : t('login')}
-                  </span>
-                </div>
+                <>
+                  <div className={styles.login} onClick={() => authLogin()}>
+                    <span>
+                      {state.groupInfo?.category === 'GROUP'
+                        ? t('owner_login')
+                        : t('login')}
+                    </span>
+                  </div>
+                </>
               )}
             </div>
           </div>
