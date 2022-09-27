@@ -52,6 +52,10 @@ owlrss.interceptors.response.use(
     }
   },
   (err) => {
+    console.log(err)
+    if (!err.response) {
+      return Promise.reject('error null')
+    }
     // err.response: config, data, headers, status, statusText
     if (err.response.status === 403 || err.response.status === 401) {
       return Promise.reject({

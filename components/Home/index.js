@@ -8,18 +8,35 @@ import { ProfileContext } from '../../stores/useProfile'
 import toast from 'react-hot-toast'
 const OwlToast = dynamic(() => import('../../widgets/OwlToast'))
 const Overlay = dynamic(() => import('../../widgets/Overlay'))
-const UriSampleSheet = dynamic(() => import('./UriSampleSheet'))
 
 import Icon from '../../widgets/Icon'
 import Tooltip from '../../widgets/Tooltip'
 import Input from '../../widgets/Input'
 import Loading from '../../widgets/Loading'
+import UriSampleSheet from './UriSampleSheet'
 
 import { authLogin, logout } from '../../utils/loginUtil'
 
 import { parseFeed, subscribeChannel, checkOrder } from '../../services/api/owl'
 
 import styles from './index.module.scss'
+
+function toSubscribeChannel(event, t, channel_id) {
+  event.target.innerHTML = t('subscribing')
+
+  event.target.disabled = true
+
+  subscribeChannel(channel_id)
+    .then(() => {
+      toast.success(t('subscribe_success'))
+      event.target.innerHTML = '✓' + t('subscribed')
+    })
+    .catch((error) => {
+      toast.error(error.message)
+      event.target.disabled = false
+      event.target.innerHTML = t('subscribe')
+    })
+}
 
 function Home() {
   const { t } = useTranslation('common')
@@ -32,33 +49,30 @@ function Home() {
   const [show, setShow] = useState(false)
   const [check, setCheck] = useState(false)
 
-  const [feedInfo, setFeedInfo] = useState({})
-  const [feedError, setFeedError] = useState('')
+  const [parsingResult, setParsingResult] = useState({})
+  const [parsingError, setParsingError] = useState('')
   const [uriError, setUriError] = useState(false)
 
   const [loading, setLoading] = useState(false)
-  const [orderId, setOrderId] = useState('')
-  const [intervalId, setIntervalId] = useState(null)
-  const [subscribeBtnText, setSubscribeBtnText] = useState(t('subscribe'))
-  const [followLoading, setFollowLoading] = useState(false)
+  // const [orderId, setOrderId] = useState('')
+  // const [intervalId, setIntervalId] = useState(null)
 
   const prefix = <Icon type="search" className={styles.searchIcon} />
 
   const handleInput = (val) => {
+    setParsingError('')
+
     if (!val) {
       setSourceUri('')
-      setFeedInfo({})
-      setFeedError('')
-      setSubscribeBtnText(t('subscribe'))
+      return
     }
     setSourceUri(val)
     validateSourceUri()
   }
 
   const handleClear = () => {
-    setFeedInfo({})
-    setFeedError('')
-    setSubscribeBtnText(t('subscribe'))
+    setParsingResult({})
+    setParsingError('')
   }
 
   const parseSourceURI = async (uri) => {
@@ -66,10 +80,8 @@ function Home() {
     try {
       const res = await parseFeed(params)
       if (res?.id) {
-        console.log(res)
-        setFeedInfo(res)
+        setParsingResult(res)
         setLoading(false)
-        if (res.subscription?.enabled) setSubscribeBtnText(t('already_follow'))
       }
     } catch (error) {
       if (error?.action === 'logout') {
@@ -78,8 +90,7 @@ function Home() {
         logout(dispatch)
         return
       }
-      console.log(error)
-      setFeedError(error?.message || t('parsing_error_uri'))
+      setParsingError(error?.message || t('parsing_error_uri'))
       setLoading(false)
     }
   }
@@ -100,52 +111,30 @@ function Home() {
   }
 
   const handleParse = async () => {
-    setFeedInfo({})
-    setFeedError('')
-    setSubscribeBtnText(t('subscribe'))
+    setParsingError('')
+    setParsingResult({})
     if (validateSourceUri()) {
       setLoading(true)
       parseSourceURI(source_uri)
     } else {
-      setFeedError(t('validation_error_uri'))
+      setParsingError(t('invalid_uri'))
     }
   }
 
   const handleKeyDown = (e) => {
     const enterPressed = e.keyCode === 13
     if (enterPressed && !isLogin) {
-      if (isLogin) push('/discovery')
-      else {
-        toast(t('login_first'), { icon: '💁' })
-        e.preventDefault()
-        return
-      }
+      toast(t('login_first'), { icon: '💁' })
+      e.preventDefault()
+
       // authLogin()
       return
     }
     if (enterPressed && isLogin) {
-      handleParse(source_uri)
       e.target.blur()
+      handleParse(source_uri)
     }
   }
-
-  useEffect(() => {
-    if (check) {
-      const orderInterval = setInterval(async () => {
-        const res = await checkOrder(orderId)
-        if (res?.paid?.amount) {
-          toast.success(t('subcribe_success'))
-          setCheck(false)
-          setOrderId('')
-          setSubscribeBtnText(t('following'))
-        }
-      }, 3000)
-      setIntervalId(orderInterval)
-    } else {
-      setOrderId('')
-      intervalId && clearInterval(intervalId)
-    }
-  }, [check])
 
   return (
     <div className={styles.main}>
@@ -164,39 +153,21 @@ function Home() {
       </form>
 
       {/* 实时告知 URI 格式错误 */}
-      {!feedError && uriError && source_uri && source_uri.length > 7 && (
+      {!parsingError && uriError && source_uri && source_uri.length > 7 && (
         <div className={styles.errorInfo}>
           <Icon type="info-fill" />
-          <p>✘ {t('Invalid URI')}</p>
+          <p>{t('invalid_uri')}</p>
         </div>
       )}
 
       {/* 解析错误 */}
-      {feedError && (
+      {parsingError && (
         <div className={styles.errorInfo}>
           <Icon type="info-fill" />
-          <p>{feedError.indexOf(' ') >= 0 ? feedError : t(feedError)}</p>
-        </div>
-      )}
-
-      {/* 信息源地址案例（无解析结果时） */}
-      {!feedInfo?.id && !loading && (
-        <>
-          <UriSampleSheet t={t} />
-
-          <p
-            className={styles.hot}
-            onClick={() => {
-              if (isLogin) push('/discovery')
-              else {
-                toast(t('login_first'), { icon: '💁' })
-                return
-              }
-            }}
-          >
-            <a>{t('hot_now')} &#8594;</a>
+          <p>
+            {parsingError.indexOf(' ') >= 0 ? parsingError : t(parsingError)}
           </p>
-        </>
+        </div>
       )}
 
       {/* 解析后源信息卡片 */}
@@ -206,43 +177,32 @@ function Home() {
           <span className={styles.loadingHint}>{t('loading_hint')}</span>
         </div>
       ) : (
-        feedInfo?.id && (
+        parsingResult?.id && (
           <>
-            <div className={styles.feedInfo}>
-              <div className={styles.feedDesc}>
+            <div className={styles.parsingResult}>
+              <div className={styles.channelDesc}>
                 <div>
-                  <p>{feedInfo.title}</p>
-                  {feedInfo.description && (
+                  <p>{parsingResult.title}</p>
+                  {parsingResult.description && (
                     <p>
                       {t('desc')}
                       {t('colon')}
-                      {feedInfo.description}
+                      {parsingResult.description}
                     </p>
                   )}
                 </div>
-                <button
-                  onClick={async () => {
-                    if (subscribeBtnText === t('already_follow')) return
-                    setFollowLoading(true)
-                    try {
-                      const res = await subscribeChannel(feedInfo.id)
-                      console.log(res)
-                      if (res?.enabled) {
-                        setSubscribeBtnText(t('already_follow'))
-                      }
-                    } catch (error) {
-                      console.log(error)
-                      toast.error('Error')
-                    }
-                    setFollowLoading(false)
-                  }}
-                >
-                  {followLoading ? (
-                    <Loading className={styles.followLoading} size={19} />
-                  ) : (
-                    subscribeBtnText
-                  )}
-                </button>
+
+                {parsingResult?.subscription?.enabled ? (
+                  <button disabled>{t('subscribed')}</button>
+                ) : (
+                  <button
+                    onClick={(event) => {
+                      toSubscribeChannel(event, t, parsingResult.id)
+                    }}
+                  >
+                    {t('subscribe')}
+                  </button>
+                )}
               </div>
             </div>
             <div className={styles.feedPrice}>
@@ -254,24 +214,34 @@ function Home() {
                     <span className={styles.help}>
                       {t('channel_info_price')}
                       {': '}
-                      {feedInfo.price_per_info.channel_fee}
+                      {parsingResult.price_per_info.channel_fee}
                       {', '}
                       {t('pushing_info_price')}
                       {': '}
-                      {feedInfo.price_per_info.pushing_fee.min}
+                      {parsingResult.price_per_info.pushing_fee.min}
                       {' ~ '}
-                      {feedInfo.price_per_info.pushing_fee.max}
+                      {parsingResult.price_per_info.pushing_fee.max}
                     </span>
                   }
                 >
                   <p>
                     {t('price_per_info')}
                     {': '}
-                    {parseFloat(feedInfo.price_per_info.channel_fee) +
-                      parseFloat(feedInfo.price_per_info.pushing_fee.min)}
+                    {Math.round(
+                      (parseFloat(parsingResult.price_per_info.channel_fee) +
+                        parseFloat(
+                          parsingResult.price_per_info.pushing_fee.min
+                        )) *
+                        1000
+                    ) / 1000}
                     {' ~ '}
-                    {parseFloat(feedInfo.price_per_info.channel_fee) +
-                      parseFloat(feedInfo.price_per_info.pushing_fee.max)}
+                    {Math.round(
+                      (parseFloat(parsingResult.price_per_info.channel_fee) +
+                        parseFloat(
+                          parsingResult.price_per_info.pushing_fee.max
+                        )) *
+                        1000
+                    ) / 1000}
                     {' NUT / '}
                     {t('per_info')}
                     <Icon type="help-fill" />
@@ -281,7 +251,7 @@ function Home() {
 
               <div className={styles.how_to_charge}>
                 <p>{t('how_to_charge')}</p>
-                <span>
+                <p>
                   {t('price_per_info')} {' = '}
                   <span>
                     <Tooltip
@@ -316,11 +286,32 @@ function Home() {
                       </span>
                     </Tooltip>
                   </span>
-                </span>
+                </p>
               </div>
             </div>
           </>
         )
+      )}
+
+      {/* 信息源地址案例（无解析结果时） */}
+      {!parsingResult?.id && !loading && (
+        <>
+          {/* intro to discovery */}
+          <div
+            className={styles.hot}
+            onClick={() => {
+              if (isLogin) push('/discovery')
+              else {
+                toast(t('login_first'), { icon: '💁' })
+                return
+              }
+            }}
+          >
+            <a>{t('intro_to_discovery')} &#8594;</a>
+          </div>
+
+          <UriSampleSheet toast={toast} t={t} />
+        </>
       )}
 
       <Overlay

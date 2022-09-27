@@ -1,19 +1,31 @@
-
 .uriSample {
-  max-width: 520px;
-  margin: 14px auto 12px auto;
-  padding: 16px;
+  // max-width: 520px;
+  display: block;
+  margin: 1em 0;
+  padding: 2em;
   border-radius: 8px;
-  background: $backgroundSecondary;
+  background: $backgroundCard;
+  overflow-x: hidden;
 
+  color: $contentPrimary;
   font-size: 14px;
 
-  .title{
+  .title {
+    display: block;
     font-weight: bold;
-    margin-left: -1em;
   }
 
-  > li {
-    list-style: none;
+  .uri_type {
+    display: block;
+    margin: 1.5em 0 0.25em 0;
+    color: $contentSecondary;
+  }
+
+  .uri_item {
+    display: block;
+    cursor: pointer;
+    margin: 0.5em 0 0.5em 1.5em;
+    color: $contentPrimary;
+    overflow-x: hidden;
   }
 }

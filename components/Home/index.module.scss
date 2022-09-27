@@ -82,14 +82,14 @@
   }
 }
 
-.feedInfo {
+.parsingResult {
   // max-width: 520px;
   margin: 14px auto 12px auto;
   padding: 16px;
   border-radius: 8px;
   background: $backgroundSecondary;
 
-  .feedDesc {
+  .channelDesc {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -116,6 +116,7 @@
       }
     }
   }
+
   button {
     background: $accent;
     border: none;
@@ -133,11 +134,19 @@
       opacity: 0.7;
     }
   }
+
+  button:disabled {
+    background: transparent;
+    color: $contentSecondary;
+    border: 1px solid $contentSecondary;
+    cursor: default;
+    pointer-events: none;
+  }
 }
 
 .errorInfo {
   // max-width: 520px;
-  margin: 24px auto 12px auto;
+  margin: 0.25em auto 1em auto;
   padding: 16px;
   border-radius: 8px;
   background: $backgroundSecondary;
@@ -172,6 +181,10 @@
     margin-top: 6px;
     margin-bottom: 6px;
     font-size: 12px;
+
+    p {
+      margin: 0.25em 0;
+    }
   }
 }
 
