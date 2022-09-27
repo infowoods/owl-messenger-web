@@ -1,54 +1,18 @@
-.main {
-  min-height: calc(100vh - 210px);
-  @include responsive(xs) {
-    min-height: calc(100vh - 180px);
-  }
-}
-
-.avatar,
-.login {
-  display: flex;
-  justify-content: flex-end;
-  cursor: pointer;
-  margin-top: 6px;
-  img {
-    border-radius: 50%;
-  }
-}
-
-.login {
-  span {
-    line-height: 32px;
-    color: $contentPrimary;
-    padding: 4px 10px;
-    background: $backgroundSecondary;
-    border-radius: 8px;
-    font-size: 14px;
-    margin-top: 12px;
-    &:hover {
-      color: $accent;
-    }
-  }
-}
-
 .search {
-  margin-top: 46px;
-  @include responsive(lg) {
-    margin-top: 64px;
-  }
+  margin: 1.5em 0 1em 0;
   display: flex;
 }
 
 .searchIcon {
   color: $borderSelected;
   font-size: 18px;
-  margin-right: 18px;
+  margin-right: 12px;
 }
 
 .input {
   margin: 0 auto;
   flex: 1;
-  max-width: 520px;
+  // max-width: 520px;
 }
 
 .options {
@@ -101,7 +65,7 @@
 }
 
 .loadingWrap {
-  max-width: 520px;
+  // max-width: 520px;
   margin: 14px auto;
   padding: 16px;
   border-radius: 8px;
@@ -119,7 +83,7 @@
 }
 
 .feedInfo {
-  max-width: 520px;
+  // max-width: 520px;
   margin: 14px auto 12px auto;
   padding: 16px;
   border-radius: 8px;
@@ -172,7 +136,7 @@
 }
 
 .errorInfo {
-  max-width: 520px;
+  // max-width: 520px;
   margin: 24px auto 12px auto;
   padding: 16px;
   border-radius: 8px;
@@ -191,18 +155,18 @@
 }
 
 .feedPrice {
-  max-width: 520px;
+  // max-width: 520px;
   margin: 0 auto;
   padding: 0 14px;
-  cursor:default;
-  
+  cursor: default;
+
   > .price {
     // display: flex;
     // align-items: center;
     color: $contentPrimary;
     font-size: 14px;
   }
-  
+
   > .how_to_charge {
     color: $contentSecondary;
     margin-top: 6px;
@@ -223,11 +187,11 @@
   color: $contentNotice;
   margin: 12px auto 0 auto;
   padding: 0 16px;
-  max-width: 520px;
-  >a {
+  // max-width: 520px;
+  > a {
     cursor: pointer;
     &:active {
-      opacity: 0.7;;
+      opacity: 0.7;
     }
   }
 }
@@ -240,12 +204,11 @@
   }
 }
 
-
 .tip_err {
   font-size: 14px;
   font-style: italic;
   color: $contentNegative;
   margin: 12px auto 0 auto;
   padding: 0 16px;
-  max-width: 520px;
+  // max-width: 520px;
 }

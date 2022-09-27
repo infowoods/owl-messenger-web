@@ -1,35 +1,3 @@
-.main {
-  min-height: calc(100vh - 110px);
-}
-
-.avatar {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-top: 6px;
-  margin-bottom: 12px;
-  div {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    i {
-      vertical-align: middle;
-      font-size: 28px;
-      color: $contentPrimary;
-      cursor: pointer;
-      padding: 4px;
-      margin-right: 12px;
-      &:hover {
-        background: $borderOpaque;
-        border-radius: 50%;
-      }
-    }
-    img {
-      border-radius: 50%;
-    }
-  }
-}
-
 .loading {
   margin-top: 25%;
 }

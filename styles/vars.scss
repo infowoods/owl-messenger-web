@@ -52,7 +52,7 @@ $backgroundTertiary: var(--backgroundTertiary);
 $backgroundInversePrimary: var(--backgroundInversePrimary);
 $backgroundInverseSecondary: var(--backgroundInverseSecondary);
 $contentPrimary: var(--contentPrimary);
-$contentSecondry: var(--contentSecondry);
+$contentSecondary: var(--contentSecondary);
 $contentTertiary: var(--contentTertiary);
 $contentInversePrimary: var(--contentInversePrimary);
 $contentInverseSecondary: var(--contentInverseSecondary);
@@ -88,6 +88,7 @@ $borderLightAccent: var(--borderLightAccent);
 $borderNotice: var(--borderNotice);
 $borderNegative: var(--borderNegative);
 $borderPositive: var(--borderPositive);
+$backgroundCard: var(--c-bg-card);
 
 :export {
   name: 'scss';
@@ -105,7 +106,7 @@ $borderPositive: var(--borderPositive);
   backgroundInversePrimary: $backgroundInversePrimary;
   backgroundInverseSecondary: $backgroundInverseSecondary;
   contentPrimary: $contentPrimary;
-  contentSecondry: $contentSecondry;
+  contentSecondary: $contentSecondary;
   contentTertiary: $contentTertiary;
   contentInversePrimary: $contentInversePrimary;
   contentInverseSecondary: $contentInverseSecondary;
@@ -141,4 +142,5 @@ $borderPositive: var(--borderPositive);
   borderNotice: $borderNotice;
   borderNegative: $borderNegative;
   borderPositive: $borderPositive;
+  backgroundCard: $backgroundCard;
 }

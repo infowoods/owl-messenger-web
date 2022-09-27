@@ -119,7 +119,7 @@
 
 //   return (
 //     <div className={styles.main}>
-//       <p className={styles.sectionTitle}># {t('my_balance')}</p>
+//       <p className={styles.sectionTitle}># {t('my_balances')}</p>
 //       <div className={styles.walletsWrap}>
 //         {myWallets.isLoading && (
 //           <Loading size={10} className={styles.loading} />
@@ -177,7 +177,7 @@
 //       )}
 //       {mySubscriptions.data && (
 //         <>
-//           <p className={styles.sectionTitle}># {t('following')}</p>
+//           <p className={styles.sectionTitle}># {t('subscribing')}</p>
 //           {!mySubscriptions.data?.subscriptions && (
 //             <div className={styles.empty}>
 //               <Icon type="ufo" />
@@ -307,16 +307,16 @@
 //             <button
 //               className={`${styles.button} ${styles.buttonAccent}`}
 //               onClick={async () => {
-//                 setBtnSelect(index + 'refollow')
+//                 setBtnSelect(index + 'subscribe')
 //                 await subscribeChannel(feed.channel.id)
 //                 getUserFollows()
 //                 getUserUnFollows()
 //               }}
 //             >
-//               {btnSelect === index + 'refollow' ? (
+//               {btnSelect === index + 'subscribe' ? (
 //                 <Loading size={18} className={styles.btnLoading} />
 //               ) : (
-//                 t('refollow')
+//                 t('subscribe')
 //               )}
 //             </button>
 //           </div>

@@ -125,19 +125,19 @@ const Card = ({ t, item }) => {
 
 function Discovery() {
   const { t } = useTranslation('common')
-  const [searchType, setSearchType] = useState('channel')
+  const [searchType, setSearchType] = useState('oak_channel')
   const [searchVal, setSearchVal] = useState('')
   const [searchRes, setSearchRes] = useState([])
 
   const [searchLoading, setSearchLoading] = useState(false)
   const [empty, setEmpty] = useState(false)
-  const typeList = ['channel', 'weibo', 'twitter']
+  const sourceTypeList = ['oak_channel', 'weibo', 'twitter']
   const hotCollection = useHotCollection()
 
   const placeholder = (type) => {
     switch (type) {
-      case 'channel':
-        return t('channel_search_ph')
+      case 'oak_channel':
+        return t('oak_channel_search_ph')
       case 'weibo':
         return t('weibo_search_ph')
       case 'twitter':
@@ -181,10 +181,10 @@ function Discovery() {
 
       {/* type radio */}
       <div
-        className={styles.group}
+        className={styles.typeOptions}
         onChange={(e) => setSearchType(e.target.value)}
       >
-        {typeList.map((item) => (
+        {sourceTypeList.map((item) => (
           <React.Fragment key={item}>
             <input
               type="radio"

@@ -1,15 +1,17 @@
+'use strict'
+
 const storageUtil = {
-  set(key, value) {
+  set: function (key, value) {
     localStorage.setItem(key, JSON.stringify(value))
   },
-  get(key) {
+  get: function (key) {
     const value = localStorage.getItem(key)
     if (value !== 'undefined') {
       return JSON.parse(value)
     }
     return
   },
-  del(key) {
+  del: function (key) {
     localStorage.removeItem(key)
   },
 }

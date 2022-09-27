@@ -1,5 +1,5 @@
 import http from '../../services/http/mixin'
-import StorageUtil from '../../utils/storageUtil'
+import storageUtil from '../../utils/storageUtil'
 
 export async function getAccessToken(code) {
   // const verifier = localStorage.getItem('code-verifier')
@@ -24,7 +24,7 @@ export function getProfile() {
 }
 
 export function loginFunc(token) {
-  StorageUtil.set('mixin_token', token)
+  storageUtil.set('mixin_token', token)
 }
 
 export function getMixinContext() {

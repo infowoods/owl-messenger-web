@@ -33,17 +33,16 @@ function Layout({ children }) {
   const getBarColor = (path) => {
     reloadTheme(platform)
     if (theme === 'dark') {
-      return path === '/' ? '#080808' : '#1E1E1E'
+      // return path === '/' ? '#080808' : '#1E1E1E'
+      return '#080808'
     }
-    return path === '/' ? '#FFFFFF' : '#F4F6F7'
+    // return path === '/' ? '#FFFFFF' : '#F4F6F7'
+    return '#FFFFFF'
   }
 
   const backLink = (path) => {
     switch (path) {
-      case '/user':
-      case '/hot-channels':
-        return '/'
-      case '/settings':
+      case '/user/settings':
         return '/user'
       default:
         break
@@ -52,15 +51,14 @@ function Layout({ children }) {
 
   const avatarLink = (path) => {
     switch (path) {
-      case '/':
-      case '/hot-channels':
-        return '/user'
-      default:
+      case '/user':
         break
+      default:
+        return '/user'
     }
   }
 
-  const handleClick = () => {
+  const handleAvatarClick = () => {
     const link = avatarLink(pathname)
     if (link) {
       push(avatarLink(pathname))
@@ -135,7 +133,7 @@ function Layout({ children }) {
   }, [])
 
   return (
-    <div className={`${styles.wrap} ${pathname !== '/' && styles.bgGray}`}>
+    <div className={styles.wrap}>
       <Head>
         <title>{t(APP_TITLE)}</title>
         <meta name="description" content={t(APP_TITLE)} />
@@ -153,7 +151,7 @@ function Layout({ children }) {
                   <Avatar
                     group={state.groupInfo?.category === 'GROUP'}
                     imgSrc={state.userInfo?.avatar}
-                    onClick={handleClick}
+                    onClick={handleAvatarClick}
                   />
                 </div>
               ) : (
