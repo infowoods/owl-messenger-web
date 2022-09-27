@@ -125,19 +125,19 @@ const Card = ({ t, item }) => {
 
 function Discovery() {
   const { t } = useTranslation('common')
-  const [searchType, setSearchType] = useState('oak_channel')
+  const [searchType, setSearchType] = useState('channel')
   const [searchVal, setSearchVal] = useState('')
   const [searchRes, setSearchRes] = useState([])
 
   const [searchLoading, setSearchLoading] = useState(false)
   const [empty, setEmpty] = useState(false)
-  const sourceTypeList = ['oak_channel', 'weibo', 'twitter']
+  const sourceTypeList = ['channel', 'weibo', 'twitter']
   const hotCollection = useHotCollection()
 
   const placeholder = (type) => {
     switch (type) {
-      case 'oak_channel':
-        return t('oak_channel_search_ph')
+      case 'channel':
+        return t('channel_search_ph')
       case 'weibo':
         return t('weibo_search_ph')
       case 'twitter':
@@ -179,57 +179,59 @@ function Discovery() {
     <div className={styles.main}>
       <p className={styles.sectionTitle}># {t('discovery')}</p>
 
-      {/* type radio */}
-      <div
-        className={styles.typeOptions}
-        onChange={(e) => setSearchType(e.target.value)}
-      >
-        {sourceTypeList.map((item) => (
-          <React.Fragment key={item}>
-            <input
-              type="radio"
-              id={item}
-              name="searchType"
-              value={item}
-              checked={searchType === item}
-              readOnly
-            />
-            <label htmlFor={item}>{t(item)}</label>
-          </React.Fragment>
-        ))}
-      </div>
+      <div className={styles.findWrap}>
+        {/* type radio */}
+        <div
+          className={styles.typeOptions}
+          onChange={(e) => setSearchType(e.target.value)}
+        >
+          {sourceTypeList.map((item) => (
+            <React.Fragment key={item}>
+              <input
+                type="radio"
+                id={item}
+                name="searchType"
+                value={item}
+                checked={searchType === item}
+                readOnly
+              />
+              <label htmlFor={item}>{t(item)}</label>
+            </React.Fragment>
+          ))}
+        </div>
 
-      {/* 搜索框 */}
-      <div className={styles.searchWrap}>
-        <form className={styles.searchForm} action=".">
-          <Input
-            className={styles.input}
-            type="search"
-            placeholder={placeholder(searchType)}
-            value={searchVal}
-            onChange={(val) => {
-              if (!val) {
+        {/* 搜索框 */}
+        <div className={styles.searchWrap}>
+          <form className={styles.searchForm} action=".">
+            <Input
+              className={styles.input}
+              type="search"
+              placeholder={placeholder(searchType)}
+              value={searchVal}
+              onChange={(val) => {
+                if (!val) {
+                  setSearchRes([])
+                  setEmpty(false)
+                }
+                setSearchVal(val)
+              }}
+              onClear={() => {
                 setSearchRes([])
                 setEmpty(false)
-              }
-              setSearchVal(val)
-            }}
-            onClear={() => {
-              setSearchRes([])
-              setEmpty(false)
-            }}
-            onKeyDown={(e) => handleKeyDown(e)}
-          />
-        </form>
+              }}
+              onKeyDown={(e) => handleKeyDown(e)}
+            />
+          </form>
 
-        <div className={styles.searchIcon}>
-          {searchLoading ? (
-            <div className={styles.loadingWrap}>
-              <Loading size={18} className={styles.searchLoading} />
-            </div>
-          ) : (
-            <Icon type="search" onClick={async () => handleSearch()} />
-          )}
+          <div className={styles.searchIcon}>
+            {searchLoading ? (
+              <div className={styles.loadingWrap}>
+                <Loading size={18} className={styles.searchLoading} />
+              </div>
+            ) : (
+              <Icon type="search" onClick={async () => handleSearch()} />
+            )}
+          </div>
         </div>
       </div>
 

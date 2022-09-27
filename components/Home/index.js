@@ -243,7 +243,7 @@ function Home() {
                         1000
                     ) / 1000}
                     {' NUT / '}
-                    {t('per_info')}
+                    {t('each_info')}
                     <Icon type="help-fill" />
                   </p>
                 </Tooltip>

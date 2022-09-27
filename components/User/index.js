@@ -4,7 +4,6 @@ import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import toast from 'react-hot-toast'
-import { Tooltip } from '@nextui-org/react'
 
 import { ProfileContext } from '../../stores/useProfile'
 
@@ -63,7 +62,9 @@ function useMySubscriptions() {
 }
 
 function toUnsubscribeChannel(event, t, channel_id, channel_index) {
+  // event.target.innerHTML = t('unsubscribing')
   event.target.innerHTML = t('unsubscribing')
+
   event.target.disabled = true
 
   const card = document.querySelector(`div[data_id='${channel_id}']`)
@@ -89,54 +90,46 @@ function User() {
 
   return (
     <div className={styles.main}>
-      <p className={styles.sectionTitle}># {t('my_balance')}</p>
+      <p className={styles.sectionTitle}># {t('my_balances')}</p>
       <div className={styles.walletsWrap}>
         {myWallets.isLoading && (
-          <Loading size={10} className={styles.loading} />
+          <Loading size={14} className={styles.loading} />
         )}
+
         {myWallets.data && (
           <>
             <div className={styles.wallet}>
-              <span>
+              <div>
                 <span className={styles.nut_icon}>👛</span>
+                <span className={styles.val}>{myWallets.data.wallets.NUT}</span>
+                {'NUT'}
+                {' + '}
                 <span className={styles.val}>
                   {myWallets.data.wallets.gNUT}
                 </span>
                 {'gNUT'}
-                <sup>
-                  <Tooltip content={t('gnut_tip')}>
-                    <Icon type="help-fill" />
-                  </Tooltip>
-                </sup>
-              </span>
+              </div>
+
+              <div className={styles.tip}>
+                <strong>{'NUT '}</strong>
+                <span>{t('nut_tip')}</span> <strong>{'gNUT '}</strong>{' '}
+                <span>{t('gnut_tip')}</span>{' '}
+                <span>{t('nut_spending_tip')}</span>
+              </div>
             </div>
 
             <div className={styles.wallet}>
-              <span>
-                <span className={styles.nut_icon}>👛</span>
-                <span className={styles.val}>{myWallets.data.wallets.NUT}</span>
-                {'NUT'}
-              </span>
-              <sup>
-                <Tooltip content={t('nut_tip')}>
-                  <Icon type="help-fill" />
-                </Tooltip>
-              </sup>
-            </div>
-
-            <div className={styles.wallet}>
-              <span>
-                <span className={styles.nut_icon}>🌰</span>
+              <div>
+                <span className={styles.nut_icon}>🌰 {t('revenue')} </span>
                 <span className={styles.val}>
                   {myWallets.data.wallets.revenue}
                 </span>
-                {'NUT '} {t('revenue')}
-              </span>
-              <sup>
-                <Tooltip content={t('revenue_tip')}>
-                  <Icon type="help-fill" />
-                </Tooltip>
-              </sup>
+                {'NUT '}
+              </div>
+
+              <div className={styles.tip}>
+                <span>{t('revenue_tip')}</span>
+              </div>
             </div>
           </>
         )}

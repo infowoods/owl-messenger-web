@@ -5,6 +5,13 @@
   margin: 1.5em 0 1em 0;
 }
 
+.findWrap {
+  padding: 12px 16px;
+  background-color: $backgroundCard;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
 .typeOptions {
   margin: 12px 0 8px 0;
   input {
@@ -83,7 +90,7 @@
 .input {
   margin: 0 auto;
   flex: 1;
-  border-radius: 18px;
+  border-radius: 14px;
   background-color: $backgroundPrimary;
 }
 
