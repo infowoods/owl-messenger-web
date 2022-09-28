@@ -36,17 +36,17 @@ function BottomNav({ t, isLogin }) {
             key={idx}
             className={`${
               pathname === item.href ? styles.active : styles.default
-            }`}
+            } ${styles.button}`}
             onClick={() => {
               if (!isLogin) {
-                toast('Login first', { icon: '💁' })
+                toast('login_first', { icon: '💁' })
                 return
               }
               push(item.href)
             }}
           >
             <Icon type={item.icon} />
-            <p>{t(item.name)}</p>
+            <p className={styles.label}>{t(item.name)}</p>
           </div>
         ))}
       </div>

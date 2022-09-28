@@ -21,32 +21,27 @@
   }
 }
 
-.default {
+.button {
   cursor: pointer;
   text-align: center;
-  color: $contentSecondary;
+  padding-top: 7px;
+  padding-bottom: 6px;
+
   > i {
-    font-size: 28px;
-    padding-top: 6px;
+    font-size: 25px;
   }
-  > p {
-    font-size: 14px;
-    padding-bottom: 6px;
+  .label {
+    font-size: 12px;
   }
+}
+
+.default {
+  color: $contentSecondary;
   &:active {
     color: $contentPrimary;
   }
 }
 
 .active {
-  text-align: center;
   color: $contentPrimary !important;
-  > i {
-    font-size: 28px;
-    padding-top: 6px;
-  }
-  > p {
-    font-size: 14px;
-    padding-bottom: 6px;
-  }
 }

@@ -136,6 +136,10 @@ function Layout({ children }) {
     <div className={styles.wrap}>
       <Head>
         <title>{t(APP_TITLE)}</title>
+        <meta
+          name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no"
+        />
         <meta name="description" content={t(APP_TITLE)} />
         <meta name="theme-color" content={getBarColor(pathname)} />
         <link rel="icon" href="/favicon.png" />

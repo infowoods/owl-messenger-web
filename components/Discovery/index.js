@@ -193,9 +193,10 @@ function Discovery() {
                 name="searchType"
                 value={item}
                 checked={searchType === item}
+                label={t(item)}
                 readOnly
               />
-              <label htmlFor={item}>{t(item)}</label>
+              {/* <label htmlFor={item}>{t(item)}</label> */}
             </React.Fragment>
           ))}
         </div>

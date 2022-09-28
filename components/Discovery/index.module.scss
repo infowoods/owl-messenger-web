@@ -1,7 +1,7 @@
 .sectionTitle {
   color: $contentPrimary;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 1.28em;
   margin: 1.5em 0 1em 0;
 }
 
@@ -14,14 +14,56 @@
 
 .typeOptions {
   margin: 12px 0 8px 0;
-  input {
-    margin: 0 0.2em 0 1.5em;
+
+  .radio {
+    background: #454857;
+    padding: 4px;
+    border-radius: 3px;
+    box-shadow: inset 0 0 0 3px rgba(35, 33, 45, 0.3),
+      0 0 0 3px rgba(185, 185, 185, 0.3);
+    position: relative;
   }
+
+  input {
+    width: auto;
+    height: 100%;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+    border-radius: 2px;
+    padding: 4px 8px;
+    background: $backgroundPrimary;
+    color: $contentPrimary;
+    font-size: 1em;
+    transition: all 100ms linear;
+
+    margin-right: 4px;
+  }
+
+  input:checked {
+    background: $accent;
+    color: #fff;
+    box-shadow: 0 1px 1px #0000002e;
+    text-shadow: 0 1px 0px #79485f7a;
+  }
+
+  input:before {
+    content: attr(label);
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+  }
+
+  // input {
+  //   margin: 0 0.2em 0 1.5em;
+  // }
 }
 
 .searchWrap {
   width: 100%;
-  margin: 0;
+  margin-bottom: 12px;
   padding: 0;
   display: flex;
 }
@@ -30,9 +72,17 @@
   display: block;
   flex: 1 1 auto; /* dynamic width */
 
-  .input,
-  input {
+  .input {
+    flex: 1;
     width: 100%;
+
+    border-radius: 16px 4px 4px 16px;
+    background-color: $backgroundPrimary;
+
+    input {
+      height: 2.5em;
+      width: 100%;
+    }
   }
 }
 
@@ -41,24 +91,28 @@
   flex: 0 0 auto; /* fixed width */
 
   color: $contentInversePrimary;
-  font-size: 18px;
+  font-size: 1.25em;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
 
   > i {
+    height: 2.5em;
     background-color: $accent;
-    padding: 12px;
-    border-radius: 50%;
+    padding: 14px 14px 14px 14px;
+    border-radius: 4px 16px 16px 4px;
     margin-left: 4px;
   }
 }
 
 .loadingWrap {
-  margin-left: 4px;
+  // font-size: 1.25em;
+  height: 2.5em;
   background-color: $accent;
-  border-radius: 50%;
+  // padding: 14px 14px 14px 14px;
+  border-radius: 4px 16px 16px 4px;
+  margin-left: 4px;
 }
 
 .hotLoading {
@@ -82,16 +136,9 @@
 
 .empty {
   color: $contentSecondary;
-  font-size: 15px;
+  font-size: 1em;
   padding-left: 4px;
   margin-bottom: 12px;
-}
-
-.input {
-  margin: 0 auto;
-  flex: 1;
-  border-radius: 14px;
-  background-color: $backgroundPrimary;
 }
 
 .card {

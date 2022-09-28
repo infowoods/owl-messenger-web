@@ -8,23 +8,19 @@
 
 html,
 body {
-  padding: 0;
-  margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
   }
+
+  font-size: 1em; //14px set in :root
 }
 
 a {
   color: inherit;
   text-decoration: none;
-}
-
-p {
-  margin: 0;
 }
 
 input,

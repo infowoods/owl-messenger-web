@@ -93,7 +93,7 @@ function User() {
       <p className={styles.sectionTitle}># {t('my_balances')}</p>
       <div className={styles.walletsWrap}>
         {myWallets.isLoading && (
-          <Loading size={14} className={styles.loading} />
+          <Loading size={20} className={styles.loading} />
         )}
 
         {myWallets.data && (
@@ -135,12 +135,12 @@ function User() {
         )}
       </div>
 
+      <p className={styles.sectionTitle}># {t('my_subscription')}</p>
       {mySubscriptions.isLoading && (
         <Loading size={40} className={styles.loading} />
       )}
       {mySubscriptions.data && (
         <>
-          <p className={styles.sectionTitle}># {t('my_subscription')}</p>
           {!mySubscriptions.data?.subscriptions && (
             <div className={styles.empty}>
               <Icon type="ufo" />

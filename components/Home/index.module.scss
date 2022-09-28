@@ -12,7 +12,10 @@
 .input {
   margin: 0 auto;
   flex: 1;
-  // max-width: 520px;
+
+  input {
+    font-size: 0.85em;
+  }
 }
 
 .options {
