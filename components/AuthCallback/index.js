@@ -1,24 +1,22 @@
 import { useEffect, useContext, useState } from 'react'
 import { useRouter } from 'next/router'
-import { i18n } from 'next-i18next'
-import Head from 'next/head'
+import { i18n, useTranslation } from 'next-i18next'
 import dynamic from 'next/dynamic'
 import toast from 'react-hot-toast'
 const OwlToast = dynamic(() => import('../../widgets/OwlToast'))
 
-import { ProfileContext } from '../../stores/useProfile'
+import { CurrentLoginContext } from '../../contexts/currentLogin'
+import { getMixinContext } from '../../utils/pageUtil'
+import { owlSignIn } from '../../services/api/owl'
+import { mixinApi } from '../../services/api/mixin'
 
-import { owlSignIn, checkGroup } from '../../services/api/owl'
-import { getMixinContext, getAccessToken } from '../../services/api/mixin'
-
-import storageUtil from '../../utils/storageUtil'
+import { saveToken, saveUserData } from '../../utils/loginUtil'
 import styles from './index.module.scss'
 import { APP_NAME } from '../../constants'
 
 function AuthCallback() {
-  const [ctx, setCtx] = useState({})
-  const [, dispatch] = useContext(ProfileContext)
-  const { push } = useRouter()
+  const { t } = useTranslation('common')
+  const [curLogin, loginDispatch] = useContext(CurrentLoginContext)
   const router = useRouter()
 
   const useQuery = () => {
@@ -31,74 +29,57 @@ function AuthCallback() {
   const query = useQuery()
 
   useEffect(() => {
+    // login owl with mixin access token
+    const ctx = getMixinContext()
     const conversation_id = ctx.conversation_id || ''
 
-    const auth = async (token) => {
-      try {
-        const params = {
-          app: APP_NAME,
-          mixin_access_token: token,
-          conversation_id: conversation_id,
-        }
-        const data = await owlSignIn(params)
+    const loginOwl = async (token) => {
+      const params = {
+        app: APP_NAME,
+        mixin_access_token: token,
+        conversation_id: conversation_id,
+      }
+      const data = await owlSignIn(params)
 
-        if (data?.access_token) {
-          dispatch({
-            type: 'userInfo',
-            userInfo: data,
-          })
-          storageUtil.set(`user_info_${conversation_id}`, data) // userInfo persistence
+      if (data?.access_token) {
+        curLogin.token = data.access_token
+        saveToken(conversation_id, data.access_token)
 
-          if (ctx?.locale && ctx.locale !== 'zh-CN' && i18n.language !== 'en') {
-            i18n.changeLanguage('en')
-            push('/', '/', { locale: 'en' })
-          } else {
-            push('/')
-          }
+        const user_data = {
+          // expiry_time: data.expiry_time,
+          user_id: data.user_id,
+          user_name: data.user_name,
+          avatar: data.avatar,
         }
-      } catch (error) {
-        toast.error('Auth Failed')
+        curLogin.user = user_data
+        saveUserData(conversation_id, user_data)
+
+        if (ctx?.locale && ctx.locale !== 'zh-CN' && i18n.language !== 'en') {
+          i18n.changeLanguage('en')
+          router.push('/', '/', { locale: 'en' })
+        } else {
+          router.push('/')
+        }
+      }
+    }
+
+    //
+    const getMixinToken_andLoginOwl = async () => {
+      const token = await mixinApi.getAccessToken(query.code)
+      token && loginOwl(token)
+    }
+
+    if (query?.code) {
+      getMixinToken_andLoginOwl().catch((err) => {
+        console.log('err :>> ', err)
+        toast.error(t('login_failed'))
         push('/')
-      }
+      })
     }
-
-    const getToken = async () => {
-      const token = await getAccessToken(query.code)
-      token && auth(token)
-    }
-
-    query?.code && getToken()
   }, [query])
-
-  useEffect(() => {
-    const res = getMixinContext()
-    res && setCtx(res)
-    if (res?.conversation_id) {
-      const initialFunc = async () => {
-        const data = await checkGroup({
-          app: APP_NAME,
-          conversation_id: res.conversation_id,
-        })
-        if (data?.is_group) {
-          dispatch({
-            type: 'groupInfo',
-            groupInfo: data,
-          })
-          storageUtil.set(`group_info_${res.conversation_id}`, data) // groupInfo persistence
-        }
-      }
-      initialFunc()
-    }
-  }, [])
 
   return (
     <div className={styles.main}>
-      <Head>
-        <title>Owl Messenger</title>
-        <meta name="description" content="猫头鹰订阅器" />
-        <link rel="icon" href="/favicon.png" />
-      </Head>
-
       <OwlToast />
     </div>
   )

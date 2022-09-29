@@ -1,20 +1,25 @@
 import { useReducer } from 'react'
 import { appWithTranslation } from 'next-i18next'
-import { ProfileContext, state, reducer } from '../stores/useProfile'
+
+import {
+  CurrentLoginContext,
+  LoginData,
+  loginDataReducer,
+} from '../contexts/currentLogin'
 import '../styles/globals.scss'
 import '../styles/themes.scss'
 const i18nConfig = require('../next-i18next.config')
 import Layout from '../components/Layout'
 
 function MyApp({ Component, pageProps }) {
-  const store = useReducer(reducer, state)
+  const loginData = useReducer(loginDataReducer, LoginData)
 
   return (
-    <ProfileContext.Provider value={store}>
+    <CurrentLoginContext.Provider value={loginData}>
       <Layout>
         <Component {...pageProps} />
       </Layout>
-    </ProfileContext.Provider>
+    </CurrentLoginContext.Provider>
   )
 }
 

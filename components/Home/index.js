@@ -2,12 +2,10 @@ import { useEffect, useContext, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-
-import { ProfileContext } from '../../stores/useProfile'
-
 import toast from 'react-hot-toast'
 const OwlToast = dynamic(() => import('../../widgets/OwlToast'))
 const Overlay = dynamic(() => import('../../widgets/Overlay'))
+import { CurrentLoginContext } from '../../contexts/currentLogin'
 
 import Icon from '../../widgets/Icon'
 import Tooltip from '../../widgets/Tooltip'
@@ -15,9 +13,15 @@ import Input from '../../widgets/Input'
 import Loading from '../../widgets/Loading'
 import UriSampleSheet from './UriSampleSheet'
 
-import { authLogin, logout } from '../../utils/loginUtil'
+import { logout, saveGroupData } from '../../utils/loginUtil'
+import { getMixinContext } from '../../utils/pageUtil'
 
-import { parseFeed, subscribeChannel, checkOrder } from '../../services/api/owl'
+import {
+  parseFeed,
+  subscribeChannel,
+  checkOrder,
+  checkGroup,
+} from '../../services/api/owl'
 
 import styles from './index.module.scss'
 
@@ -40,10 +44,8 @@ function toSubscribeChannel(event, t, channel_id) {
 
 function Home() {
   const { t } = useTranslation('common')
-  const [state, dispatch] = useContext(ProfileContext)
   const { push } = useRouter()
-  const isLogin = state.userInfo && state.userInfo.user_name
-  // console.log('homepage state:', state)
+  const [curLogin, loginDispatch] = useContext(CurrentLoginContext)
 
   const [source_uri, setSourceUri] = useState('')
   const [show, setShow] = useState(false)
@@ -53,11 +55,30 @@ function Home() {
   const [parsingError, setParsingError] = useState('')
   const [uriError, setUriError] = useState(false)
 
-  const [loading, setLoading] = useState(false)
+  const [parsing, setParsing] = useState(false)
   // const [orderId, setOrderId] = useState('')
   // const [intervalId, setIntervalId] = useState(null)
+  const inputPrefix = <Icon type="search" className={styles.searchIcon} />
 
-  const prefix = <Icon type="search" className={styles.searchIcon} />
+  useEffect(() => {
+    const ctx = getMixinContext()
+    if (ctx) {
+      if (ctx.conversation_id) {
+        checkGroup({
+          app: APP_NAME,
+          conversation_id: ctx.conversation_id,
+        }).then((data) => {
+          saveGroupData(res.conversation_id, data)
+          curLogin.group = data
+          // loginDispatch({
+          //   type: 'group',
+          //   group: data,
+          // })
+          // storageUtil.set(`group_info_${res.conversation_id}`, data) // groupInfo persistence
+        })
+      }
+    }
+  }, [])
 
   const handleInput = (val) => {
     setParsingError('')
@@ -81,17 +102,17 @@ function Home() {
       const res = await parseFeed(params)
       if (res?.id) {
         setParsingResult(res)
-        setLoading(false)
+        setParsing(false)
       }
     } catch (error) {
       if (error?.action === 'logout') {
         toast.error(t('auth_expire'))
-        setLoading(false)
+        setParsing(false)
         logout(dispatch)
         return
       }
       setParsingError(error?.message || t('parsing_error_uri'))
-      setLoading(false)
+      setParsing(false)
     }
   }
 
@@ -114,7 +135,7 @@ function Home() {
     setParsingError('')
     setParsingResult({})
     if (validateSourceUri()) {
-      setLoading(true)
+      setParsing(true)
       parseSourceURI(source_uri)
     } else {
       setParsingError(t('invalid_uri'))
@@ -123,14 +144,14 @@ function Home() {
 
   const handleKeyDown = (e) => {
     const enterPressed = e.keyCode === 13
-    if (enterPressed && !isLogin) {
+    if (enterPressed && !curLogin.token) {
       toast(t('login_first'), { icon: '💁' })
       e.preventDefault()
 
       // authLogin()
       return
     }
-    if (enterPressed && isLogin) {
+    if (enterPressed && curLogin.token) {
       e.target.blur()
       handleParse(source_uri)
     }
@@ -143,7 +164,7 @@ function Home() {
         <Input
           className={styles.input}
           type="search"
-          prefix={prefix}
+          prefix={inputPrefix}
           placeholder={t('uri_here')}
           value={source_uri}
           onChange={handleInput}
@@ -171,7 +192,7 @@ function Home() {
       )}
 
       {/* 解析后源信息卡片 */}
-      {loading ? (
+      {parsing ? (
         <div className={styles.loadingWrap}>
           <Loading size={30} className={styles.loading} />
           <span className={styles.loadingHint}>{t('loading_hint')}</span>
@@ -294,13 +315,13 @@ function Home() {
       )}
 
       {/* 信息源地址案例（无解析结果时） */}
-      {!parsingResult?.id && !loading && (
+      {!parsingResult?.id && !parsing && (
         <>
           {/* intro to discovery */}
           <div
             className={styles.hot}
             onClick={() => {
-              if (isLogin) push('/discovery')
+              if (curLogin.token) push('/discovery')
               else {
                 toast(t('login_first'), { icon: '💁' })
                 return
