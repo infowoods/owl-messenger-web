@@ -6,10 +6,9 @@ const storageUtil = {
   },
   get: function (key) {
     const value = localStorage.getItem(key)
-    if (value !== 'undefined') {
-      return JSON.parse(value)
-    }
-    return
+    if (!value) return
+    if (value === 'undefined') return
+    return JSON.parse(value)
   },
   del: function (key) {
     localStorage.removeItem(key)
