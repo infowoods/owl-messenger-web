@@ -1,9 +1,10 @@
 import axios from 'axios'
-import { getToken } from '../../utils/loginUtil'
+import { getMixinContext } from '../../utils/pageUtil'
+import { loadToken } from '../../utils/loginUtil'
 
 const OWL_API_HOST = 'https://api.infowoods.com/v3'
 
-const owlrss = axios.create({
+const session = axios.create({
   baseURL: OWL_API_HOST,
   timeout: 15000,
   responseType: 'json',
@@ -12,9 +13,10 @@ const owlrss = axios.create({
   },
 })
 
-owlrss.interceptors.request.use(
+session.interceptors.request.use(
   async (configs) => {
-    const token = await getToken(configs)
+    const ctx = getMixinContext()
+    const token = await loadToken(ctx?.conversation_id)
     if (token) {
       configs.headers.Authorization = `Bearer ${token}`
     }
@@ -23,27 +25,13 @@ owlrss.interceptors.request.use(
   (_) => {}
 )
 
-// err handler
-owlrss.interceptors.response.use(
+session.interceptors.response.use(
   (res) => {
+    // ok response
     // res: config, data, headers, status, statusText
-    // res.data: message
+    // console.log('res :>> ', res)
     if (!res.data) {
       return Promise.reject({ code: -1 })
-    }
-    if (res.data.error) {
-      const error = res.data.error
-      if (error.code === (401 || 403)) {
-        return Promise.reject({ code: error.code })
-      }
-      return Promise.reject({ code: error.code, message: error.description })
-    }
-    if (res.status === 403 || res.status === 401) {
-      return Promise.reject({
-        action: 'logout',
-        status: res.status,
-        data: res.data,
-      })
     }
     if (res.status === 202) {
       return Promise.reject({ status: res.status, data: res.data })
@@ -52,28 +40,45 @@ owlrss.interceptors.response.use(
     }
   },
   (err) => {
-    console.log(err)
+    //error response
     if (!err.response) {
       return Promise.reject('error null')
     }
     // err.response: config, data, headers, status, statusText
-    if (err.response.status === 403 || err.response.status === 401) {
+    const rsp = err.response
+    console.log('error rsp :>> ', rsp)
+    if (!rsp.data) {
+      return Promise.reject({ code: rsp.status, message: statusText })
+    }
+    if (!rsp.data.error) {
+      if (rsp.status === 401) {
+        return Promise.reject({
+          action: 'logout',
+          status: rsp.status,
+          data: rsp.data,
+        })
+      }
+
       return Promise.reject({
-        action: 'logout',
-        status: err.response.status,
-        data: err.response.data,
+        code: rsp.status,
+        message: 'Invalid request. Maybe invalid path or method.',
       })
     }
-    if (err.response && err.response.data) {
-      return Promise.reject(err.response.data)
+
+    if (rsp.data.error === 'invalid_token') {
+      return Promise.reject({
+        action: 'logout',
+        status: rsp.status,
+        data: rsp.data,
+      })
     } else {
-      return Promise.reject({ code: -1 })
+      return Promise.reject({ code: rsp.status, message: rsp.data.message })
     }
   }
 )
 
 async function request(options) {
-  const res = await owlrss.request(options)
+  const res = await session.request(options)
   return Promise.resolve(res)
 }
 
