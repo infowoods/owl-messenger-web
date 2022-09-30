@@ -29,59 +29,18 @@
 .sectionTitle {
   color: $contentPrimary;
   font-weight: bold;
-  font-size: 18px;
-}
-
-.walletsWrap {
-  // 24.87% 72.57% at 0% 12.63%,
-  // #fcc381
-  background: radial-gradient(
-      25% 72% at 0% 12%,
-      rgb(255, 217, 0, 0.58) 0%,
-      rgba(253, 192, 81, 0) 100%
-    ),
-    #f8e0b3;
-
-  // border: 2px dotted $borderOpaque;
-  border-radius: 8px;
-  padding: 12px 18px;
-  margin: 10px 0;
-
-  display: flex;
-  flex-direction: column;
-}
-
-.wallet {
-  display: block;
-  margin: 0.5em 0;
-  padding: 0.25em;
-  color: $contentPrimary;
-
-  .nut_icon {
-    opacity: 0.5;
-  }
-
-  .val {
-    font-weight: bold;
-    margin: 0 0.25em;
-    color: $contentPrimary;
-  }
-
-  .tip {
-    margin-top: 0.65em;
-    font-size: 0.7em;
-    color: $contentSecondary;
-  }
+  font-size: 1.5em;
+  margin-top: 1em;
 }
 
 .channelCard {
   .button {
     background: transparent;
-    padding: 6px 10px;
+    margin-top: 0.5em;
+    padding: 0.5em 1em;
     border-radius: 8px;
     color: $notice;
     border: 1px solid $notice;
-    font-size: 14px;
     cursor: pointer;
     &:hover {
       background: $notice;
@@ -132,7 +91,6 @@
   line-height: 18px;
   span {
     color: $contentPrimary;
-    font-size: 14px;
   }
 }
 
@@ -146,7 +104,6 @@
   span {
     &:first-child {
       color: $contentPrimary;
-      font-size: 14px;
     }
     &:last-child {
       cursor: pointer;

@@ -47,7 +47,6 @@ function AuthCallback() {
 
         const user_data = {
           // expiry_time: data.expiry_time,
-          user_id: data.user_id,
           user_name: data.user_name,
           avatar: data.avatar,
         }
@@ -73,7 +72,7 @@ function AuthCallback() {
       getMixinToken_andLoginOwl().catch((err) => {
         console.log('err :>> ', err)
         toast.error(t('login_failed'))
-        push('/')
+        router.push('/')
       })
     }
   }, [query])

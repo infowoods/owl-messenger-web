@@ -1,0 +1,57 @@
+.walletsWrap {
+  // 24.87% 72.57% at 0% 12.63%,
+  // #fcc381
+  background: radial-gradient(
+      25% 72% at 0% 12%,
+      rgb(255, 217, 0, 0.28) 0%,
+      rgba(253, 192, 81, 0) 100%
+    ),
+    #f8e0b3;
+
+  // border: 2px dotted $borderOpaque;
+  border-radius: 8px;
+  padding: 12px 18px;
+  margin: 10px 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.wallet {
+  display: block;
+  margin: 0.5em 0;
+  padding: 0.25em;
+  color: $contentPrimary;
+
+  .nut_icon {
+    opacity: 0.5;
+  }
+
+  .val {
+    font-weight: bold;
+    margin: 0 0.25em;
+    color: $contentPrimary;
+  }
+
+  .tip {
+    margin-top: 0.65em;
+    font-size: 0.8em;
+    color: $contentSecondary;
+  }
+
+  button {
+    width: 100%;
+    cursor: pointer;
+    margin: 0.5em 0 0 0;
+    padding: 0.6em 3em;
+    background-color: $backgroundPrimary;
+    color: $contentPrimary;
+    border: 1px solid rgba(110, 34, 225, 0);
+    border-radius: 1em;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.11);
+
+    &:hover {
+      border: 1px solid rgba(110, 34, 225, 1);
+    }
+  }
+}

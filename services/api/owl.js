@@ -135,16 +135,38 @@ export function updateUserSettings(data) {
 }
 
 // ==============================================
-// ORDERS
+// TOP-UP
 // ==============================================
 
 /**
  *
- * @param {app_id} String
- * @param {trace_id} String
- * @returns
+ * Read Goods List
+ */
+export function listGoods() {
+  return http.get('/orders/goods')
+}
+
+/**
+ *
+ * Create order
+ * @returns pay links
+ */
+export function createOrder(goods_id) {
+  let data = {
+    app: 'owl',
+    goods_id: goods_id,
+  }
+  return http.post('/orders/create', { data })
+}
+
+/**
  * 查询订单状态
  */
-export function checkOrder(data) {
+export function checkOrder({ mm_trace_id, mixpay_trace_id }) {
+  let data = {
+    app: 'owl',
+    mm_trace_id,
+    mixpay_trace_id,
+  }
   return http.post('/orders/payment', { data })
 }
