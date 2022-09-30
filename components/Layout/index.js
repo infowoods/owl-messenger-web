@@ -12,13 +12,7 @@ import { CurrentLoginContext } from '../../contexts/currentLogin'
 import { getMixinContext, reloadTheme } from '../../utils/pageUtil'
 import { toLogin } from '../../utils/loginUtil'
 
-import {
-  allCookies,
-  loadToken,
-  loadUserData,
-  loadGroupData,
-  saveGroupData,
-} from '../../utils/loginUtil'
+import { loadToken, loadUserData, loadGroupData } from '../../utils/loginUtil'
 
 import { APP_NAME, APP_TITLE } from '../../constants'
 
@@ -26,10 +20,10 @@ import styles from './index.module.scss'
 
 function Layout({ children }) {
   const { t } = useTranslation('common')
-  const { pathname, push } = useRouter()
+  const router = useRouter()
+  const [init, setInit] = useState(false)
   const [theme, setTheme] = useState('')
   const [curLogin, loginDispatch] = useContext(CurrentLoginContext)
-
   const navHref = ['/', '/discovery', '/user']
 
   // const getBarColor = (path) => {
@@ -61,16 +55,16 @@ function Layout({ children }) {
   }
 
   const handleAvatarClick = () => {
-    const link = avatarLink(pathname)
+    const link = avatarLink(router.pathname)
     if (link) {
-      push(avatarLink(pathname))
+      router.push(avatarLink(router.pathname))
     } else {
       return
     }
   }
 
   useEffect(() => {
-    // console.log('>>> layout init:', pathname)
+    console.log('>>> layout init:', router.pathname)
     const ctx = getMixinContext()
     ctx.appearance &&
       document.documentElement.setAttribute('data-theme', ctx.appearance)
@@ -80,32 +74,19 @@ function Layout({ children }) {
       ctx?.locale &&
       ctx.locale !== 'zh-CN' &&
       i18n.language !== 'en' &&
-      pathname !== '/callback/mixin'
+      router.pathname !== '/callback/mixin'
     ) {
       i18n.changeLanguage('en')
-      push(pathname, pathname, { locale: 'en' })
+      router.push(router.pathname, router.pathname, { locale: 'en' })
       return
     }
 
-    // load login data from browser cookie
-    // loginDispatch({
-    //   type: 'token',
-    //   token: loadToken(ctx?.conversation_id),
-    // })
-    // loginDispatch({
-    //   type: 'user',
-    //   user: loadUserData(ctx?.conversation_id),
-    // })
-    // loginDispatch({
-    //   type: 'group',
-    //   group: loadGroupData(ctx?.conversation_id),
-    // })
-
-    if (pathname !== '/callback/mixin') {
+    if (router.pathname !== '/callback/mixin') {
       curLogin.token = loadToken(ctx?.conversation_id)
       curLogin.user = loadUserData(ctx?.conversation_id)
       curLogin.group = loadGroupData(ctx?.conversation_id)
     }
+    setInit(true)
   }, [])
 
   return (
@@ -117,25 +98,32 @@ function Layout({ children }) {
           content="width=device-width,initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no"
         />
         <meta name="description" content={t(APP_TITLE)} />
-        {/* <meta name="theme-color" content={getBarColor(pathname)} /> */}
+        {/* <meta name="theme-color" content={getBarColor(router.pathname)} /> */}
         <link rel="icon" href="/favicon.png" />
       </Head>
 
-      {pathname === '/callback/mixin' ? (
+      {router.pathname === '/callback/mixin' ? (
         <>
           <Loading size={36} className={styles.loading} />
         </>
       ) : (
         <>
-          <TopBar url={backLink(pathname)} />
+          <TopBar url={backLink(router.pathname)} />
+
           <div className={styles.avatarWrap}>
+            <div>
+              {router.pathname === '/' && (
+                <a href="https://mixin.owldeliver.one/">🚪 Old Version</a>
+              )}
+            </div>
+
             <div>
               {curLogin?.user ? (
                 <div className={styles.avatar}>
                   <Avatar
                     isGroup={curLogin?.group?.is_group}
                     imgSrc={curLogin?.user?.avatar}
-                    onClick={handleAvatarClick}
+                    onClick={() => handleAvatarClick()}
                   />
                 </div>
               ) : (
@@ -155,8 +143,7 @@ function Layout({ children }) {
       )}
 
       {children}
-
-      {navHref.includes(pathname) && <BottomNav t={t} />}
+      {navHref.includes(router.pathname) && <BottomNav t={t} />}
     </div>
   )
 }

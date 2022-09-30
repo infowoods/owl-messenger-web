@@ -1,5 +1,4 @@
 import { copyText } from '../../../utils/copyUtil'
-import Icon from '../../../widgets/Icon'
 import styles from './index.module.scss'
 
 function toCopyText(event, toast, t) {

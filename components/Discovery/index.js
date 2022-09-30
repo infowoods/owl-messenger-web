@@ -1,5 +1,5 @@
 import useSWR from 'swr'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { useTranslation } from 'next-i18next'
 import dynamic from 'next/dynamic'
 import toast from 'react-hot-toast'
@@ -8,25 +8,15 @@ const OwlToast = dynamic(() => import('../../widgets/OwlToast'))
 import Input from '../../widgets/Input'
 import Icon from '../../widgets/Icon'
 import Loading from '../../widgets/Loading'
-
 import {
   searchSource,
   getCollection,
   subscribeChannel,
 } from '../../services/api/owl'
-
+import { logout, toLogin } from '../../utils/loginUtil'
 import { copyText } from '../../utils/copyUtil'
-
+import { CurrentLoginContext } from '../../contexts/currentLogin'
 import styles from './index.module.scss'
-
-function useHotCollection() {
-  const { data, error } = useSWR('hot', getCollection)
-  return {
-    data: data,
-    isLoading: !error && !data,
-    isError: error,
-  }
-}
 
 function toSubscribeChannel(event, t, channel_id) {
   event.target.innerHTML = t('subscribing')
@@ -125,13 +115,41 @@ const Card = ({ t, item }) => {
 
 function Discovery() {
   const { t } = useTranslation('common')
+  const [curLogin, _] = useContext(CurrentLoginContext)
+
   const [searchType, setSearchType] = useState('channel')
   const [searchVal, setSearchVal] = useState('')
   const [searchRes, setSearchRes] = useState([])
-
   const [searchLoading, setSearchLoading] = useState(false)
   const [empty, setEmpty] = useState(false)
   const sourceTypeList = ['channel', 'weibo', 'twitter']
+
+  function handelOwlApiError(error) {
+    if (error.action === 'logout') {
+      toast.loading(t('login_first'))
+      logout()
+      curLogin.token = null
+      curLogin.user = null
+      curLogin.group = null
+
+      toLogin()
+    } else {
+      toast.error(`${error.code} ${error.message}`)
+    }
+  }
+
+  function useHotCollection() {
+    const { data, error } = useSWR('hot', getCollection)
+    if (error) {
+      handelOwlApiError(error)
+    }
+    return {
+      data: data,
+      isLoading: !error && !data,
+      isError: error,
+    }
+  }
+
   const hotCollection = useHotCollection()
 
   const placeholder = (type) => {

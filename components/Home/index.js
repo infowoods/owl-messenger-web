@@ -7,6 +7,7 @@ const OwlToast = dynamic(() => import('../../widgets/OwlToast'))
 const Overlay = dynamic(() => import('../../widgets/Overlay'))
 import { CurrentLoginContext } from '../../contexts/currentLogin'
 
+import { APP_NAME } from '../../constants'
 import Icon from '../../widgets/Icon'
 import Tooltip from '../../widgets/Tooltip'
 import Input from '../../widgets/Input'
@@ -44,37 +45,32 @@ function toSubscribeChannel(event, t, channel_id) {
 
 function Home() {
   const { t } = useTranslation('common')
-  const { push } = useRouter()
+  const router = useRouter()
+
   const [curLogin, loginDispatch] = useContext(CurrentLoginContext)
-
   const [source_uri, setSourceUri] = useState('')
-  const [show, setShow] = useState(false)
   const [check, setCheck] = useState(false)
-
   const [parsingResult, setParsingResult] = useState({})
   const [parsingError, setParsingError] = useState('')
   const [uriError, setUriError] = useState(false)
-
   const [parsing, setParsing] = useState(false)
-  // const [orderId, setOrderId] = useState('')
-  // const [intervalId, setIntervalId] = useState(null)
   const inputPrefix = <Icon type="search" className={styles.searchIcon} />
 
   useEffect(() => {
     const ctx = getMixinContext()
+
     if (ctx) {
       if (ctx.conversation_id) {
         checkGroup({
           app: APP_NAME,
           conversation_id: ctx.conversation_id,
         }).then((data) => {
-          saveGroupData(res.conversation_id, data)
+          saveGroupData(ctx.conversation_id, data)
           curLogin.group = data
           // loginDispatch({
           //   type: 'group',
           //   group: data,
           // })
-          // storageUtil.set(`group_info_${res.conversation_id}`, data) // groupInfo persistence
         })
       }
     }
@@ -156,6 +152,8 @@ function Home() {
       handleParse(source_uri)
     }
   }
+
+  process.env.owl_is_init = true
 
   return (
     <div className={styles.main}>
@@ -321,7 +319,7 @@ function Home() {
           <div
             className={styles.hot}
             onClick={() => {
-              if (curLogin.token) push('/discovery')
+              if (curLogin.token) router.push('/discovery')
               else {
                 toast(t('login_first'), { icon: '💁' })
                 return
