@@ -309,17 +309,18 @@ function Home() {
       {!parsingResult?.id && !parsing && (
         <>
           {/* intro to discovery */}
-          <div
-            className={styles.intro_to_discovery}
-            onClick={() => {
-              if (curLogin.token) router.push('/discovery')
-              else {
-                toast(t('login_first'), { icon: '💁' })
-                return
-              }
-            }}
-          >
-            <a>{t('intro_to_discovery')} &#8594;</a>
+          <div className={styles.intro_to_discovery}>
+            <a
+              onClick={() => {
+                if (curLogin.token) router.push('/discovery')
+                else {
+                  toast(t('login_first'), { icon: '💁' })
+                  return
+                }
+              }}
+            >
+              {t('intro_to_discovery')} &#8594;
+            </a>
           </div>
 
           <UriSampleSheet toast={toast} t={t} />

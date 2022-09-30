@@ -133,6 +133,7 @@ function TopUpSheet(props) {
 
   return (
     <div className={`${styles.overlay}`} onClick={() => onClose()}>
+      <div className={styles.mask}></div>
       <div
         className={styles.sheet}
         onClick={(e) => {

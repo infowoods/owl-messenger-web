@@ -1,5 +1,5 @@
 .search {
-  margin: 1.5em 0 1em 0;
+  margin: 3em 0 2em 0;
   display: flex;
 }
 
@@ -192,14 +192,18 @@
 
 .intro_to_discovery {
   font-style: italic;
-  font-weight: bold;
+
   color: $contentNotice;
   margin: 12px auto 0 auto;
   padding: 0 16px;
   // max-width: 520px;
   > a {
     cursor: pointer;
+    &:hover,
     &:active {
+      font-weight: bold;
+    }
+    &:visited {
       opacity: 0.7;
     }
   }
