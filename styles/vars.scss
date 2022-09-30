@@ -89,6 +89,7 @@ $borderNotice: var(--borderNotice);
 $borderNegative: var(--borderNegative);
 $borderPositive: var(--borderPositive);
 $backgroundCard: var(--c-bg-card);
+$backgroundWallet: var(--c-bg-wallet);
 
 :export {
   name: 'scss';
@@ -143,4 +144,5 @@ $backgroundCard: var(--c-bg-card);
   borderNegative: $borderNegative;
   borderPositive: $borderPositive;
   backgroundCard: $backgroundCard;
+  backgroundWallet: $backgroundWallet;
 }

@@ -28,7 +28,14 @@
 
 .avatarWrap {
   display: flex;
-  justify-content: flex-end;
+  // justify-content: flex-end;
+  justify-content: space-between;
+
+  .oldVer {
+    a {
+      color: $contentPrimary;
+    }
+  }
 }
 
 .avatar {
@@ -85,16 +92,4 @@
 .tempSlot {
   min-height: calc(100vh - 110px);
   background: $backgroundPrimary;
-}
-
-.oldVer {
-  float: left;
-  a {
-    &:hover {
-      color: blue;
-    }
-    &::after {
-      content: '|';
-    }
-  }
 }

@@ -15,7 +15,9 @@ body {
     display: none;
   }
 
-  font-size: 1em; //14px set in :root
+  background: $backgroundPrimary;
+
+  font-size: 1em; //px set in :root
 }
 
 a {

@@ -20,13 +20,12 @@
 
 .label {
   color: $contentSecondary;
-  font-size: 12px;
-  line-height: 18px;
+  line-height: 1.5em;
 }
 
 .row {
   display: flex;
-  height: 24px;
+  height: 1.5em;
   align-items: center;
 
   input {
@@ -34,8 +33,7 @@
     color: $contentPrimary;
     background: $backgroundPrimary;
     border: 0;
-    font-size: 16px;
-    line-height: 24px;
+    // line-height: 24px;
     padding: 0;
     &:focus {
       border: 0;
@@ -57,7 +55,6 @@
 }
 
 .clear {
-  font-size: 24px;
   cursor: pointer;
   color: $contentSecondary;
 }

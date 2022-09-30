@@ -17,12 +17,7 @@ import UriSampleSheet from './UriSampleSheet'
 import { logout, saveGroupData } from '../../utils/loginUtil'
 import { getMixinContext } from '../../utils/pageUtil'
 
-import {
-  parseFeed,
-  subscribeChannel,
-  checkOrder,
-  checkGroup,
-} from '../../services/api/owl'
+import { parseFeed, subscribeChannel, checkGroup } from '../../services/api/owl'
 
 import styles from './index.module.scss'
 
@@ -152,8 +147,6 @@ function Home() {
       handleParse(source_uri)
     }
   }
-
-  process.env.owl_is_init = true
 
   return (
     <div className={styles.main}>
@@ -312,12 +305,12 @@ function Home() {
         )
       )}
 
-      {/* 信息源地址案例（无解析结果时） */}
+      {/* 未解析地址时 */}
       {!parsingResult?.id && !parsing && (
         <>
           {/* intro to discovery */}
           <div
-            className={styles.hot}
+            className={styles.intro_to_discovery}
             onClick={() => {
               if (curLogin.token) router.push('/discovery')
               else {

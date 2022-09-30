@@ -115,6 +115,6 @@
   "weibo_url": "微博用户地址",
   "mirrorxyz_url": "Mirror.xyz 地址",
   "invalid_uri": "URI 看起来不正确。",
-  "old_version_entrance": "旧版入口",
+  "old_ver_door": "旧版入口",
   "parsing_error_uri": "URI 解析失败"
 }

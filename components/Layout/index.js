@@ -22,19 +22,10 @@ function Layout({ children }) {
   const { t } = useTranslation('common')
   const router = useRouter()
   const [init, setInit] = useState(false)
-  const [theme, setTheme] = useState('')
+  const [theme, setTheme] = useState('light')
+  const [barColor, setBarColor] = useState('999999')
   const [curLogin, loginDispatch] = useContext(CurrentLoginContext)
   const navHref = ['/', '/discovery', '/user']
-
-  // const getBarColor = (path) => {
-  //   reloadTheme()
-  //   if (theme === 'dark') {
-  //     // return path === '/' ? '#080808' : '#1E1E1E'
-  //     return '#080808'
-  //   }
-  //   // return path === '/' ? '#FFFFFF' : '#F4F6F7'
-  //   return '#FFFFFF'
-  // }
 
   const backLink = (path) => {
     switch (path) {
@@ -64,11 +55,32 @@ function Layout({ children }) {
   }
 
   useEffect(() => {
-    console.log('>>> layout init:', router.pathname)
     const ctx = getMixinContext()
-    ctx.appearance &&
-      document.documentElement.setAttribute('data-theme', ctx.appearance)
-    setTheme(ctx.appearance || 'light')
+
+    const updateTheme = () => {
+      reloadTheme()
+      if (
+        window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+      ) {
+        setTheme('dark')
+        setBarColor('#080808')
+      } else {
+        setTheme('light')
+        setBarColor('#FFFFFF')
+      }
+    }
+    updateTheme()
+    // To watch for theme changes:
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', (event) => {
+        updateTheme()
+        // setTheme(event.matches ? 'dark' : 'light')
+      })
+
+    // ctx.appearance &&
+    //   document.documentElement.setAttribute('data-theme', ctx.appearance)
 
     if (
       ctx?.locale &&
@@ -98,7 +110,7 @@ function Layout({ children }) {
           content="width=device-width,initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no"
         />
         <meta name="description" content={t(APP_TITLE)} />
-        {/* <meta name="theme-color" content={getBarColor(router.pathname)} /> */}
+        <meta name="theme-color" content={barColor} />
         <link rel="icon" href="/favicon.png" />
       </Head>
 
@@ -111,9 +123,13 @@ function Layout({ children }) {
           <TopBar url={backLink(router.pathname)} />
 
           <div className={styles.avatarWrap}>
-            <div>
+            <div className={styles.oldVer}>
               {router.pathname === '/' && (
-                <a href="https://mixin.owldeliver.one/">🚪 Old Version</a>
+                <>
+                  <a href="https://mixin.owldeliver.one/">
+                    🚪{t('old_ver_door')}
+                  </a>
+                </>
               )}
             </div>
 

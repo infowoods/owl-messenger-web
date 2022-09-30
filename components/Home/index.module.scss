@@ -5,7 +5,7 @@
 
 .searchIcon {
   color: $borderSelected;
-  font-size: 18px;
+  font-size: 1.5em;
   margin-right: 12px;
 }
 
@@ -13,9 +13,9 @@
   margin: 0 auto;
   flex: 1;
 
-  input {
-    font-size: 0.85em;
-  }
+  // input {
+  //   font-size: 1em;
+  // }
 }
 
 .options {
@@ -29,7 +29,7 @@
   }
   > span {
     margin-right: 12px;
-    font-size: 16px;
+
     color: $contentPrimary;
   }
   div {
@@ -39,18 +39,17 @@
     border-radius: 8px;
     line-height: 33px;
     cursor: pointer;
-    font-size: 14px;
+
     color: $accent;
     .curIcon {
       vertical-align: middle;
       margin-right: 8px;
       margin-left: 4px;
       line-height: 33px;
-      font-size: 16px;
     }
     .triangle {
       vertical-align: middle;
-      font-size: 12px;
+
       margin-left: 18px;
       transform: rotate(180deg);
       color: $contentSecondary;
@@ -80,7 +79,6 @@
     margin-right: 18px;
   }
   .loadingHint {
-    font-size: 14px;
     color: $contentSecondary;
   }
 }
@@ -108,7 +106,7 @@
 
         &:nth-child(2) {
           font-weight: normal;
-          font-size: 14px;
+
           line-height: 18px;
           border-left: 2px solid $borderSelected;
           padding: 6px 8px;
@@ -127,7 +125,7 @@
     margin-left: 14px;
     border-radius: 8px;
     color: $backgroundPrimary;
-    font-size: 14px;
+
     cursor: pointer;
     white-space: nowrap;
     &:hover {
@@ -157,12 +155,10 @@
   align-items: center;
   > i {
     color: $notice;
-    font-size: 21px;
     margin-right: 8px;
   }
   > p {
     color: $contentPrimary;
-    font-size: 14px;
   }
 }
 
@@ -176,14 +172,12 @@
     // display: flex;
     // align-items: center;
     color: $contentPrimary;
-    font-size: 14px;
   }
 
   > .how_to_charge {
     color: $contentSecondary;
     margin-top: 6px;
     margin-bottom: 6px;
-    font-size: 12px;
 
     p {
       margin: 0.25em 0;
@@ -192,14 +186,13 @@
 }
 
 .help {
-  font-size: 12px;
   color: $contentSecondary;
   white-space: nowrap;
 }
 
-.hot {
-  font-size: 14px;
+.intro_to_discovery {
   font-style: italic;
+  font-weight: bold;
   color: $contentNotice;
   margin: 12px auto 0 auto;
   padding: 0 16px;
@@ -221,7 +214,6 @@
 }
 
 .tip_err {
-  font-size: 14px;
   font-style: italic;
   color: $contentNegative;
   margin: 12px auto 0 auto;
