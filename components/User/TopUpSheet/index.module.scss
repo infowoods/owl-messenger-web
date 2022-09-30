@@ -42,13 +42,17 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1em;
+      padding: 0.5em;
       // margin-bottom: 1em;
 
       div {
         flex: 1;
         color: $contentPrimary;
         &:first-child span {
+          // left upper button
+          // background-color: rgba(100, 100, 255, 0.1);
+          border: 1px dotted rgba(100, 100, 255, 0.2);
+          border-radius: 4px;
           cursor: pointer;
           font-weight: bold;
           // margin-left: 1em;
@@ -59,8 +63,12 @@
           color: $contentSecondary;
         }
         &:last-child {
+          // right upper button
           text-align: right;
           span {
+            // background-color: rgba(100, 100, 255, 0.1);
+            border: 1px dotted rgba(100, 100, 255, 0.2);
+            border-radius: 4px;
             color: $accent;
             cursor: pointer;
             font-weight: bold;

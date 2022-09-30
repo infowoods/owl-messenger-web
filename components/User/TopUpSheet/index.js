@@ -44,6 +44,7 @@ function TopUpSheet(props) {
   const [orderStatus, setOrderStatus] = useState(null)
   const [paymentMethod, setPaymentMethod] = useState(null)
   const [qrCodeValue, setQrCodeValue] = useState(null)
+  const [paymentURI, setPaymentURI] = useState(null)
   const goodsList = useGoodsList(handelOwlApiError)
   const goodsOptions = []
   if (goodsList.data) {
@@ -123,6 +124,8 @@ function TopUpSheet(props) {
       stepName === STEP_NAMES.PAY_BY_MIXIN
     ) {
       return t('pay_by_mixin')
+    } else if (stepName === STEP_NAMES.PAY_BY_MIXPAY) {
+      return t('pay_by_mixpay')
     } else if (stepName === STEP_NAMES.CHECKING_ORDER) {
       return t('checking_order')
     }
@@ -145,7 +148,8 @@ function TopUpSheet(props) {
 
           {/* right blank/confirm button */}
           {stepName === STEP_NAMES.PAY_BY_MIXIN_QRCODE ||
-          stepName === STEP_NAMES.PAY_BY_MIXIN ? (
+          stepName === STEP_NAMES.PAY_BY_MIXIN ||
+          stepName === STEP_NAMES.PAY_BY_MIXPAY ? (
             <div>
               <span
                 onClick={() => {
@@ -192,7 +196,8 @@ function TopUpSheet(props) {
                     },
                     {
                       label: t('pay_by_mixpay'),
-                      value: `${d.payment_links.mixpay}&returnTo=https://${window.location.host}/order/check?mixpay_trace_id=${d.trace_id}`,
+                      value: `${d.payment_links.mixpay}`,
+                      // &returnTo=https://${window.location.host}/order/check?mixpay_trace_id=${d.trace_id}
                       image: '/mixpay-logo.png',
                     },
                   ]
@@ -212,20 +217,24 @@ function TopUpSheet(props) {
           <Loading size={40} className={styles.loading} />
         )}
         {stepName === STEP_NAMES.SELECT_PAYMENTS && payLinks && (
-          // 在 MM 中将直接弹出支付对话框，不会进行到这里。
+          // 在 MM 中将直接弹出MM支付对话框，不会进行到这里。
           // 普通浏览器中访问，才会到此步骤，选择多种支付方式，
-          // 而目前 MixPay 支付将会直接跳转到 mixpay.me 网页，
-          // 只剩下 Pay by Mixin QRCode 会到这里
           <BottomSelection
             options={payLinks}
             onSelect={async (val) => {
-              setStepName(STEP_NAMES.PAY_BY_MIXIN_QRCODE)
-              setQrCodeValue(val)
+              if (val.startsWith('mixin://')) {
+                setStepName(STEP_NAMES.PAY_BY_MIXIN_QRCODE)
+                setQrCodeValue(val)
+              } else {
+                // .startsWith("https://mixpay.me/")
+                setStepName(STEP_NAMES.PAY_BY_MIXPAY)
+                setPaymentURI(val)
+                window.open(val, '_blank')
+              }
             }}
           ></BottomSelection>
         )}
 
-        {/* mixin payment qrcode */}
         {stepName === STEP_NAMES.PAY_BY_MIXIN_QRCODE && qrCodeValue && (
           <div className={styles.qrcode}>
             <QRCode
@@ -239,6 +248,13 @@ function TopUpSheet(props) {
             />
             <div className={styles.tip}>{t('mixin_payment_tip_qrcode')}</div>
           </div>
+        )}
+
+        {stepName === STEP_NAMES.PAY_BY_MIXIN && (
+          <div className={styles.notice}>{t('tip_of_pay_by_mixin')}</div>
+        )}
+        {stepName === STEP_NAMES.PAY_BY_MIXPAY && (
+          <div className={styles.notice}>{t('tip_of_pay_by_mixpay')}</div>
         )}
 
         {stepName === STEP_NAMES.CHECKING_ORDER && (
