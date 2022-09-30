@@ -113,39 +113,49 @@ function Layout({ children }) {
           <link rel="icon" href="/favicon.png" />
         </Head>
 
-        <TopBar url={backLink(router.pathname)} />
+        {router.pathname === '/callback/mixin' ? (
+          <>
+            <Loading size={36} className={styles.loading} />
+          </>
+        ) : (
+          <>
+            <TopBar url={backLink(router.pathname)} />
 
-        <div className={styles.avatarWrap}>
-          <div className={styles.oldVer}>
-            {router.pathname === '/' && (
-              <>
-                <a href="https://mixin.owldeliver.one/">
-                  🚪{t('old_ver_door')}
-                </a>
-              </>
-            )}
-          </div>
-
-          <div>
-            {curLogin?.user ? (
-              <div className={styles.avatar}>
-                <Avatar
-                  isGroup={curLogin?.group?.is_group}
-                  imgSrc={curLogin?.user?.avatar}
-                  onClick={() => handleAvatarClick()}
-                />
+            <div className={styles.avatarWrap}>
+              <div className={styles.oldVer}>
+                {router.pathname === '/' && (
+                  <>
+                    <a href="https://mixin.owldeliver.one/">
+                      🚪{t('old_ver_door')}
+                    </a>
+                  </>
+                )}
               </div>
-            ) : (
-              <>
-                <div className={styles.login} onClick={() => toLogin()}>
-                  <span>
-                    {curLogin?.group?.is_group ? t('owner_login') : t('login')}
-                  </span>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
+
+              <div>
+                {curLogin?.user ? (
+                  <div className={styles.avatar}>
+                    <Avatar
+                      isGroup={curLogin?.group?.is_group}
+                      imgSrc={curLogin?.user?.avatar}
+                      onClick={() => handleAvatarClick()}
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <div className={styles.login} onClick={() => toLogin()}>
+                      <span>
+                        {curLogin?.group?.is_group
+                          ? t('owner_login')
+                          : t('login')}
+                      </span>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </>
+        )}
 
         {children}
         {navHref.includes(router.pathname) && <BottomNav t={t} />}
