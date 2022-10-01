@@ -9,7 +9,6 @@
 /coverage
 
 # next.js
-package-lock.json
 /.next/
 /out/
 
