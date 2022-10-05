@@ -3,30 +3,6 @@
   opacity: 0.8;
 }
 
-.btnLoading {
-  padding: 1px 18px;
-  div {
-    border-width: 2px;
-  }
-}
-
-.empty {
-  text-align: center;
-  padding: 0 12px;
-  padding-bottom: 18px;
-  margin-top: 48px;
-  > i {
-    font-size: 68px;
-    text-align: center;
-    color: $contentSecondary;
-    padding-left: 6px; // more visual center
-  }
-  > p {
-    font-size: 16px;
-    color: $contentPrimary;
-  }
-}
-
 .sectionTitle {
   color: $contentPrimary;
   font-weight: bold;

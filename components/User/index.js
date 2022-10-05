@@ -43,7 +43,6 @@ function User() {
 
   return (
     <div className={styles.main}>
-      <p className={styles.sectionTitle}># {t('my_balances')}</p>
       <Wallets
         t={t}
         toast={toast}

@@ -1,5 +1,5 @@
 import useSWR from 'swr'
-
+import { TbWallet } from 'react-icons/tb'
 import Loading from '../../../widgets/Loading'
 
 import styles from './index.module.scss'
@@ -13,14 +13,15 @@ function Wallets(props) {
 
       {myWallets.data && (
         <>
+          <div className={styles.title}>{t('balances')}</div>
           <div className={styles.wallet}>
             <div>
-              <span className={styles.nut_icon}>👛</span>
+              {/* <span className={styles.nut_icon}>👛</span> */}
               <span className={styles.val}>{myWallets.data.wallets.NUT}</span>
-              {'NUT'}
-              {' + '}
+              {' NUT'}
+              {' , '}
               <span className={styles.val}>{myWallets.data.wallets.gNUT}</span>
-              {'gNUT'}
+              {' gNUT'}
             </div>
 
             <div className={styles.tip}>
@@ -33,14 +34,19 @@ function Wallets(props) {
               {t('top-up-nut')}
             </button>
           </div>
+        </>
+      )}
 
+      {myWallets.data && (
+        <>
+          <div className={styles.title}>{t('revenue')}</div>
           <div className={styles.wallet}>
             <div>
-              <span className={styles.nut_icon}>🌰 {t('revenue')} </span>
+              {/* <span className={styles.nut_icon}>🌰 {t('revenue')} </span> */}
               <span className={styles.val}>
                 {myWallets.data.wallets.revenue}
               </span>
-              {'NUT '}
+              {' NUT '}
             </div>
 
             <div className={styles.tip}>
@@ -49,6 +55,10 @@ function Wallets(props) {
           </div>
         </>
       )}
+
+      <div className={styles.icon}>
+        <TbWallet size={'2.5em'} />
+      </div>
     </div>
   )
 }
