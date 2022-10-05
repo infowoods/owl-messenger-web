@@ -28,25 +28,14 @@
 
 .avatarWrap {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin: 1em 0;
-
-  .oldVer {
-    margin-top: auto;
-    a {
-      margin-bottom: auto;
-      color: $contentPrimary;
-      &:hover {
-        color: $accent;
-      }
-    }
-  }
 }
 
 .avatar {
   cursor: pointer;
-  // display: flex;
-  // justify-content: flex-end;
+  display: flex;
+  justify-content: flex-end;
   img {
     min-width: 38px;
     min-height: 38px;

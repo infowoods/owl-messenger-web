@@ -70,6 +70,7 @@
   "history": "History",
   "settings": "Settings",
   "time": "Time",
+  "expiry_time": "Expiry time",
   "current_utc": "Current is UTC",
   "change": "Change",
   "owner_login": "Owner's auth is required",

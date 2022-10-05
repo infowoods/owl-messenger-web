@@ -1,13 +1,11 @@
 import useSWR from 'swr'
 import { useState, useEffect, useContext } from 'react'
 import { useTranslation } from 'next-i18next'
-import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import toast from 'react-hot-toast'
 
 import { handelOwlApiError } from '../../utils/apiUtils'
-import { getSubscriptions, unsubscribeChannel } from '../../services/api/owl'
-import { copyText } from '../../utils/copyUtil'
+import { oldVer_GetFollows, oldVer_Unfollow } from '../../services/api/owl'
 
 import Icon from '../../widgets/Icon'
 import Collapse from '../../widgets/Collapse'
@@ -21,8 +19,8 @@ function Subscriptions() {
   const { t } = useTranslation('common')
   const [curLogin, _] = useContext(CurrentLoginContext)
 
-  function useMySubscriptions() {
-    const { data, error } = useSWR('subscriptions?enabled', getSubscriptions)
+  function useOldVerFollows() {
+    const { data, error } = useSWR('old-ver-get-follows', oldVer_GetFollows)
     if (error) {
       if (error) {
         handelOwlApiError(error, t, curLogin)
@@ -35,15 +33,15 @@ function Subscriptions() {
     }
   }
 
-  function toUnsubscribeChannel(event, t, channel_id) {
+  function toUnfollow(event, t, topic_id) {
     // event.target.innerHTML = t('unsubscribing')
     event.target.innerHTML = t('unsubscribing')
 
     event.target.disabled = true
 
-    const card = document.querySelector(`div[data_id='${channel_id}']`)
+    const card = document.querySelector(`div[data_id='${topic_id}']`)
 
-    unsubscribeChannel(channel_id)
+    oldVer_Unfollow(topic_id)
       .then(() => {
         toast.success(t('unsubscribe_success'))
         card.style.display = 'none'
@@ -57,61 +55,55 @@ function Subscriptions() {
       })
   }
 
-  const mySubscriptions = useMySubscriptions()
+  const myFollows = useOldVerFollows()
 
   return (
     <div className={styles.main}>
-      <p className={styles.sectionTitle}># {t('my-subscriptions')}</p>
-      {mySubscriptions.isLoading && (
-        <Loading size={40} className={styles.loading} />
-      )}
-      {mySubscriptions.data && (
+      <p className={styles.sectionTitle}># {t('old-ver-subs')}</p>
+      {myFollows.isLoading && <Loading size={40} className={styles.loading} />}
+      {myFollows.data && (
         <>
-          {mySubscriptions.data?.subscriptions?.length === 0 && (
+          {myFollows?.data?.follows?.length === 0 && (
             <div className={styles.empty}>
               <Icon type="ufo" />
               <p>{t('no_records')}</p>
             </div>
           )}
-          {mySubscriptions?.data?.subscriptions?.length > 0 &&
-            mySubscriptions.data.subscriptions.map((item, index) => {
+          {myFollows?.data?.follows?.length > 0 &&
+            myFollows.data.follows.map((item, index) => {
               return (
                 <Collapse
                   className={styles.channelCard}
-                  title={item.channel.title}
-                  key={item.channel.id}
-                  data_id={item.channel.id}
+                  title={item.title}
+                  key={item.tid}
+                  data_id={item.tid}
                 >
                   <>
-                    {item.channel.description && (
+                    {item.description && (
                       <p className={styles.channelDesc}>
                         <span>
                           {t('desc')}
                           {t('colon')}
                         </span>
-                        {item.channel.description}
+                        {item.description}
                       </p>
                     )}
-                    <div className={styles.copy}>
-                      <p>
-                        <span>
-                          {t('channel_uri')}
-                          {t('colon')}
-                        </span>
-                        <span
-                          onClick={() => copyText(item.channel.uri, toast, t)}
-                        >
-                          {item.channel.uri} <Icon type="copy" />
-                        </span>
-                      </p>
-                    </div>
+
+                    <p className={styles.expiry_time}>
+                      <span>
+                        {t('expiry_time')}
+                        {t('colon')}
+                      </span>
+                      {item.expiry_time}
+                    </p>
+
                     <div
                       className={`${styles.detail} ${styles.increaseMargin}`}
                     >
                       <button
                         className={styles.button}
                         onClick={(event) => {
-                          toUnsubscribeChannel(event, t, item.channel.id, index)
+                          toUnfollow(event, t, item.tid, index)
                         }}
                       >
                         {t('unsubscribe')}

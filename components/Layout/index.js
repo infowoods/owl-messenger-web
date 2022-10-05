@@ -123,16 +123,6 @@ function Layout({ children }) {
             <TopBar url={backLink(router.pathname)} />
 
             <div className={styles.avatarWrap}>
-              <div className={styles.oldVer}>
-                {router.pathname === '/' && (
-                  <>
-                    <a href="https://mixin.owldeliver.one/">
-                      🚪{t('old_ver_door')}
-                    </a>
-                  </>
-                )}
-              </div>
-
               <div>
                 {curLogin?.user ? (
                   <div className={styles.avatar}>

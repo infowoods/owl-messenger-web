@@ -58,6 +58,26 @@ export function unsubscribeChannel(channel_id) {
   return http.delete('subscriptions', { data })
 }
 
+/** （旧版）订阅列表
+ */
+export function oldVer_GetFollows() {
+  const data = {
+    action: 'list_follows',
+  }
+  return http.post('v1', { data })
+}
+
+/** （旧版）退订
+ * @param {topic_id} String
+ */
+export function oldVer_Unfollow(topic_id) {
+  const data = {
+    action: 'unfollow',
+    topic_id: topic_id,
+  }
+  return http.post('v1', { data })
+}
+
 // ==============================================
 // CHANNELS & COLLECTIONS
 // ==============================================
