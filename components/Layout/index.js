@@ -28,7 +28,8 @@ function Layout({ children }) {
 
   const backLink = (path) => {
     switch (path) {
-      case '/user/settings':
+      case '/user/subscriptions':
+      case '/user/old-ver-subs':
         return '/user'
       default:
         break

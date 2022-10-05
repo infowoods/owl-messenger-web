@@ -8,7 +8,6 @@ function BottomSelection(props) {
     options, //=[{label,value,image},...]
     onSelect,
   } = props
-  console.log('options :>> ', options)
 
   return (
     <div className={styles.options}>
