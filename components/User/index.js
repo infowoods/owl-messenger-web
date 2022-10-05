@@ -16,6 +16,7 @@ const TopUpSheet = dynamic(() => import('./TopUpSheet'))
 const Wallets = dynamic(() => import('./Wallets'))
 
 import styles from './index.module.scss'
+import { logout } from '../../utils/loginUtil'
 
 function User() {
   const { t } = useTranslation('common')
@@ -26,7 +27,7 @@ function User() {
   function useMyWallets() {
     const { data, error, mutate } = useSWR('me?wallets', getUserWallets)
     if (error) {
-      handelOwlApiError(error, curLogin)
+      handelOwlApiError(error, t, curLogin)
     }
     return {
       data: data,
@@ -47,7 +48,6 @@ function User() {
         t={t}
         toast={toast}
         myWallets={myWallets}
-        handelOwlApiError={handelOwlApiError}
         setInProcessOfTopUp={setInProcessOfTopUp}
       ></Wallets>
 
@@ -63,13 +63,26 @@ function User() {
         path={'/user/old-ver-subs'}
       ></SubPageCard>
 
+      <div className={styles.logout}>
+        <span
+          onClick={() => {
+            logout()
+            window.location.href = '/'
+          }}
+        >
+          {t('logout')}
+        </span>
+      </div>
+
       {/* 充值组件 */}
       {inProcessOfTopUp && (
         <TopUpSheet
           t={t}
           toast={toast}
           myWallets={myWallets}
-          handelOwlApiError={handelOwlApiError}
+          handelOwlApiErrorP={(error) => {
+            handelOwlApiError(error, t, curLogin)
+          }}
           setInProcessOfTopUp={setInProcessOfTopUp}
         />
       )}
