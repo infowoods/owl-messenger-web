@@ -244,9 +244,7 @@ function Discovery() {
 
           <div className={styles.searchIcon}>
             {searchLoading ? (
-              <div className={styles.loadingWrap}>
-                <Loading size={18} className={styles.searchLoading} />
-              </div>
+              <Loading size={14} className={styles.searchLoading} />
             ) : (
               <Icon type="search" onClick={async () => handleSearch()} />
             )}

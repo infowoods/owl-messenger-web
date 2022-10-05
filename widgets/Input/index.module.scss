@@ -24,12 +24,16 @@
 }
 
 .row {
+  flex: 1 1 auto; /* dynamic width */
+  justify-content: center;
+  align-items: center;
+
   display: flex;
-  height: 1.5em;
+  justify-content: center;
   align-items: center;
 
   input {
-    flex: 1;
+    flex: 1 1 auto; /* dynamic width */
     color: $contentPrimary;
     background: $backgroundPrimary;
     border: 0;
@@ -51,6 +55,10 @@
     &::placeholder {
       color: $contentSecondary;
     }
+  }
+
+  i {
+    font-size: 1.25em;
   }
 }
 
