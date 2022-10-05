@@ -5,7 +5,7 @@ import Loading from '../../../widgets/Loading'
 import styles from './index.module.scss'
 
 function Wallets(props) {
-  const { t, toast, myWallets, handelOwlApiError, setInProcessOfTopUp } = props
+  const { t, toast, myWallets, setInProcessOfTopUp } = props
 
   return (
     <div className={styles.walletsWrap}>

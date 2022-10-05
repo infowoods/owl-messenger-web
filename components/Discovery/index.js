@@ -4,7 +4,6 @@ import { useTranslation } from 'next-i18next'
 import dynamic from 'next/dynamic'
 import toast from 'react-hot-toast'
 const OwlToast = dynamic(() => import('../../widgets/OwlToast'))
-
 import Input from '../../widgets/Input'
 import Icon from '../../widgets/Icon'
 import Loading from '../../widgets/Loading'
@@ -13,7 +12,7 @@ import {
   getCollection,
   subscribeChannel,
 } from '../../services/api/owl'
-import { logout, toLogin } from '../../utils/loginUtil'
+import { handelOwlApiError } from '../../utils/apiUtils'
 import { copyText } from '../../utils/copyUtil'
 import { CurrentLoginContext } from '../../contexts/currentLogin'
 import styles from './index.module.scss'
@@ -124,24 +123,10 @@ function Discovery() {
   const [empty, setEmpty] = useState(false)
   const sourceTypeList = ['channel', 'weibo', 'twitter']
 
-  function handelOwlApiError(error) {
-    if (error.action === 'logout') {
-      toast.loading(t('login_first'))
-      logout()
-      curLogin.token = null
-      curLogin.user = null
-      curLogin.group = null
-
-      toLogin()
-    } else {
-      toast.error(`${error.code} ${error.message}`)
-    }
-  }
-
   function useHotCollection() {
     const { data, error } = useSWR('hot', getCollection)
     if (error) {
-      handelOwlApiError(error)
+      handelOwlApiError(error, t, curLogin)
     }
     return {
       data: data,

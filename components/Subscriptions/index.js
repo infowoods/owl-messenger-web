@@ -25,7 +25,7 @@ function Subscriptions() {
     const { data, error } = useSWR('subscriptions?enabled', getSubscriptions)
     if (error) {
       if (error) {
-        handelOwlApiError(error, curLogin, toast)
+        handelOwlApiError(error, t, curLogin)
       }
     }
     return {
@@ -50,7 +50,7 @@ function Subscriptions() {
       })
       .catch((error) => {
         if (error) {
-          handelOwlApiError(error, curLogin, taost)
+          handelOwlApiError(error, t, curLogin)
         }
         event.target.disabled = false
       })

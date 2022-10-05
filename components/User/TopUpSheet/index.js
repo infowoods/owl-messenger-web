@@ -20,10 +20,10 @@ const STEP_NAMES = {
   FINISH_ALL: 'FINISH_ALL',
 }
 
-function useGoodsList(handelOwlApiError) {
+function useGoodsList(handelOwlApiErrorP) {
   const { data, error } = useSWR('goods', listGoods)
   if (error) {
-    handelOwlApiError(error)
+    handelOwlApiErrorP(error)
   }
 
   return {
@@ -34,7 +34,7 @@ function useGoodsList(handelOwlApiError) {
 }
 
 function TopUpSheet(props) {
-  const { t, toast, myWallets, handelOwlApiError, setInProcessOfTopUp } = props
+  const { t, toast, myWallets, handelOwlApiErrorP, setInProcessOfTopUp } = props
   const ctx = getMixinContext()
   const router = useRouter()
 
@@ -45,7 +45,7 @@ function TopUpSheet(props) {
   const [paymentMethod, setPaymentMethod] = useState(null)
   const [qrCodeValue, setQrCodeValue] = useState(null)
   const [paymentURI, setPaymentURI] = useState(null)
-  const goodsList = useGoodsList(handelOwlApiError)
+  const goodsList = useGoodsList(handelOwlApiErrorP)
   const goodsOptions = []
   if (goodsList.data) {
     for (var item of goodsList.data) {
@@ -100,7 +100,7 @@ function TopUpSheet(props) {
       } catch (err) {
         clearInterval(theTimer)
         setOrderStatus(err.message)
-        handelOwlApiError(err)
+        handelOwlApiErrorP(err)
       }
     }, 3000)
     return theTimer
@@ -208,7 +208,7 @@ function TopUpSheet(props) {
                 setPayLinks(null)
                 setStepName(STEP_NAMES.SELECT_GOODS)
                 setInProcessOfTopUp(false)
-                handelOwlApiError(error)
+                handelOwlApiErrorP(error)
               }
             }}
           ></BottomSelection>
