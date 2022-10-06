@@ -1,4 +1,4 @@
-import Icon from '../Icon'
+import { RiArrowDropRightLine } from 'react-icons/ri'
 import styles from './index.module.scss'
 import { useRouter } from 'next/router'
 
@@ -24,7 +24,7 @@ function SubPageCard(props) {
           {children && <div className={styles.children}>{children}</div>}
         </div>
         <div className={styles.right}>
-          <Icon type="arrow-right" className={`${styles.arrow}`} />
+          <RiArrowDropRightLine className={`${styles.arrow}`} />
         </div>
       </div>
     </>

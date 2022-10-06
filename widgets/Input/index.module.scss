@@ -54,15 +54,12 @@
       color: $contentSecondary;
     }
   }
-
-  i {
-    font-size: 1.25em;
-  }
 }
 
 .clear {
   cursor: pointer;
   color: $contentSecondary;
+  font-size: 1.5em;
 }
 
 .disabled,

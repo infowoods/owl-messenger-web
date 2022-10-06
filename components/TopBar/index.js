@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 
-import Icon from '../../widgets/Icon'
+import { RiArrowLeftLine } from 'react-icons/ri'
 
 import styles from './index.module.scss'
 
@@ -12,9 +12,8 @@ function TopBar(props) {
   return (
     <div className={styles.bar}>
       {url && (
-        <Icon
+        <RiArrowLeftLine
           className={styles.back}
-          type="arrow-right"
           onClick={() => {
             router.push(url)
           }}

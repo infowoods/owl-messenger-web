@@ -3,21 +3,21 @@ import { useTranslation } from 'next-i18next'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import toast from 'react-hot-toast'
+import { RiSearchLine, RiInformationFill, RiQuestionFill } from 'react-icons/ri'
+
+import { parseFeed, subscribeChannel, checkGroup } from '../../services/api/owl'
+
 const OwlToast = dynamic(() => import('../../widgets/OwlToast'))
 const Overlay = dynamic(() => import('../../widgets/Overlay'))
 import { CurrentLoginContext } from '../../contexts/currentLogin'
 
 import { APP_NAME } from '../../constants'
-import Icon from '../../widgets/Icon'
 import Tooltip from '../../widgets/Tooltip'
 import Input from '../../widgets/Input'
 import Loading from '../../widgets/Loading'
 import UriSampleSheet from './UriSampleSheet'
-
 import { logout, saveGroupData } from '../../utils/loginUtil'
 import { getMixinContext } from '../../utils/pageUtil'
-
-import { parseFeed, subscribeChannel, checkGroup } from '../../services/api/owl'
 
 import styles from './index.module.scss'
 
@@ -49,7 +49,7 @@ function Home() {
   const [parsingError, setParsingError] = useState('')
   const [uriError, setUriError] = useState(false)
   const [parsing, setParsing] = useState(false)
-  const inputPrefix = <Icon type="search" className={styles.searchIcon} />
+  const inputPrefix = <RiSearchLine className={styles.searchIcon} />
 
   useEffect(() => {
     const ctx = getMixinContext()
@@ -167,7 +167,7 @@ function Home() {
       {/* 实时告知 URI 格式错误 */}
       {!parsingError && uriError && source_uri && source_uri.length > 7 && (
         <div className={styles.errorInfo}>
-          <Icon type="info-fill" />
+          <RiInformationFill />
           <p>{t('invalid_uri')}</p>
         </div>
       )}
@@ -175,7 +175,7 @@ function Home() {
       {/* 解析错误 */}
       {parsingError && (
         <div className={styles.errorInfo}>
-          <Icon type="info-fill" />
+          <RiInformationFill />
           <p>
             {parsingError.indexOf(' ') >= 0 ? parsingError : t(parsingError)}
           </p>
@@ -256,7 +256,7 @@ function Home() {
                     ) / 1000}
                     {' NUT / '}
                     {t('each_info')}
-                    <Icon type="help-fill" />
+                    <RiQuestionFill />
                   </p>
                 </Tooltip>
               </div>
@@ -277,7 +277,7 @@ function Home() {
                     >
                       <span>
                         {t('channel_info_price')}
-                        <Icon type="help-fill" />
+                        <RiQuestionFill />
                       </span>
                     </Tooltip>
                   </span>
@@ -294,7 +294,7 @@ function Home() {
                     >
                       <span>
                         {t('pushing_info_price')}
-                        <Icon type="help-fill" />
+                        <RiQuestionFill />
                       </span>
                     </Tooltip>
                   </span>

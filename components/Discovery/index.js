@@ -3,9 +3,11 @@ import React, { useEffect, useState, useContext } from 'react'
 import { useTranslation } from 'next-i18next'
 import dynamic from 'next/dynamic'
 import toast from 'react-hot-toast'
+import { AiFillFire, AiOutlineLoading3Quarters } from 'react-icons/ai'
+import { RiSearch2Fill, RiSearchLine, RiFileCopyLine } from 'react-icons/ri'
+
 const OwlToast = dynamic(() => import('../../widgets/OwlToast'))
 import Input from '../../widgets/Input'
-import Icon from '../../widgets/Icon'
 import Loading from '../../widgets/Loading'
 import {
   searchSource,
@@ -19,7 +21,6 @@ import styles from './index.module.scss'
 
 function toSubscribeChannel(event, t, channel_id) {
   event.target.innerHTML = t('subscribing')
-  // <Loading className={styles.followLoading} size={16} />
   event.target.disabled = true
 
   subscribeChannel(channel_id)
@@ -53,7 +54,7 @@ const Card = ({ t, item }) => {
             {t('colon')}
           </span>
           <span onClick={() => copyText(item.uri, toast, t)}>
-            {item.uri} <Icon type="copy" />
+            {item.uri} <RiFileCopyLine />
           </span>
         </p>
 
@@ -180,7 +181,9 @@ function Discovery() {
 
   return (
     <div className={styles.main}>
-      <p className={styles.sectionTitle}># {t('discovery')}</p>
+      <div className={styles.sectionTitle}>
+        <RiSearch2Fill /> {t('discovery')}
+      </div>
 
       <div className={styles.findWrap}>
         {/* type radio */}
@@ -229,9 +232,14 @@ function Discovery() {
 
           <div className={styles.searchIcon}>
             {searchLoading ? (
-              <Loading size={14} className={styles.searchLoading} />
+              <AiOutlineLoading3Quarters
+                className={`${styles.searchIcon} ${styles.spin}`}
+              />
             ) : (
-              <Icon type="search" onClick={async () => handleSearch()} />
+              <RiSearchLine
+                className={styles.searchIcon}
+                onClick={async () => handleSearch()}
+              />
             )}
           </div>
         </div>
@@ -245,9 +253,11 @@ function Discovery() {
       </div>
 
       {/* hot collection */}
-      <p className={styles.sectionTitle}># {t('hot_channels')}</p>
+      <p className={styles.sectionTitle}>
+        <AiFillFire /> {t('hot_channels')}
+      </p>
       {hotCollection?.isLoading ? (
-        <Loading className={styles.hotLoading} />
+        <Loading size={36} />
       ) : (
         <div className={styles.collection}>
           {hotCollection?.data?.channels &&

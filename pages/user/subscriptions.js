@@ -1,4 +1,4 @@
-import Subscriptions from '../../components/Subscriptions'
+import Subscriptions from '../../components/User/Subscriptions'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 const i18nConfig = require('../../next-i18next.config')
 

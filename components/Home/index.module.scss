@@ -1,21 +1,27 @@
 .search {
-  margin: 3em 0 2em 0;
+  margin: 3em 0 1em 0;
   padding: 0;
   display: flex;
-}
 
-.searchIcon {
-  color: $borderSelected;
-  font-size: 1.5em;
-  margin-right: 12px;
-}
+  .input {
+    margin: 0 auto;
+    padding: 0.25em 1em;
+    flex: 1;
 
-.input {
-  margin: 0 auto;
-  flex: 1;
+    input {
+      padding: 1em 1em 1em 0.5em;
+      font-size: 1em;
+    }
+  }
 
-  i {
+  .searchIcon {
+    color: $borderSelected;
     font-size: 1.5em;
+    margin-right: 0.5em;
+  }
+
+  .clearIcon {
+    font-size: 2em;
   }
 }
 
@@ -152,14 +158,12 @@
   padding: 16px;
   border-radius: 8px;
   background: $backgroundSecondary;
+  color: $contentNotice;
   display: flex;
   align-items: center;
-  > i {
-    color: $notice;
-    margin-right: 8px;
-  }
-  > p {
-    color: $contentPrimary;
+
+  svg {
+    margin-right: 0.5em;
   }
 }
 
@@ -194,7 +198,7 @@
 .intro_to_discovery {
   font-style: italic;
 
-  color: $contentNotice;
+  color: $contentAccent;
   margin: 12px auto 0 auto;
   padding: 0 16px;
   // max-width: 520px;

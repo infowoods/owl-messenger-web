@@ -3,7 +3,8 @@ import { useEffect, useContext, useState } from 'react'
 import dynamic from 'next/dynamic'
 import toast from 'react-hot-toast'
 
-import Icon from '../Icon'
+import { AiFillHome } from 'react-icons/ai'
+import { RiHomeFill, RiSearch2Fill, RiUser4Fill } from 'react-icons/ri'
 import { CurrentLoginContext } from '../../contexts/currentLogin'
 const OwlToast = dynamic(() => import('../OwlToast'))
 import styles from './index.module.scss'
@@ -11,20 +12,17 @@ import styles from './index.module.scss'
 function BottomNav({ t }) {
   const [curLogin, _] = useContext(CurrentLoginContext)
   const { pathname, push } = useRouter()
-  const list = [
+  const navList = [
     {
       href: '/',
-      icon: 'flashlight',
       name: 'home',
     },
     {
       href: '/discovery',
-      icon: 'search-fill',
       name: 'discovery',
     },
     {
       href: '/user',
-      icon: 'user',
       name: 'me',
     },
   ]
@@ -32,7 +30,7 @@ function BottomNav({ t }) {
   return (
     <div className={styles.bottomNav}>
       <div>
-        {list.map((item, idx) => (
+        {navList.map((item, idx) => (
           <div
             key={idx}
             className={`${
@@ -46,7 +44,11 @@ function BottomNav({ t }) {
               push(item.href)
             }}
           >
-            <Icon type={item.icon} />
+            {item.name === 'home' && <RiHomeFill className={styles.icon} />}
+            {item.name === 'discovery' && (
+              <RiSearch2Fill className={styles.icon} />
+            )}
+            {item.name === 'me' && <RiUser4Fill className={styles.icon} />}
             <p className={styles.label}>{t(item.name)}</p>
           </div>
         ))}

@@ -1,6 +1,8 @@
 import { useState } from 'react'
-import Icon from '../Icon'
+
 import styles from './index.module.scss'
+
+import { RiArrowDropRightLine } from 'react-icons/ri'
 
 function Collapse(props) {
   const { className, title, remark, children, data_id } = props
@@ -17,8 +19,7 @@ function Collapse(props) {
           {title}
           {remark && <span>{remark}</span>}
         </div>
-        <Icon
-          type="arrow-right"
+        <RiArrowDropRightLine
           className={`${styles.arrow} ${active && styles.arrowActive}`}
         />
       </div>

@@ -1,5 +1,5 @@
 .loading {
-  margin-top: 25%;
+  margin-top: 2em;
   opacity: 0.8;
 }
 
@@ -11,19 +11,21 @@
 }
 
 .empty {
-  text-align: center;
-  padding: 0 12px;
-  padding-bottom: 18px;
-  margin-top: 48px;
-  > i {
-    font-size: 68px;
-    text-align: center;
-    color: $contentSecondary;
-    padding-left: 6px; // more visual center
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+
+  .emptyImage {
+    path {
+      fill: $contentSecondary;
+    }
   }
-  > p {
-    font-size: 16px;
-    color: $contentPrimary;
+  .emptyText {
+    font-size: 1em;
+    margin-top: 0.5em;
+    margin-left: -1em;
+    color: $contentSecondary;
   }
 }
 

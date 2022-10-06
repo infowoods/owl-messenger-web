@@ -4,16 +4,18 @@ import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import toast from 'react-hot-toast'
+import { RiFileCopyLine } from 'react-icons/ri'
+import { TbMailbox } from 'react-icons/tb'
 
-import { handelOwlApiError } from '../../utils/apiUtils'
-import { getSubscriptions, unsubscribeChannel } from '../../services/api/owl'
-import { copyText } from '../../utils/copyUtil'
+import { handelOwlApiError } from '../../../utils/apiUtils'
+import { getSubscriptions, unsubscribeChannel } from '../../../services/api/owl'
+import { copyText } from '../../../utils/copyUtil'
 
-import Icon from '../../widgets/Icon'
-import Collapse from '../../widgets/Collapse'
-import Loading from '../../widgets/Loading'
-import { CurrentLoginContext } from '../../contexts/currentLogin'
-const OwlToast = dynamic(() => import('../../widgets/OwlToast'))
+import Empty from '../../../widgets/Empty'
+import Collapse from '../../../widgets/Collapse'
+import Loading from '../../../widgets/Loading'
+import { CurrentLoginContext } from '../../../contexts/currentLogin'
+const OwlToast = dynamic(() => import('../../../widgets/OwlToast'))
 
 import styles from './index.module.scss'
 
@@ -61,17 +63,21 @@ function Subscriptions() {
 
   return (
     <div className={styles.main}>
-      <p className={styles.sectionTitle}># {t('my-subscriptions')}</p>
+      <p className={styles.sectionTitle}>
+        <TbMailbox /> {t('my-subscriptions')}
+      </p>
       {mySubscriptions.isLoading && (
         <Loading size={40} className={styles.loading} />
       )}
       {mySubscriptions.data && (
         <>
           {mySubscriptions.data?.subscriptions?.length === 0 && (
-            <div className={styles.empty}>
-              <Icon type="ufo" />
-              <p>{t('no_records')}</p>
-            </div>
+            <Empty
+              text={t('no_records')}
+              mainClass={styles.empty}
+              imageClass={styles.emptyImage}
+              textClass={styles.emptyText}
+            />
           )}
           {mySubscriptions?.data?.subscriptions?.length > 0 &&
             mySubscriptions.data.subscriptions.map((item, index) => {
@@ -101,7 +107,7 @@ function Subscriptions() {
                         <span
                           onClick={() => copyText(item.channel.uri, toast, t)}
                         >
-                          {item.channel.uri} <Icon type="copy" />
+                          {item.channel.uri} <RiFileCopyLine />
                         </span>
                       </p>
                     </div>

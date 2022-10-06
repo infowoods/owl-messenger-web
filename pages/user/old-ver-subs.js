@@ -1,4 +1,4 @@
-import OldVerSubs from '../../components/OldVerSubs'
+import OldVerSubs from '../../components/User/OldVerSubs'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 const i18nConfig = require('../../next-i18next.config')
 

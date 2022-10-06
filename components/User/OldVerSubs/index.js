@@ -4,14 +4,14 @@ import { useTranslation } from 'next-i18next'
 import dynamic from 'next/dynamic'
 import toast from 'react-hot-toast'
 
-import { handelOwlApiError } from '../../utils/apiUtils'
-import { oldVer_GetFollows, oldVer_Unfollow } from '../../services/api/owl'
+import { handelOwlApiError } from '../../../utils/apiUtils'
+import { oldVer_GetFollows, oldVer_Unfollow } from '../../../services/api/owl'
 
-import Icon from '../../widgets/Icon'
-import Collapse from '../../widgets/Collapse'
-import Loading from '../../widgets/Loading'
-import { CurrentLoginContext } from '../../contexts/currentLogin'
-const OwlToast = dynamic(() => import('../../widgets/OwlToast'))
+import Collapse from '../../../widgets/Collapse'
+import Loading from '../../../widgets/Loading'
+import Empty from '../../../widgets/Empty'
+import { CurrentLoginContext } from '../../../contexts/currentLogin'
+const OwlToast = dynamic(() => import('../../../widgets/OwlToast'))
 
 import styles from './index.module.scss'
 
@@ -60,14 +60,16 @@ function Subscriptions() {
   return (
     <div className={styles.main}>
       <p className={styles.sectionTitle}># {t('old-ver-subs')}</p>
-      {myFollows.isLoading && <Loading size={40} className={styles.loading} />}
+      {myFollows.isLoading && <Loading size={36} className={styles.loading} />}
       {myFollows.data && (
         <>
           {myFollows?.data?.follows?.length === 0 && (
-            <div className={styles.empty}>
-              <Icon type="ufo" />
-              <p>{t('no_records')}</p>
-            </div>
+            <Empty
+              text={t('no_records')}
+              mainClass={styles.empty}
+              imageClass={styles.emptyImage}
+              textClass={styles.emptyText}
+            />
           )}
           {myFollows?.data?.follows?.length > 0 &&
             myFollows.data.follows.map((item, index) => {

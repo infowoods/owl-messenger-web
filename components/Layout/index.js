@@ -4,7 +4,6 @@ import { i18n, useTranslation } from 'next-i18next'
 import Head from 'next/head'
 import TopBar from '../TopBar'
 import Avatar from '../../widgets/Avatar'
-import Icon from '../../widgets/Icon'
 import Loading from '../../widgets/Loading'
 import BottomNav from '../../widgets/BottomNav'
 
