@@ -15,6 +15,8 @@ export function getMixinContext() {
     ctx.platform = ctx.platform || 'Android'
   }
 
+  ctx.conversation_id = ctx.conversation_id || ''
+
   return ctx
 }
 

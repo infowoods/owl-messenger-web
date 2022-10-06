@@ -88,6 +88,7 @@ function Home() {
   }
 
   const parseSourceURI = async (uri) => {
+    const ctx = getMixinContext()
     const params = { uri: uri }
     try {
       const res = await parseFeed(params)
@@ -99,7 +100,7 @@ function Home() {
       if (error?.action === 'logout') {
         toast.error(t('auth_expire'))
         setParsing(false)
-        logout(dispatch)
+        logout(ctx.conversation_id)
         return
       }
       setParsingError(error?.message || t('parsing_error_uri'))

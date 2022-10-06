@@ -7,6 +7,7 @@ import toast from 'react-hot-toast'
 
 import { TbMailbox } from 'react-icons/tb'
 
+import { getMixinContext } from '../../utils/pageUtil'
 import { getUserWallets } from '../../services/api/owl'
 import { handelOwlApiError } from '../../utils/apiUtils'
 import { CurrentLoginContext } from '../../contexts/currentLogin'
@@ -65,7 +66,8 @@ function User() {
       <div className={styles.logout}>
         <span
           onClick={() => {
-            logout()
+            const ctx = getMixinContext()
+            logout(ctx.conversation_id)
             window.location.href = '/'
           }}
         >

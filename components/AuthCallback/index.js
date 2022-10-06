@@ -31,19 +31,18 @@ function AuthCallback() {
   useEffect(() => {
     // login owl with mixin access token
     const ctx = getMixinContext()
-    const conversation_id = ctx.conversation_id || ''
 
     const loginOwl = async (token) => {
       const params = {
         app: APP_NAME,
         mixin_access_token: token,
-        conversation_id: conversation_id,
+        conversation_id: ctx.conversation_id,
       }
       const data = await owlSignIn(params)
 
       if (data?.access_token) {
         curLogin.token = data.access_token
-        saveToken(conversation_id, data.access_token)
+        saveToken(ctx.conversation_id, data.access_token)
 
         const user_data = {
           // expiry_time: data.expiry_time,
@@ -51,13 +50,15 @@ function AuthCallback() {
           avatar: data.avatar,
         }
         curLogin.user = user_data
-        saveUserData(conversation_id, user_data)
+        saveUserData(ctx.conversation_id, user_data)
 
         if (ctx?.locale && ctx.locale !== 'zh-CN' && i18n.language !== 'en') {
           i18n.changeLanguage('en')
-          router.push('/', '/', { locale: 'en' })
+          // router.push('/', '/', { locale: 'en' })
+          window.location.href = '/en' //refresh page
         } else {
-          router.push('/')
+          // router.push('/')
+          window.location.href = '/' //refresh page
         }
       }
     }
@@ -72,7 +73,7 @@ function AuthCallback() {
       getMixinToken_andLoginOwl().catch((err) => {
         console.log('err :>> ', err)
         toast.error(t('login_failed'))
-        router.push('/')
+        window.location.href = '/' //refresh page
       })
     }
   }, [query])
