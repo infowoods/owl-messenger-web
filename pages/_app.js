@@ -1,20 +1,37 @@
 import { useReducer } from 'react'
 import { appWithTranslation } from 'next-i18next'
-import { ProfileContext, state, reducer } from '../stores/useProfile'
+import dynamic from 'next/dynamic'
+const i18nConfig = require('../next-i18next.config')
+import {
+  CurrentLoginContext,
+  LoginData,
+  loginDataReducer,
+} from '../contexts/currentLogin'
 import '../styles/globals.scss'
 import '../styles/themes.scss'
-const i18nConfig = require('../next-i18next.config')
+import 'nprogress/nprogress.css'
+
 import Layout from '../components/Layout'
 
+const TopProgressBar = dynamic(
+  () => {
+    return import('../components/TopProgressBar')
+  },
+  { ssr: false }
+)
+
 function MyApp({ Component, pageProps }) {
-  const store = useReducer(reducer, state)
+  const loginData = useReducer(loginDataReducer, LoginData)
 
   return (
-    <ProfileContext.Provider value={store}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
-    </ProfileContext.Provider>
+    <>
+      <TopProgressBar />
+      <CurrentLoginContext.Provider value={loginData}>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </CurrentLoginContext.Provider>
+    </>
   )
 }
 

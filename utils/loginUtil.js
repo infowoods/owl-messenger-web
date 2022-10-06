@@ -1,52 +1,44 @@
 import AuthMixin from './auth/AuthMixin'
-import StorageUtil from './storageUtil'
-import { getProfile } from '../services/api/mixin'
+import storageUtil from './storageUtil'
 
-const MIXIN_TOKEN = 'mixin_token'
-const OWL_USER = 'user_info_'
-
-export function authLogin() {
+export function toLogin() {
   AuthMixin.requestCode(true)
 }
 
-export function logout(dispatch) {
-  const conversationId = StorageUtil.get('current_conversation_id')
-  const id = conversationId === null ? '' : conversationId
-  dispatch({
-    type: 'profile',
-    profile: {},
-  })
-  dispatch({
-    type: 'userInfo',
-    userInfo: {},
-  })
-  // dispatch({
-  //   type: 'groupInfo',
-  //   groupInfo: {},
-  // })
-  console.log('logout')
-  StorageUtil.del(OWL_USER + id)
-  StorageUtil.del('mixin_token')
+export function logout(conversation_id) {
+  storageUtil.del(genKey(conversation_id, 'token'))
+  storageUtil.del(genKey(conversation_id, 'user'))
+  storageUtil.del(genKey(conversation_id, 'group'))
 }
 
-export async function loadAccountInfo(dispatch) {
-  const profile = await getProfile()
-  dispatch({
-    type: 'profile',
-    profile,
-  })
-}
-
-export function saveToken({ token }) {
-  StorageUtil.set(MIXIN_TOKEN, token)
-}
-
-export function getToken() {
-  if (process.env.NODE_ENV === 'development' && process.env.TOKEN) {
-    return process.env.TOKEN
+function genKey(conversation_id, sub_key = '') {
+  if (conversation_id) {
+    return `owl_login_${conversation_id}_${sub_key}`
+  } else {
+    return `owl_login__${sub_key}`
   }
-  const conversationId = StorageUtil.get('current_conversation_id')
-  const id = conversationId === null ? '' : conversationId
-  const token = StorageUtil.get(OWL_USER + id)?.access_token
-  return token
+}
+
+export function saveGroupData(conversation_id, data) {
+  storageUtil.set(genKey(conversation_id, 'group'), data)
+}
+
+export function loadGroupData(conversation_id) {
+  return storageUtil.get(genKey(conversation_id, 'group'))
+}
+
+export function saveUserData(conversation_id, data) {
+  storageUtil.set(genKey(conversation_id, 'user'), data)
+}
+
+export function loadUserData(conversation_id) {
+  return storageUtil.get(genKey(conversation_id, 'user'))
+}
+
+export function saveToken(conversation_id, token) {
+  storageUtil.set(genKey(conversation_id, 'token'), token)
+}
+
+export function loadToken(conversation_id) {
+  return storageUtil.get(genKey(conversation_id, 'token'))
 }

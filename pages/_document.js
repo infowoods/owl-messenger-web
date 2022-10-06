@@ -13,7 +13,6 @@ class MyDocument extends Document {
         <body>
           <Main />
           <NextScript />
-          <script defer src="/fonts/iconfont.js" />
         </body>
       </Html>
     )

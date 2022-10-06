@@ -1,10 +1,29 @@
 import axios from 'axios'
-import { getToken } from '../../utils/loginUtil'
+import { getMixinContext } from '../../utils/pageUtil'
 
-const MIXIN_API_HOST = 'https://mixin-api.zeromesh.net'
+function is_use_chinese() {
+  let ctx = getMixinContext()
+  if (ctx) {
+    if (ctx?.locale?.toLowerCase() === 'zh-cn') {
+      return true
+    }
+    if (ctx?.currency?.toUpperCase() === 'CNY') {
+      return true
+    }
+  }
+  return false
+}
+function get_api_base_url() {
+  const BASE_URL = 'https://api.mixin.one'
+  const CN_BASE_URL = 'https://mixin-api.zeromesh.net'
+  if (is_use_chinese()) {
+    return CN_BASE_URL
+  } else {
+    return BASE_URL
+  }
+}
 
-const owlrss = axios.create({
-  baseURL: MIXIN_API_HOST,
+const session = axios.create({
   timeout: 15000,
   responseType: 'json',
   headers: {
@@ -12,33 +31,30 @@ const owlrss = axios.create({
   },
 })
 
-owlrss.interceptors.request.use(
+session.interceptors.request.use(
   async (configs) => {
-    if (configs.url === '/oauth/token') {
-      return configs
-    }
-    const token = await getToken()
-    if (token) {
+    if (configs.url !== '/oauth/token') {
       configs.headers.Authorization = `Bearer ${token}`
     }
+    configs.baseURL = get_api_base_url()
     return configs
   },
   (_) => {}
 )
 
-owlrss.interceptors.response.use(
-  (res) => {
-    if (!res.data) {
+session.interceptors.response.use(
+  (rsp) => {
+    if (!rsp.data) {
       return Promise.reject({ code: -1 })
     }
-    if (res.data.error) {
-      const error = res.data.error
+    if (rsp.data.error) {
+      const error = rsp.data.error
       if (error.code === (401 || 403)) {
         return Promise.reject({ code: error.code })
       }
       return Promise.reject({ code: error.code, message: error.description })
     } else {
-      return Promise.resolve(res.data)
+      return Promise.resolve(rsp.data)
     }
   },
   (err) => {
@@ -51,20 +67,11 @@ owlrss.interceptors.response.use(
 )
 
 async function request(options) {
-  const res = await owlrss.request(options)
-  return Promise.resolve(res.data)
+  const rsp = await session.request(options)
+  return Promise.resolve(rsp.data)
 }
 
 const http = {
-  post: (url, options = {}) => {
-    const config = {
-      url,
-      method: 'post',
-      ...options,
-    }
-    return request(config)
-  },
-
   get: (url, options = {}) => {
     const config = {
       url,
@@ -74,10 +81,10 @@ const http = {
     return request(config)
   },
 
-  delete: (url, options = {}) => {
+  post: (url, options = {}) => {
     const config = {
       url,
-      method: 'delete',
+      method: 'post',
       ...options,
     }
     return request(config)

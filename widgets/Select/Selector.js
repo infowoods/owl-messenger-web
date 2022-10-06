@@ -1,5 +1,5 @@
 import React from 'react'
-import Icon from '../Icon'
+import { RiArrowRightLine } from 'react-icons/ri'
 import classnames from 'classnames'
 const Selector = (props) => {
   const {
@@ -89,7 +89,7 @@ const Selector = (props) => {
         {enableSearch && !disabled
           ? renderInputSelector()
           : renderNomalSelector()}
-        <Icon type="arrow-right-s-line" class={`arrow ${open && 'arrow-up'}`} />
+        <RiArrowRightLine class={`arrow ${open && 'arrow-up'}`} />
       </div>
     </div>
   )

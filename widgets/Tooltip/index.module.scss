@@ -28,7 +28,7 @@
     &.white {
       background: $backgroundPrimary;
       color: $contentPrimary;
-      border: 1px solid $contentSecondry;
+      border: 1px solid $contentSecondary;
       &::before {
         display: none;
       }

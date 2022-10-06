@@ -1,19 +1,19 @@
-# 🦉 Frontend of Owl Deliver
+# 🦉 Web App of Owl Messenger
 
-> A notifier based on [Mixin Messenger](https://www.mixin.one/mm), bot ID: 7000102034.
+> A notifier based on [Mixin Messenger](https://www.mixin.one/mm), Bot ID: **7000102034**.
 
-## Supported subscriptions:
+## Supported Info sources
 
-- Oak Hub topic
+- Oak Channel
 - RSS/Atom feed
 - Twitter
 - Weibo
-- to do...
+- Mirror.xyz
+- (more in progress)
 
 ## Features
 
-- Multi language
-- Dark theme
-- Support Mixin messenger group subscription
-- Pay with crypto (BTC, XIN, etc)
-- Configurable time zone
+- Pay with crypto currency
+- Support for Mixin Messenger chat group to subscribe channel as a user
+- Multiple languages
+- Light and Dark themes

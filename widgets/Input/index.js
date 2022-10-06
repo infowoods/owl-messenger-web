@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
-import Icon from '../Icon'
+import { RiCloseCircleLine } from 'react-icons/ri'
 import styles from './index.module.scss'
 
 function Input(props) {
@@ -82,8 +82,7 @@ function Input(props) {
         />
 
         {focus && value !== '' && (
-          <Icon
-            type="close-fill"
+          <RiCloseCircleLine
             className={styles.clear}
             onMouseDown={(e) => e.preventDefault()}
             onClick={handleOnClear}

@@ -11,4 +11,8 @@ module.exports = {
     domains: ['mixin-images.zeromesh.net'],
   },
   i18n,
+  env: {
+    MIXIN_CLIENT_ID: process.env.MIXIN_CLIENT_ID,
+    MIXIN_SECRET_KEY: process.env.MIXIN_SECRET_KEY,
+  },
 }

@@ -1,14 +1,16 @@
 import { useState } from 'react'
-import Icon from '../Icon'
+
 import styles from './index.module.scss'
 
+import { RiArrowDropRightLine } from 'react-icons/ri'
+
 function Collapse(props) {
-  const { className, title, remark, children } = props
+  const { className, title, remark, children, data_id } = props
 
   const [active, setActive] = useState(false)
 
   return (
-    <div className={`${styles.collapse} ${className}`}>
+    <div className={`${styles.collapse} ${className}`} data_id={data_id}>
       <div
         className={`${styles.card} ${active && styles.cardActive}`}
         onClick={() => setActive(!active)}
@@ -17,8 +19,7 @@ function Collapse(props) {
           {title}
           {remark && <span>{remark}</span>}
         </div>
-        <Icon
-          type="arrow-right"
+        <RiArrowDropRightLine
           className={`${styles.arrow} ${active && styles.arrowActive}`}
         />
       </div>

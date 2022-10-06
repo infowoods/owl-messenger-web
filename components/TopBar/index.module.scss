@@ -3,8 +3,7 @@
   padding-bottom: 6px;
 
   .back {
-    transform: rotate(180deg);
-    font-size: 24px;
+    font-size: 2em;
     padding: 4px;
     float: left;
     cursor: pointer;
@@ -19,7 +18,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
+    // cursor: pointer;
+    cursor: default;
 
     span {
       color: $contentPrimary;
@@ -32,7 +32,8 @@
   }
 }
 
-.inactive, .active {
+.inactive,
+.active {
   color: $contentPrimary;
   font-size: 18px;
   margin-left: 4px;
@@ -67,7 +68,7 @@
   > div {
     margin-left: 12px;
     > p {
-      color: $contentSecondry;
+      color: $contentSecondary;
       &:first-child {
         font-weight: bold;
         color: $contentPrimary;

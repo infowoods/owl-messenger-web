@@ -1,4 +1,4 @@
-import { MIXIN_CLIENT_ID, MIXIN_OAUTH_HOST } from '../../constants'
+import { MIXIN_OAUTH_HOST } from '../../constants'
 
 const crypto = require('crypto')
 
@@ -27,8 +27,8 @@ class OAuth {
     // const randomCode = crypto.randomBytes(32)
     // const verifier = this.base64URLEncode(randomCode)
     // const challenge = this.base64URLEncode(this.sha256(randomCode))
-    // let url = `${MIXIN_OAUTH_HOST}/oauth/authorize?client_id=${MIXIN_CLIENT_ID}&scope=PROFILE%3AREAD&code_challenge=${challenge}`
-    let url = `${MIXIN_OAUTH_HOST}/oauth/authorize?client_id=${MIXIN_CLIENT_ID}&scope=PROFILE%3AREAD`
+    // let url = `${MIXIN_OAUTH_HOST}/oauth/authorize?client_id=${process.env.MIXIN_CLIENT_ID}&scope=PROFILE%3AREAD&code_challenge=${challenge}`
+    let url = `${MIXIN_OAUTH_HOST}/oauth/authorize?client_id=${process.env.MIXIN_CLIENT_ID}&scope=PROFILE%3AREAD`
     if (state) {
       const str = encodeURIComponent(JSON.stringify(state))
       url += `&state=${str}`
@@ -37,7 +37,7 @@ class OAuth {
   }
 
   requestCodeServe(state) {
-    let url = `${MIXIN_OAUTH_HOST}/oauth/authorize?client_id=${MIXIN_CLIENT_ID}&response_type=code&scope=PROFILE%3AREAD`
+    let url = `${MIXIN_OAUTH_HOST}/oauth/authorize?client_id=${process.env.MIXIN_CLIENT_ID}&response_type=code&scope=PROFILE%3AREAD`
     if (state) {
       const str = encodeURIComponent(JSON.stringify(state))
       url += `&state=${str}`

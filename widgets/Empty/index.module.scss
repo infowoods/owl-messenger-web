@@ -1,0 +1,22 @@
+.empty {
+  .image {
+    svg {
+      width: 96px;
+      height: auto;
+    }
+    image {
+      width: 96px;
+      height: auto;
+    }
+
+    .my-svg-alternate {
+      display: none;
+    }
+    .no-svg .my-svg-alternate {
+      display: block;
+      width: 100px;
+      height: 100px;
+      background-image: url('/empty.svg');
+    }
+  }
+}

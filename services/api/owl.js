@@ -1,106 +1,192 @@
 import http from '../../services/http/owl'
 
+// ==============================================
+// AUTH
+// ==============================================
+
 /**
  *
- * @param {code} code 授权机器人后mixin返回的code
+ * @param {mixin_access_token} String
  * @param {conversation_id} 标识群组
  * @returns
  * 登录获取owl令牌和用户信息
  */
 export function owlSignIn(data) {
-  return http.post('/mixin/signin', { data })
+  return http.post('/oauth/mixin', { data })
 }
+
+/**
+ *
+ * @param {app} String
+ * @param {conversation_id}
+ * @returns
+ * check if is group
+ */
+export function checkGroup(data) {
+  return http.post('/oauth/mixin/is_group', { data })
+}
+
+// ==============================================
+// SUBSCRIPTIONS
+// ==============================================
 
 // 获取用户订阅列表
-export function getFollows(data) {
-  return http.get('/user/follows', { data })
+export function getSubscriptions() {
+  return http.get('/subscriptions?enabled=true')
 }
 
-/**
- *
- * @param {topic_id} String
+// 获取用户退订列表
+export function getSubscriptionHistory() {
+  return http.get('/subscriptions?enabled=false')
+}
+
+/** 订阅频道
+ * @param {channel_id} String
  * @returns
- * 取消关注Feed
  */
-export function unfollowFeeds(data) {
-  return http.post('/user/follows/unfo', { data })
+export function subscribeChannel(channel_id) {
+  let data = { channel_id }
+  return http.post('subscriptions', { data })
 }
+
+/** 退订频道
+ * @param {channel_id} String
+ * @returns
+ */
+export function unsubscribeChannel(channel_id) {
+  let data = { channel_id }
+  return http.delete('subscriptions', { data })
+}
+
+/** （旧版）订阅列表
+ */
+export function oldVer_GetFollows() {
+  const data = {
+    action: 'list_follows',
+  }
+  return http.post('v1', { data })
+}
+
+/** （旧版）退订
+ * @param {topic_id} String
+ */
+export function oldVer_Unfollow(topic_id) {
+  const data = {
+    action: 'unfollow',
+    topic_id: topic_id,
+  }
+  return http.post('v1', { data })
+}
+
+// ==============================================
+// CHANNELS & COLLECTIONS
+// ==============================================
 
 /**
  *
- * @param {action} 'parse_uri'
  * @param {uri} String
  * @returns
  * 解析RSS地址
  */
 export function parseFeed(data) {
-  return http.post('/topic', { data })
+  return http.post('/channels/parse', { data })
 }
 
 /**
  *
- * @param {action} 'query'
+ * @param {collection_id} String optional
+ * @returns
+ * get collection
+ */
+export function getCollection(collection_id) {
+  if (!collection_id) {
+    throw 'collection_id is empty'
+  }
+  return http.get(`/collections/${collection_id}`)
+}
+
+/**
+ *
  * @param {uri} String optional
- * @param {tid} String optional
+ * @param {channel_id} String optional
  * @returns
- * 解析Topic地址
+ * 解析Channel地址
  */
-export function parseTopic(data) {
-  return http.post('/topic', { data })
+export function parseTopic(channel_id) {
+  return http.get(`/channels/${channel_id}`)
 }
 
 /**
  *
- * @param {action} 'follow'
- * @param {period} String
- * @param {tid} String
+ * @param {source} String
+ * @param {text} String
+ * @param {limit} Number optional
+ * @param {continuous_key} String optional
  * @returns
- * 申请关注
+ * 搜索源
  */
-export function subscribeTopic(data) {
-  return http.post('/topic', { data })
+export function searchSource(searchType, searchVal) {
+  let data = { source: searchType, text: searchVal }
+  return http.post('/channels/search', { data })
 }
+
+// ==============================================
+// USERS
+// ==============================================
 
 // 获取用户设置
 export function getUserSettings(data) {
-  return http.get('/user/settings', { data })
+  return http.get('/users/me?settings', { data })
+}
+
+// 获取用户信息
+export function getUserWallets() {
+  return http.get('/users/me?wallets')
 }
 
 /**
  *
- * @param {setting_name} 'utc_offset'
+ * @param {data}
  * @returns
  * 更改用户设置
  */
 export function updateUserSettings(data) {
-  return http.post('/user/settings', { data })
+  return http.put('/users/me', { data })
 }
+
+// ==============================================
+// TOP-UP
+// ==============================================
 
 /**
  *
- * @param {conversation_id} String
- * @returns
- * 判断是否群组
+ * Read Goods List
  */
-export function checkGroup(data) {
-  return http.post('/mixin/group', { data })
+export function listGoods() {
+  return http.get('/orders/goods')
 }
 
 /**
  *
- * @param {order_id} String
- * @returns
+ * Create order
+ * @returns pay links
+ */
+export function createOrder(goods_id) {
+  let data = {
+    app: 'owl',
+    goods_id: goods_id,
+  }
+  return http.post('/orders/create', { data })
+}
+
+/**
  * 查询订单状态
  */
-export function checkOrder(order_id) {
-  return http.get(`/user/order/${order_id}`)
-}
-
-/**
- *
- * @returns
- * 查询热门主题
- */
-export function getHotTopics() {
-  return http.get('/topic/hot')
+export function checkOrder({ mm_trace_id, mixpay_trace_id }) {
+  let data = {
+    app: 'owl',
+    mm_trace_id,
+    mixpay_trace_id,
+  }
+  return http.post('/orders/payment', { data })
 }

@@ -1,54 +1,28 @@
-.main {
-  min-height: calc(100vh - 210px);
-  @include responsive(xs) {
-    min-height: calc(100vh - 180px);
-  }
-}
-
-.avatar,
-.login {
+.search {
+  margin: 3em 0 1em 0;
+  padding: 0;
   display: flex;
-  justify-content: flex-end;
-  cursor: pointer;
-  margin-top: 6px;
-  img {
-    border-radius: 50%;
-  }
-}
 
-.login {
-  span {
-    line-height: 32px;
-    color: $contentPrimary;
-    padding: 4px 10px;
-    background: $backgroundSecondary;
-    border-radius: 8px;
-    font-size: 14px;
-    margin-top: 12px;
-    &:hover {
-      color: $accent;
+  .input {
+    margin: 0 auto;
+    padding: 0.25em 1em;
+    flex: 1;
+
+    input {
+      padding: 1em 1em 1em 0.5em;
+      font-size: 1em;
     }
   }
-}
 
-.search {
-  margin-top: 46px;
-  @include responsive(lg) {
-    margin-top: 64px;
+  .searchIcon {
+    color: $borderSelected;
+    font-size: 1.5em;
+    margin-right: 0.5em;
   }
-  display: flex;
-}
 
-.searchIcon {
-  color: $borderSelected;
-  font-size: 18px;
-  margin-right: 18px;
-}
-
-.input {
-  margin: 0 auto;
-  flex: 1;
-  max-width: 520px;
+  .clearIcon {
+    font-size: 2em;
+  }
 }
 
 .options {
@@ -62,7 +36,7 @@
   }
   > span {
     margin-right: 12px;
-    font-size: 16px;
+
     color: $contentPrimary;
   }
   div {
@@ -72,21 +46,20 @@
     border-radius: 8px;
     line-height: 33px;
     cursor: pointer;
-    font-size: 14px;
+
     color: $accent;
     .curIcon {
       vertical-align: middle;
       margin-right: 8px;
       margin-left: 4px;
       line-height: 33px;
-      font-size: 16px;
     }
     .triangle {
       vertical-align: middle;
-      font-size: 12px;
+
       margin-left: 18px;
       transform: rotate(180deg);
-      color: $contentSecondry;
+      color: $contentSecondary;
     }
   }
 }
@@ -101,7 +74,7 @@
 }
 
 .loadingWrap {
-  max-width: 520px;
+  // max-width: 520px;
   margin: 14px auto;
   padding: 16px;
   border-radius: 8px;
@@ -113,19 +86,18 @@
     margin-right: 18px;
   }
   .loadingHint {
-    font-size: 14px;
-    color: $contentSecondry;
+    color: $contentSecondary;
   }
 }
 
-.feedInfo {
-  max-width: 520px;
+.parsingResult {
+  // max-width: 520px;
   margin: 14px auto 12px auto;
   padding: 16px;
   border-radius: 8px;
   background: $backgroundSecondary;
 
-  .feedDesc {
+  .channelDesc {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -141,7 +113,7 @@
 
         &:nth-child(2) {
           font-weight: normal;
-          font-size: 14px;
+
           line-height: 18px;
           border-left: 2px solid $borderSelected;
           padding: 6px 8px;
@@ -152,6 +124,7 @@
       }
     }
   }
+
   button {
     background: $accent;
     border: none;
@@ -159,86 +132,100 @@
     margin-left: 14px;
     border-radius: 8px;
     color: $backgroundPrimary;
-    font-size: 14px;
+
     cursor: pointer;
     white-space: nowrap;
+    &:hover {
+      opacity: 0.7;
+    }
+    &:active {
+      opacity: 0.7;
+    }
+  }
+
+  button:disabled {
+    background: transparent;
+    color: $contentSecondary;
+    border: 1px solid $contentSecondary;
+    cursor: default;
+    pointer-events: none;
   }
 }
 
 .errorInfo {
-  max-width: 520px;
-  margin: 24px auto 12px auto;
+  // max-width: 520px;
+  margin: 0.25em auto 1em auto;
   padding: 16px;
   border-radius: 8px;
   background: $backgroundSecondary;
+  color: $contentNotice;
   display: flex;
   align-items: center;
-  > i {
-    color: $notice;
-    font-size: 21px;
-    margin-right: 8px;
-  }
-  > p {
-    color: $contentPrimary;
-    font-size: 14px;
+
+  svg {
+    margin-right: 0.5em;
   }
 }
 
 .feedPrice {
-  max-width: 520px;
+  // max-width: 520px;
   margin: 0 auto;
-  padding: 0 16px;
-  > p {
-    color: $contentSecondry;
-    margin-bottom: 6px;
-    font-size: 14px;
-    font-weight: bold;
-    > span {
-      font-weight: normal;
-      font-size: 12px;
-      margin-left: 4px;
-    }
+  padding: 0 14px;
+  cursor: default;
+
+  > .price {
+    // display: flex;
+    // align-items: center;
+    color: $contentPrimary;
   }
-  div {
-    display: flex;
-    align-items: center;
+
+  > .how_to_charge {
+    color: $contentSecondary;
+    margin-top: 6px;
+    margin-bottom: 6px;
+
     p {
-      font-size: 12px;
-      line-height: 16px;
-      color: $contentSecondry;
-      cursor: pointer;
-      > i {
-        font-size: 14px;
-        line-height: 16px;
-        vertical-align: middle;
-        margin-left: 4px;
-      }
-    }
-    .divider {
-      border-left: 1px solid $contentPrimary;
-      height: 14px;
-      margin: 0 10px;
+      margin: 0.25em 0;
     }
   }
 }
 
 .help {
-  font-size: 12px;
-  color: $contentSecondry;
+  color: $contentSecondary;
   white-space: nowrap;
 }
 
-.hot {
-  display: block;
-  max-width: 520px;
-  font-size: 14px;
-  font-weight: bold;
+.intro_to_discovery {
   font-style: italic;
-  color: $contentNotice;
-  max-width: 520px;
+
+  color: $contentAccent;
   margin: 12px auto 0 auto;
   padding: 0 16px;
-  &:hover {
-    color: $contentAccent;
+  // max-width: 520px;
+  > a {
+    cursor: pointer;
+    &:hover,
+    &:active {
+      font-weight: bold;
+    }
+    &:visited {
+      opacity: 0.7;
+    }
   }
+}
+
+.followLoading {
+  padding: 0 12px;
+  div {
+    border: 2px solid $backgroundPrimary;
+    border-left-color: transparent;
+  }
+}
+
+.tip_err {
+  font-style: italic;
+  color: $contentNegative;
+  margin: 12px auto 0 auto;
+  padding: 0 16px;
+  // max-width: 520px;
 }

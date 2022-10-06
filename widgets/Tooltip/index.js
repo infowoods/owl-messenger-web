@@ -26,7 +26,7 @@ function Tooltip(props) {
   }, [visible])
 
   return (
-    <div
+    <span
       className={styles.wrap}
       onMouseEnter={() => {
         setVisible(true)
@@ -34,7 +34,7 @@ function Tooltip(props) {
       }}
       onMouseLeave={() => setVisible(false)}
     >
-      <div
+      <span
         className={`${styles.tooltip} ${styles[theme]} ${styles[position]} ${styles[tooltipClassName]}`}
         style={{
           display: visible ? 'block' : 'none',
@@ -43,9 +43,9 @@ function Tooltip(props) {
         onMouseDown={(e) => e.preventDefault()}
       >
         {content}
-      </div>
+      </span>
 
-      <div
+      <span
         ref={tooltipRef}
         className={`${styles.children} ${
           styles[className] || styles[props.className]
@@ -55,8 +55,8 @@ function Tooltip(props) {
         onClick={() => setVisible(true)}
       >
         {children}
-      </div>
-    </div>
+      </span>
+    </span>
   )
 }
 

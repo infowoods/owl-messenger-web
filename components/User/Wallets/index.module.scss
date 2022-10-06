@@ -1,0 +1,65 @@
+.walletsWrap {
+  position: relative;
+  background: $backgroundWallet;
+  color: $contentPrimary;
+  transition: all 100ms linear;
+
+  border-radius: 8px;
+  padding: 1.5em;
+  margin: 10px 0;
+
+  display: flex;
+  flex-direction: column;
+
+  .title {
+    font-size: 1.25em;
+    font-weight: bold;
+    color: $contentSecondary;
+    margin-top: 0.5em;
+  }
+
+  .icon {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    color: $contentSecondary;
+  }
+
+  button {
+    width: 100%;
+    cursor: pointer;
+    margin: 1em 0;
+    padding: 0.6em 3em;
+    background-color: $backgroundPrimary;
+    color: $contentPrimary;
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-radius: 1em;
+    box-shadow: 0px 0px 6px $shadow; // rgba(0, 0, 0, 0.11);
+    transition: all 100ms linear;
+
+    &:hover {
+      border: 1px solid $contentPrimary; // rgba(110, 34, 225, 1);
+    }
+  }
+}
+
+.wallet {
+  display: block;
+  color: $contentPrimary;
+
+  .nut_icon {
+    opacity: 0.8;
+  }
+
+  .val {
+    font-size: 1.25em;
+    font-weight: bold;
+    color: $contentPrimary;
+  }
+
+  .tip {
+    font-size: 0.9em;
+    margin-top: 0.65em;
+    color: $contentSecondary;
+  }
+}
