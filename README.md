@@ -1,19 +1,23 @@
-# 🦉 Web App of Owl Messenger
+Owl Messenger Web App
 
-> A notifier based on [Mixin Messenger](https://www.mixin.one/mm), Bot ID: **7000102034**.
+    This is a web project based on Next.js
 
-## Supported Info sources
+1. Create `.env.local` file
 
-- Oak Channel
-- RSS/Atom feed
-- Twitter
-- Weibo
-- Mirror.xyz
-- (more in progress)
+2. Build Setup
 
-## Features
+```sh
+# install dependencies
 
-- Pay with crypto currency
-- Support for Mixin Messenger chat group to subscribe channel as a user
-- Multiple languages
-- Light and Dark themes
+$ npm install
+
+# lint code
+
+$ yarn lint
+
+# serve with hot reload at localhost:3000
+
+$ yarn dev
+```
+
+For detailed explanation on how things work, checkout [Next.js](https://nextjs.org/) docs.
