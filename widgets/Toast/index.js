@@ -1,7 +1,7 @@
 import { Toaster } from 'react-hot-toast'
 import styles from './index.module.scss'
 
-function OwlToast(props) {
+function Toast(props) {
   return (
     <Toaster
       toastOptions={{
@@ -11,4 +11,4 @@ function OwlToast(props) {
   )
 }
 
-export default OwlToast
+export default Toast
