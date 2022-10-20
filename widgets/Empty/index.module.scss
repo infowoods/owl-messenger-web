@@ -1,6 +1,12 @@
 .empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+
   .image {
     svg {
+      fill: $contentSecondary;
       width: 96px;
       height: auto;
     }
@@ -18,5 +24,12 @@
       height: 100px;
       background-image: url('/empty.svg');
     }
+  }
+
+  .text {
+    font-size: 1em;
+    margin-top: 0.5em;
+    margin-left: -1em;
+    color: $contentSecondary;
   }
 }

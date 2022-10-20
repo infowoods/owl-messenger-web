@@ -3,20 +3,19 @@ import { useEffect, useContext, useState } from 'react'
 import dynamic from 'next/dynamic'
 import toast from 'react-hot-toast'
 
-import { AiFillHome } from 'react-icons/ai'
 import { RiHomeFill, RiSearch2Fill, RiUser4Fill } from 'react-icons/ri'
 import { CurrentLoginContext } from '../../contexts/currentLogin'
-const OwlToast = dynamic(() => import('../OwlToast'))
+const Toast = dynamic(() => import('../Toast'))
 import styles from './index.module.scss'
 
-function BottomNav({ t }) {
-  const [curLogin, _] = useContext(CurrentLoginContext)
+function BottomNav({ ctx, t, curLogin }) {
   const { pathname, push } = useRouter()
   const navList = [
     {
       href: '/',
       name: 'home',
     },
+
     {
       href: '/discovery',
       name: 'discovery',
@@ -54,7 +53,7 @@ function BottomNav({ t }) {
         ))}
       </div>
 
-      <OwlToast />
+      <Toast />
     </div>
   )
 }

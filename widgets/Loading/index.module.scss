@@ -1,21 +1,64 @@
-.loading {
-  position: relative;
-  margin: 0;
+.wrap {
   display: flex;
   justify-content: center;
   align-items: center;
-  div {
-    border: 3px solid $accent;
-    border-left-color: rgba(0, 0, 0, 0);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
+
+  margin: 0.2em;
+}
+
+.icon {
+  display: block;
+  border-radius: 50%;
+  border-style: solid;
+
+  &.primary {
+    border-color: $contentPrimary;
+    border-left-color: transparent;
+  }
+
+  &.secondary {
+    border-color: $contentSecondary;
+    border-left-color: transparent;
+  }
+
+  &.accent {
+    border-color: $borderAccent;
+    border-left-color: transparent;
+  }
+
+  &.xl {
+    border-width: 3px;
+    width: 2.5em;
+    height: 2.5em;
+  }
+  &.lg {
+    border-width: 3px;
+    width: 2em;
+    height: 2em;
+  }
+  &.md {
+    border-width: 3px;
+    width: 1.4em;
+    height: 1.4em;
+  }
+  &.sm {
+    border-width: 2px;
+    width: 0.8em;
+    height: 0.8em;
+  }
+  &.xs {
+    border-width: 2px;
+    width: 0.6em;
+    height: 0.6em;
+  }
+
+  animation: spin 1.5s linear infinite;
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
     }
   }
 }

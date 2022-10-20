@@ -1,4 +1,5 @@
 .bottomNav {
+  z-index: 8888;
   position: fixed;
   bottom: 0;
   width: 100%;
@@ -10,7 +11,7 @@
     left: 0;
   }
 
-  @include responsive(lg) {
+  @include responsive(md) {
     border-left: 1px solid $borderOpaque;
     border-right: 1px solid $borderOpaque;
   }

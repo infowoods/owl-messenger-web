@@ -1,4 +1,4 @@
-import { RiArrowDropRightLine } from 'react-icons/ri'
+import { RiArrowRightLine } from 'react-icons/ri'
 import styles from './index.module.scss'
 import { useRouter } from 'next/router'
 
@@ -12,6 +12,7 @@ function SubPageCard(props) {
       <div
         className={`${styles.subPageCard} ${className}`}
         onClick={() => {
+          console.log('path :>> ', path)
           router.push(path)
         }}
       >
@@ -24,7 +25,7 @@ function SubPageCard(props) {
           {children && <div className={styles.children}>{children}</div>}
         </div>
         <div className={styles.right}>
-          <RiArrowDropRightLine className={`${styles.arrow}`} />
+          <RiArrowRightLine className={`${styles.arrow}`} />
         </div>
       </div>
     </>
