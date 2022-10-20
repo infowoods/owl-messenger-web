@@ -1,88 +1,13 @@
 .wrap {
   max-width: 680px;
   margin: 0 auto;
-  padding: 0 1em 65px 1em;
-  background: $backgroundPrimary;
+  padding: 0.25em 1em 65px 1em;
+  background: transparent;
 
-  @include responsive(lg) {
+  min-height: 100vh;
+
+  @include responsive(md) {
     border-left: 1px solid $borderOpaque;
     border-right: 1px solid $borderOpaque;
   }
-}
-
-.bgLight {
-  background: $backgroundPrimary;
-}
-
-.bgGray {
-  background: $backgroundSecondary;
-}
-
-// .main {
-//   min-height: calc(100vh - 210px);
-//   @include responsive(xs) {
-//     min-height: calc(100vh - 180px);
-//   }
-//   padding: 0 1em;
-// }
-
-.avatarWrap {
-  display: flex;
-  justify-content: flex-end;
-  margin: 1em 0;
-}
-
-.avatar {
-  cursor: pointer;
-  display: flex;
-  justify-content: flex-end;
-  img {
-    min-width: 38px;
-    min-height: 38px;
-    max-width: 38px;
-    max-height: 38px;
-    border-radius: 50%;
-  }
-}
-
-.login {
-  display: flex;
-  justify-content: flex-end;
-  cursor: pointer;
-
-  span {
-    line-height: 32px;
-    color: $contentPrimary;
-    padding: 4px 10px;
-    border-radius: 8px;
-    &:hover {
-      color: $accent;
-    }
-  }
-}
-
-.noTopBar {
-  max-width: 680px;
-  margin: 0 auto;
-  min-height: 100vh;
-  border-left: 1px solid $borderOpaque;
-  border-right: 1px solid $borderOpaque;
-  background: $backgroundPrimary;
-}
-
-.notInit {
-  max-width: 680px;
-  margin: 0 auto;
-  min-height: 100vh;
-  background: $backgroundPrimary;
-}
-
-.loading {
-  padding-top: 64px;
-  z-index: 99;
-}
-
-.tempSlot {
-  min-height: calc(100vh - 110px);
-  background: $backgroundPrimary;
 }

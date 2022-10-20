@@ -15,9 +15,12 @@ body {
     display: none;
   }
 
+  height: 100%;
+
   background: $backgroundPrimary;
 
   font-size: 1em; //px set in :root
+  transition: all ease 0.2s;
 }
 
 a {
@@ -36,9 +39,12 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
-input[type='search']::-webkit-search-decoration,
-input[type='search']::-webkit-search-cancel-button,
-input[type='search']::-webkit-search-results-button,
-input[type='search']::-webkit-search-results-decoration {
-  -webkit-appearance: none;
+.round {
+  border-radius: 4px;
+}
+.round-md {
+  border-radius: 8px;
+}
+.round-lg {
+  border-radius: 12px;
 }
