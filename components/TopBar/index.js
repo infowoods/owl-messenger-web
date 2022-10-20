@@ -1,50 +1,97 @@
-import { useState } from 'react'
-import { useTranslation } from 'next-i18next'
+import React, { useEffect, useState, useContext } from 'react'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
+import toast from 'react-hot-toast'
+import { RiArrowLeftLine, RiArrowDownSLine } from 'react-icons/ri'
 
-import { RiArrowLeftLine } from 'react-icons/ri'
+import { toLogin, saveGroupData } from '../../utils/loginUtil'
+import { checkGroup } from '../../services/api/infowoods'
+import Avatar from '../../widgets/Avatar'
+import { APPS } from '../../constants'
+import favIconImg from '../../public/favicon.png'
 
 import styles from './index.module.scss'
 
 function TopBar(props) {
-  const { url } = props
-  const { t } = useTranslation('common')
+  const { ctx, t, curLogin, backPath, showApps, setShowApps } = props
   const router = useRouter()
-  const [show, setShow] = useState(false)
 
-  const botList = {
-    oak: {
-      id: 'b9fee5b9-b3cb-4448-9f31-a6440ba21bf8',
-      url: 'https://exquisite-kleicha-433ec6.netlify.app',
-    },
+  const avatarLink = (path) => {
+    switch (path) {
+      case '/user':
+        break
+      default:
+        return '/user'
+    }
   }
 
-  // const handleClose = () => setShow(false)
-
-  // const handleBotClick = (name) => {
-  //   setShow(false)
-  //   if (storageUtil.get('platform') === 'browser') {
-  //     window.open(botList[name].url)
-  //   } else {
-  //     window.open(`mixin://apps/${botList[name].id}`)
-  //   }
-  // }
+  useEffect(() => {
+    if (ctx) {
+      if (ctx.conversation_id) {
+        checkGroup({
+          app: APPS.current,
+          conversation_id: ctx.conversation_id,
+        })
+          .then((data) => {
+            saveGroupData(ctx.conversation_id, data)
+            curLogin.group = data
+          })
+          .catch((error) => {
+            toast.error(error.message)
+          })
+      }
+    }
+  }, [ctx, curLogin])
 
   return (
     <div className={styles.bar}>
-      {url && (
-        <RiArrowLeftLine
-          className={styles.back}
-          onClick={() => {
-            router.push(url)
-          }}
-        />
-      )}
-      <div className={`${styles.icon} ${url && styles.iconPadding}`}>
-        <Image src="/favicon.png" alt="favicon" width={28} height={28} />
-        <span>Owl Messenger</span>
+      <div className={styles.left}>
+        {curLogin?.group?.is_group}
+        {backPath && (
+          <RiArrowLeftLine
+            className={styles.back}
+            onClick={() => {
+              router.push(backPath)
+            }}
+          />
+        )}
+
+        {!backPath && curLogin?.user && (
+          <div className={styles.avatar}>
+            <Avatar
+              isGroup={curLogin?.group?.is_group}
+              imgSrc={curLogin?.user?.avatar}
+              onClick={() => {
+                const link = avatarLink(router.pathname)
+                if (link) {
+                  router.push(link)
+                }
+              }}
+            />
+          </div>
+        )}
+        {!backPath && !curLogin?.user && (
+          <span className={styles.login} onClick={() => toLogin()}>
+            {curLogin?.group?.is_group ? t('group_login') : t('login')}
+          </span>
+        )}
       </div>
+
+      <div className={styles.middle}>
+        <div
+          className={styles.app}
+          onClick={() => {
+            setShowApps(true)
+          }}
+        >
+          <Image src={favIconImg} alt="favicon" width={24} height={24} />
+          <span className={styles.title}>{t(APPS[APPS.current].title)}</span>
+          <span className={showApps ? styles.active : styles.passive}>
+            <RiArrowDownSLine className={styles.arrow} />
+          </span>
+        </div>
+      </div>
+      <div className={styles.right}></div>
     </div>
   )
 }
