@@ -1,0 +1,120 @@
+.card {
+  width: 100%;
+  margin: 1.5em 0;
+  padding: 1.2em;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  .title {
+    // max-width: 80%;
+    overflow-wrap: anywhere;
+
+    display: flex;
+    align-items: center;
+
+    .sourceIcon {
+      margin-right: 0.5em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      background-color: $contentSecondary;
+      // border: 1px solid $contentSecondary;
+      min-height: 1.2em;
+      min-width: 1.2em;
+      max-height: 1.2em;
+      max-width: 1.2em;
+      border-radius: 50%;
+
+      svg {
+        font-size: 0.9em;
+        color: $backgroundPrimary;
+      }
+    }
+    .text {
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+  }
+
+  .description {
+    // max-width: 68%;
+    overflow-wrap: anywhere;
+    color: $contentSecondary;
+  }
+
+  .uri {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    margin-top: 1em;
+    cursor: pointer;
+
+    svg {
+      margin-right: 0.2em;
+      color: $contentSecondary;
+    }
+
+    font-size: 0.9em;
+    overflow-wrap: anywhere;
+  }
+
+  .price {
+    margin-top: 1em;
+    .numbers {
+      color: $contentPrimary;
+      display: flex;
+      align-items: center;
+
+      svg {
+        margin-right: 0.2em;
+        color: $contentSecondary;
+      }
+    }
+
+    .composition {
+      color: $contentSecondary;
+      margin-left: 1em;
+    }
+
+    .how_to_charge {
+      color: $contentSecondary;
+      margin-left: 1em;
+    }
+  }
+}
+
+.buttons {
+  display: flex;
+
+  button {
+    margin-top: 1em;
+
+    padding: 0.4em 1em;
+    background: $backgroundAccent;
+    border: none;
+    border-radius: 8px;
+    color: $backgroundPrimary;
+
+    cursor: pointer;
+    white-space: nowrap;
+    &:hover {
+      opacity: 0.7;
+    }
+    &:active {
+      opacity: 0.7;
+    }
+  }
+
+  button:disabled {
+    background: transparent;
+    color: $contentSecondary;
+    font-size: 0.8em;
+    border: 1px dotted $contentSecondary;
+    cursor: default;
+    pointer-events: none;
+  }
+}

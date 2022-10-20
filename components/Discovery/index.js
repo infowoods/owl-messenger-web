@@ -3,131 +3,36 @@ import React, { useEffect, useState, useContext } from 'react'
 import { useTranslation } from 'next-i18next'
 import dynamic from 'next/dynamic'
 import toast from 'react-hot-toast'
-import { AiFillFire, AiOutlineLoading3Quarters } from 'react-icons/ai'
-import { RiSearch2Fill, RiSearchLine, RiFileCopyLine } from 'react-icons/ri'
+import { Input, useInput, Radio } from '@nextui-org/react'
+import { RiSearchLine, RiInformationFill } from 'react-icons/ri'
 
-const OwlToast = dynamic(() => import('../../widgets/OwlToast'))
-import Input from '../../widgets/Input'
-import Loading from '../../widgets/Loading'
-import {
-  searchSource,
-  getCollection,
-  subscribeChannel,
-} from '../../services/api/owl'
-import { handelOwlApiError } from '../../utils/apiUtils'
-import { copyText } from '../../utils/copyUtil'
+import { sourceSearch, getCollection } from '../../services/api/infowoods'
+import { handleInfowoodsApiError } from '../../utils/apiUtils'
+import { ignoreEvent } from '../../utils/pageUtil'
 import { CurrentLoginContext } from '../../contexts/currentLogin'
+import Loading from '../../widgets/Loading'
+import SourceIcon from '../../widgets/SourceIcon'
+
+const Toast = dynamic(() => import('../../widgets/Toast'))
+const ChannelCard = dynamic(() => import('./ChannelCard'))
+
 import styles from './index.module.scss'
-
-function toSubscribeChannel(event, t, channel_id) {
-  event.target.innerHTML = t('subscribing')
-  event.target.disabled = true
-
-  subscribeChannel(channel_id)
-    .then(() => {
-      toast.success(t('subscribe_success'))
-      event.target.innerHTML = '✓' + t('subscribed')
-    })
-    .catch((error) => {
-      toast.error(error.message)
-      event.target.disabled = false
-      event.target.innerHTML = t('subscribe')
-    })
-}
-
-const Card = ({ t, item }) => {
-  return (
-    <>
-      <div key={item.id} className={styles.card}>
-        <p className={styles.channelTitle}>{item.title}</p>
-
-        <p className={styles.channelDesc}>
-          <span>
-            {t('desc')}
-            {t('colon')}
-          </span>
-          {item.description}
-        </p>
-        <p className={styles.copy}>
-          <span>
-            {t('channel_uri')}
-            {t('colon')}
-          </span>
-          <span onClick={() => copyText(item.uri, toast, t)}>
-            {item.uri} <RiFileCopyLine />
-          </span>
-        </p>
-
-        {/* Price */}
-        <div className={styles.channelFee}>
-          <p className={styles.infoPrice}>
-            <span>
-              {t('price_per_info')}
-              {': '}
-            </span>
-            {Math.round(
-              (parseFloat(item.price_per_info.channel_fee) +
-                parseFloat(item.price_per_info.pushing_fee.min)) *
-                1000
-            ) / 1000}
-            {' ~ '}
-            {Math.round(
-              (parseFloat(item.price_per_info.channel_fee) +
-                parseFloat(item.price_per_info.pushing_fee.max)) *
-                1000
-            ) / 1000}
-            {' NUT'}
-          </p>
-          <p className={styles.priceDetail}>
-            {'('}
-            {t('channel_info_price')}
-            {': '}
-            {item.price_per_info.channel_fee == 0
-              ? t('free_price')
-              : `${item.price_per_info.channel_fee} NUT`}
-            {', '}
-            {t('pushing_info_price')}
-            {': '}
-            {item.price_per_info.pushing_fee.min}
-            {' ~ '}
-            {item.price_per_info.pushing_fee.max}
-            {' NUT)'}
-          </p>
-        </div>
-
-        {/* Button of Subscribe */}
-        {item.subscription.enabled ? (
-          <span>✓ {t('subscribed')}</span>
-        ) : (
-          <button
-            className={styles.button}
-            onClick={(event) => {
-              toSubscribeChannel(event, t, item.id)
-            }}
-          >
-            {t('subscribe')}
-          </button>
-        )}
-      </div>
-    </>
-  )
-}
 
 function Discovery() {
   const { t } = useTranslation('common')
   const [curLogin, _] = useContext(CurrentLoginContext)
 
   const [searchType, setSearchType] = useState('channel')
-  const [searchVal, setSearchVal] = useState('')
-  const [searchRes, setSearchRes] = useState([])
-  const [searchLoading, setSearchLoading] = useState(false)
-  const [empty, setEmpty] = useState(false)
+  const keywords = useInput('')
+  const [searchResult, setSearchResult] = useState([])
+  const [errorTip, setErrorTip] = useState('')
+  const [isSearching, setIsSearching] = useState(false)
   const sourceTypeList = ['channel', 'weibo', 'twitter']
 
   function useHotCollection() {
     const { data, error } = useSWR('hot', getCollection)
     if (error) {
-      handelOwlApiError(error, t, curLogin)
+      handleInfowoodsApiError(error, t, curLogin)
     }
     return {
       data: data,
@@ -151,123 +56,145 @@ function Discovery() {
     }
   }
 
-  const handleKeyDown = (e) => {
+  const onKeyDown = (e) => {
     const enterPressed = e.keyCode === 13
     if (enterPressed) {
       handleSearch()
-      e.target.blur()
     }
   }
 
-  const handleSearch = async () => {
-    if (!searchVal) return
-    setEmpty(false)
-    setSearchLoading(true)
-    try {
-      const data = await searchSource(searchType, searchVal)
-      if (data.channels.length > 0) {
-        setSearchRes(data.channels)
-      } else {
-        setEmpty(true)
-        setSearchRes([])
-      }
-      setSearchLoading(false)
-    } catch (err) {
-      toast.error(t(err?.message))
-      setSearchLoading(false)
-      return
-    }
+  const handleSearch = () => {
+    if (isSearching) return
+    if (!keywords.value) return
+
+    setErrorTip('')
+    setIsSearching(true)
+    sourceSearch({ sourceType: searchType, searchVal: keywords.value })
+      .then((data) => {
+        if (data.channels.length > 0) {
+          setSearchResult(data.channels)
+        } else {
+          setErrorTip(t('no_search_result'))
+          setSearchResult([])
+        }
+      })
+      .catch((error) => {
+        const msg = handleInfowoodsApiError(error, t, curLogin)
+        setErrorTip(msg)
+      })
+      .finally(() => {
+        setIsSearching(false)
+      })
   }
 
   return (
     <div className={styles.main}>
-      <div className={styles.sectionTitle}>
-        <RiSearch2Fill /> {t('discovery')}
-      </div>
+      {/* <div className={styles.sectionTitle}>{t('discovery')}</div> */}
 
       <div className={styles.findWrap}>
         {/* type radio */}
-        <div
+
+        <Radio.Group
+          aria-label="type-options"
+          defaultValue="channel"
+          orientation="horizontal"
           className={styles.typeOptions}
-          onChange={(e) => setSearchType(e.target.value)}
+          onChange={setSearchType}
         >
-          {sourceTypeList.map((item) => (
-            <React.Fragment key={item}>
-              <input
-                type="radio"
-                id={item}
-                name="searchType"
-                value={item}
-                checked={searchType === item}
-                label={t(item)}
-                readOnly
-              />
-              {/* <label htmlFor={item}>{t(item)}</label> */}
-            </React.Fragment>
+          {sourceTypeList.map((value, index) => (
+            <Radio key={index} value={value}>
+              <SourceIcon name={value} />
+              {t(value)}
+            </Radio>
           ))}
-        </div>
+        </Radio.Group>
 
         {/* 搜索框 */}
-        <div className={styles.searchWrap}>
-          <form className={styles.searchForm} action=".">
-            <Input
-              className={styles.input}
-              type="search"
-              placeholder={placeholder(searchType)}
-              value={searchVal}
-              onChange={(val) => {
-                if (!val) {
-                  setSearchRes([])
-                  setEmpty(false)
-                }
-                setSearchVal(val)
-              }}
-              onClear={() => {
-                setSearchRes([])
-                setEmpty(false)
-              }}
-              onKeyDown={(e) => handleKeyDown(e)}
-            />
-          </form>
+        <form
+          action="#"
+          className={styles.searchWrap}
+          onBlur={ignoreEvent}
+          onSubmit={(e) => {
+            ignoreEvent(e), handleSearch()
+          }}
+        >
+          <Input
+            className={styles.input}
+            aria-label="search_input"
+            type="search"
+            clearable
+            bordered
+            size="xl"
+            placeholder={placeholder(searchType)}
+            value={keywords.value}
+            onChange={(e) => {
+              if (!e.target.value) {
+                setSearchResult([])
+                setErrorTip('')
+              }
+              keywords.setValue(e.target.value)
+            }}
+            onClearClick={() => {
+              setSearchResult([])
+              setErrorTip('')
+            }}
+            fullWidth={true}
+            contentLeft={<RiSearchLine />}
+            onKeyDown={onKeyDown}
+            onBlur={ignoreEvent}
+          />
+        </form>
+      </div>
 
-          <div className={styles.searchIcon}>
-            {searchLoading ? (
-              <AiOutlineLoading3Quarters
-                className={`${styles.searchIcon} ${styles.spin}`}
-              />
-            ) : (
-              <RiSearchLine
-                className={styles.searchIcon}
-                onClick={async () => handleSearch()}
-              />
-            )}
-          </div>
+      {isSearching && (
+        <div className={styles.loadingWrap}>
+          <Loading size="md" />
+          <div className={styles.loadingHint}>{t('waiting_searching')}</div>
         </div>
-      </div>
+      )}
 
-      {/* Search Result */}
-      <div>
-        {searchRes.length > 0 &&
-          searchRes.map((item) => <Card key={item.id} t={t} item={item} />)}
-        {empty && <p className={styles.empty}>🧶 {t('no_search_result')}</p>}
-      </div>
+      {errorTip !== '' && (
+        <div className={`${styles.errorTip}`}>
+          <RiInformationFill />
+          <span>{errorTip}</span>
+        </div>
+      )}
+
+      {searchResult?.length > 0 && (
+        <>
+          <div className={styles.cards}>
+            {searchResult.map((item, index) => (
+              // <Card key={index} t={t} item={item} />
+              <ChannelCard
+                key={index}
+                curLogin={curLogin}
+                t={t}
+                channel={item}
+              />
+            ))}
+          </div>
+        </>
+      )}
 
       {/* hot collection */}
-      <p className={styles.sectionTitle}>
-        <AiFillFire /> {t('hot_channels')}
-      </p>
+      <p className={styles.sectionTitle}>{t('hot_channels')}</p>
       {hotCollection?.isLoading ? (
-        <Loading size={36} />
+        <Loading size="xl" />
       ) : (
         <div className={styles.collection}>
           {hotCollection?.data?.channels &&
             hotCollection.data.channels.map((item) => (
-              <Card key={item.id} t={t} item={item} />
+              <ChannelCard
+                key={item.id}
+                curLogin={curLogin}
+                t={t}
+                channel={item}
+              />
             ))}
         </div>
       )}
 
-      <OwlToast />
+      <Toast />
     </div>
   )
 }
