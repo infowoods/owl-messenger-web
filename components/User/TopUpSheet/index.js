@@ -1,14 +1,22 @@
 import useSWR from 'swr'
 import { useState, useEffect, useContext } from 'react'
 import { useRouter } from 'next/router'
-import { listGoods, createOrder } from '../../../services/api/owl'
-import BottomSelection from '../../../widgets/BottomSelection'
-import { getMixinContext } from '../../../utils/pageUtil'
 const QRCode = require('qrcode.react')
+import { Button } from '@nextui-org/react'
+import toast from 'react-hot-toast'
 
-import { checkOrder } from '../../../services/api/owl'
+import {
+  listGoods,
+  createOrder,
+  checkOrder,
+} from '../../../services/api/infowoods'
+
 import Loading from '../../../widgets/Loading'
+import BottomSheet from '../../../widgets/BottomSheet'
+import BottomSelection from '../../../widgets/BottomSelection'
+
 import styles from './index.module.scss'
+import { APPS } from '../../../constants'
 
 const STEP_NAMES = {
   SELECT_GOODS: 'SELECT_GOODS',
@@ -17,6 +25,7 @@ const STEP_NAMES = {
   PAY_BY_MIXIN: 'PAY_BY_MIXIN', // in Mixin Messenger
   PAY_BY_MIXPAY: 'PAY_BY_MIXPAY', // ExinOne MixPay.me
   CHECKING_ORDER: 'CHECKING_ORDER',
+  IS_ERROR: 'IS_ERROR',
   FINISH_ALL: 'FINISH_ALL',
 }
 
@@ -34,16 +43,24 @@ function useGoodsList(handelOwlApiErrorP) {
 }
 
 function TopUpSheet(props) {
-  const { t, toast, myWallets, handelOwlApiErrorP, setInProcessOfTopUp } = props
-  const ctx = getMixinContext()
+  const {
+    ctx,
+    t,
+    curLogin,
+    myWallets,
+    handelOwlApiErrorP,
+    showTopupSheet,
+    setShowTopupSheet,
+  } = props
+
   const router = useRouter()
 
   const [stepName, setStepName] = useState(STEP_NAMES.SELECT_GOODS)
   const [payLinks, setPayLinks] = useState(null)
   const [orderTraceID, setOrderTraceID] = useState(null)
   const [orderStatus, setOrderStatus] = useState(null)
-  const [paymentMethod, setPaymentMethod] = useState(null)
   const [qrCodeValue, setQrCodeValue] = useState(null)
+  const [theTimer, setTheTimer] = useState(null)
   const [paymentURI, setPaymentURI] = useState(null)
   const goodsList = useGoodsList(handelOwlApiErrorP)
   const goodsOptions = []
@@ -54,31 +71,29 @@ function TopUpSheet(props) {
   }
 
   function onClose() {
-    setStepName(STEP_NAMES.SELECT_GOODS)
+    clearInterval(theTimer)
     setOrderTraceID(null)
-    setOrderStatus('')
-    setInProcessOfTopUp(false)
-  }
-  function onCancel() {
-    setInProcessOfTopUp(false)
+    setOrderStatus(null)
     setStepName(STEP_NAMES.SELECT_GOODS)
-    setOrderTraceID(null)
-    setOrderStatus('')
+    console.log('close to reset order trace id: ', orderTraceID)
+    setShowTopupSheet(false)
   }
 
   function autoCheckOrder() {
-    const theTimer = setInterval(async () => {
-      console.log('check order timer tick-tock')
+    var tryCount = 0
+    const tmr = setInterval(async () => {
       if (!orderTraceID) {
-        clearInterval(theTimer)
+        clearInterval(tmr)
         return
       }
+      console.log('trace_id :>> ', orderTraceID)
       try {
-        let params = {}
-        if (paymentMethod === 'mixpay') {
-          params = { mixmpay_trace_id: orderTraceID }
+        tryCount += 1
+        let params = { app: APPS.current }
+        if (stepName === STEP_NAMES.PAY_BY_MIXPAY) {
+          params.mixpay_trace_id = orderTraceID
         } else {
-          params = { mm_trace_id: orderTraceID }
+          params.mm_trace_id = orderTraceID
         }
         const rsp = await checkOrder(params)
         if (!rsp || !rsp.status) {
@@ -86,24 +101,27 @@ function TopUpSheet(props) {
         } else if (rsp?.status === 'pending') {
           setOrderStatus(t('received_the_transfer'))
         } else if (rsp?.status === 'finished') {
-          console.log('rsp of order :>> ', rsp)
           myWallets.refresh()
           const ok_msg = t('top_up_ok') + `+${rsp.goods?.coin_amount} NUT`
           setOrderStatus(ok_msg)
-          clearInterval(theTimer)
+          clearInterval(tmr)
           setOrderTraceID(null)
-          toast.success(ok_msg)
+          toast.success(ok_msg, { duration: 3000 })
           onClose()
         } else {
           setOrderStatus(t('checking'))
         }
       } catch (err) {
-        clearInterval(theTimer)
-        setOrderStatus(err.message)
-        handelOwlApiErrorP(err)
+        if (tryCount > 10) {
+          //timeout
+          setStepName(STEP_NAMES.IS_ERROR)
+          clearInterval(tmr)
+          setOrderStatus(err.message)
+          handelOwlApiErrorP(err)
+        }
       }
-    }, 3000)
-    return theTimer
+    }, 5000)
+    setTheTimer(tmr)
   }
 
   function getSheetTitle() {
@@ -126,52 +144,21 @@ function TopUpSheet(props) {
       return t('pay_by_mixin')
     } else if (stepName === STEP_NAMES.PAY_BY_MIXPAY) {
       return t('pay_by_mixpay')
-    } else if (stepName === STEP_NAMES.CHECKING_ORDER) {
+    } else if (
+      stepName === STEP_NAMES.CHECKING_ORDER ||
+      stepName === STEP_NAMES.IS_ERROR
+    ) {
       return t('checking_order')
     }
   }
 
   return (
-    <div className={`${styles.overlay}`} onClick={() => onClose()}>
-      <div className={styles.mask}></div>
-      <div
-        className={styles.sheet}
-        onClick={(e) => {
-          e.stopPropagation()
-        }}
-      >
-        <div className={styles.title}>
-          <div>
-            <span onClick={() => onCancel()}>{t('cancel')}</span>
-          </div>
-          {/* middle title */}
-          <div>{getSheetTitle()}</div>
-
-          {/* right blank/confirm button */}
-          {stepName === STEP_NAMES.PAY_BY_MIXIN_QRCODE ||
-          stepName === STEP_NAMES.PAY_BY_MIXIN ||
-          stepName === STEP_NAMES.PAY_BY_MIXPAY ? (
-            <div>
-              <span
-                onClick={() => {
-                  // user confirm transferred
-                  setStepName(STEP_NAMES.CHECKING_ORDER)
-                  setOrderStatus(t('waiting_transfer'))
-                  autoCheckOrder() //start order checker
-                }}
-              >
-                {t('paid')}
-              </span>
-            </div>
-          ) : (
-            <div>{/* right blank */}</div>
-          )}
-        </div>
-
-        {/* bottom options - start */}
+    <BottomSheet onClose={onClose} showing={showTopupSheet}>
+      <div className={styles.wrap}>
+        <div className={styles.sheetTitle}>{getSheetTitle()}</div>
 
         {stepName === STEP_NAMES.SELECT_GOODS && goodsList.isLoading && (
-          <Loading size={40} className={styles.loading} />
+          <Loading size={'md'} />
         )}
         {stepName === STEP_NAMES.SELECT_GOODS && goodsList.data && (
           <BottomSelection
@@ -180,7 +167,7 @@ function TopUpSheet(props) {
               setStepName(STEP_NAMES.SELECT_PAYMENTS)
               setPayLinks(null)
               try {
-                const d = await createOrder(val)
+                const d = await createOrder(APPS.current, val)
                 if (ctx.app_version) {
                   // in mixin messenger app,
                   setPayLinks(null)
@@ -198,7 +185,6 @@ function TopUpSheet(props) {
                     {
                       label: t('pay_by_mixpay'),
                       value: `${d.payment_links.mixpay}`,
-                      // &returnTo=https://${window.location.host}/order/check?mixpay_trace_id=${d.trace_id}
                       image: '/mixpay-logo.png',
                     },
                   ]
@@ -207,7 +193,7 @@ function TopUpSheet(props) {
               } catch {
                 setPayLinks(null)
                 setStepName(STEP_NAMES.SELECT_GOODS)
-                setInProcessOfTopUp(false)
+                setShowTopupSheet(false)
                 handelOwlApiErrorP(error)
               }
             }}
@@ -215,21 +201,22 @@ function TopUpSheet(props) {
         )}
 
         {stepName === STEP_NAMES.SELECT_PAYMENTS && !payLinks && (
-          <Loading size={40} className={styles.loading} />
+          <Loading size={'md'} />
         )}
         {stepName === STEP_NAMES.SELECT_PAYMENTS && payLinks && (
           // 在 MM 中将直接弹出MM支付对话框，不会进行到这里。
           // 普通浏览器中访问，才会到此步骤，选择多种支付方式，
           <BottomSelection
             options={payLinks}
-            onSelect={async (val) => {
+            onSelect={(val) => {
+              setPaymentURI(val)
+
               if (val.startsWith('mixin://')) {
                 setStepName(STEP_NAMES.PAY_BY_MIXIN_QRCODE)
                 setQrCodeValue(val)
               } else {
                 // .startsWith("https://mixpay.me/")
                 setStepName(STEP_NAMES.PAY_BY_MIXPAY)
-                setPaymentURI(val)
                 window.open(val, '_blank')
               }
             }}
@@ -252,19 +239,51 @@ function TopUpSheet(props) {
         )}
 
         {stepName === STEP_NAMES.PAY_BY_MIXIN && (
-          <div className={styles.notice}>{t('tip_of_pay_by_mixin')}</div>
+          <div className={styles.tip}>{t('tip_of_pay_by_mixin')}</div>
         )}
         {stepName === STEP_NAMES.PAY_BY_MIXPAY && (
-          <div className={styles.notice}>{t('tip_of_pay_by_mixpay')}</div>
+          <div className={styles.tip}>{t('tip_of_pay_by_mixpay')}</div>
         )}
 
         {stepName === STEP_NAMES.CHECKING_ORDER && (
-          <div className={styles.notice}>{orderStatus}</div>
+          <div className={styles.tip}>
+            <Loading size={'sm'} />
+            <span>{orderStatus}</span>
+          </div>
         )}
 
-        {/* bottom options - end */}
+        {stepName === STEP_NAMES.IS_ERROR && (
+          <div className={styles.notice}>
+            <spa>{orderStatus}</spa>
+          </div>
+        )}
+
+        {/* confirm button */}
+        {stepName === STEP_NAMES.PAY_BY_MIXIN_QRCODE ||
+        stepName === STEP_NAMES.PAY_BY_MIXIN ||
+        stepName === STEP_NAMES.PAY_BY_MIXPAY ? (
+          <div className={styles.buttons}>
+            <Button
+              type="button"
+              onPress={() => {
+                // user confirm transferred
+                setStepName(STEP_NAMES.CHECKING_ORDER)
+                setOrderStatus(t('waiting_transfer'))
+                autoCheckOrder() //start order checker
+              }}
+              auto
+              rounded
+              // bordered
+              size="md"
+            >
+              {t('paid')}
+            </Button>
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
-    </div>
+    </BottomSheet>
   )
 }
 

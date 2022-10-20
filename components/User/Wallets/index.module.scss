@@ -1,10 +1,10 @@
-.walletsWrap {
+.wrap {
   position: relative;
   background: $backgroundWallet;
   color: $contentPrimary;
-  transition: all 100ms linear;
+  transition: all 0.2s linear;
 
-  border-radius: 8px;
+  border-radius: 0.75rem;
   padding: 1.5em;
   margin: 10px 0;
 
@@ -34,8 +34,8 @@
     color: $contentPrimary;
     border: 1px solid rgba(0, 0, 0, 0);
     border-radius: 1em;
-    box-shadow: 0px 0px 6px $shadow; // rgba(0, 0, 0, 0.11);
-    transition: all 100ms linear;
+    box-shadow: 0px 0px 6px $clrShadow; // rgba(0, 0, 0, 0.11);
+    transition: all 0.2s linear;
 
     &:hover {
       border: 1px solid $contentPrimary; // rgba(110, 34, 225, 1);

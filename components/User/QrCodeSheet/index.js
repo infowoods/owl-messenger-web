@@ -3,22 +3,13 @@ import styles from './index.module.scss'
 const QRCode = require('qrcode.react')
 
 function QrCodeSheet(props) {
-  const { t, show, id, onClose, onCancel, onConfirm } = props
+  const { t, value, showing, onClose } = props
 
   return (
-    <BottomSheet
-      t={t}
-      show={show}
-      withConfirm={true}
-      confirmTitle={t('pay_with_phone')}
-      confirmText={t('has_paid')}
-      onClose={onClose}
-      onCancel={onCancel}
-      onConfirm={onConfirm}
-    >
+    <BottomSheet onClose={onClose} showing={showing}>
       <div className={styles.qrcode}>
         <QRCode
-          value={id}
+          value={value}
           size={240}
           imageSettings={{
             src: '/mixin-logo.png',
