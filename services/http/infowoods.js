@@ -46,7 +46,7 @@ session.interceptors.response.use(
     }
     // err.response: config, data, headers, status, statusText
     const rsp = err.response
-    console.log('error rsp :>> ', rsp)
+    // console.log('error rsp :>> ', rsp)
     if (!rsp.data) {
       return Promise.reject({ code: rsp.status, message: statusText })
     }

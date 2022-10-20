@@ -3,9 +3,9 @@ import React from 'react'
 export const CurrentLoginContext = React.createContext({})
 
 export const LoginData = {
-  token: {},
-  user: {},
-  group: {},
+  token: null,
+  user: null,
+  group: null,
 }
 
 export function loginDataReducer(preState, action) {

@@ -1,26 +1,30 @@
-import axios from 'axios'
-import { getMixinContext } from '../../utils/pageUtil'
+'use strict'
 
-function is_use_chinese() {
-  let ctx = getMixinContext()
-  if (ctx) {
-    if (ctx?.locale?.toLowerCase() === 'zh-cn') {
-      return true
-    }
-    if (ctx?.currency?.toUpperCase() === 'CNY') {
-      return true
-    }
-  }
-  return false
-}
+import axios from 'axios'
+const BASE_URL = 'https://api.mixin.one'
+const CN_BASE_URL = 'https://mixin-api.zeromesh.net'
+
+// import { getMixinContext } from '../../utils/pageUtil'
+
+// function is_use_chinese() {
+//   let ctx = getMixinContext()
+//   if (ctx) {
+//     if (ctx?.locale?.toLowerCase() === 'zh-cn') {
+//       return true
+//     }
+//     if (ctx?.currency?.toUpperCase() === 'CNY') {
+//       return true
+//     }
+//   }
+//   return false
+// }
 function get_api_base_url() {
-  const BASE_URL = 'https://api.mixin.one'
-  const CN_BASE_URL = 'https://mixin-api.zeromesh.net'
-  if (is_use_chinese()) {
-    return CN_BASE_URL
-  } else {
-    return BASE_URL
-  }
+  return CN_BASE_URL
+  // if (is_use_chinese()) {
+  //   return CN_BASE_URL
+  // } else {
+  //   return BASE_URL
+  // }
 }
 
 const session = axios.create({
