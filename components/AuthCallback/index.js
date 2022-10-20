@@ -3,20 +3,21 @@ import { useRouter } from 'next/router'
 import { i18n, useTranslation } from 'next-i18next'
 import dynamic from 'next/dynamic'
 import toast from 'react-hot-toast'
-const OwlToast = dynamic(() => import('../../widgets/OwlToast'))
+const Toast = dynamic(() => import('../../widgets/Toast'))
 
 import { CurrentLoginContext } from '../../contexts/currentLogin'
 import { getMixinContext } from '../../utils/pageUtil'
-import { owlSignIn } from '../../services/api/owl'
+import { signIn_withMixin } from '../../services/api/infowoods'
 import { mixinApi } from '../../services/api/mixin'
-
 import { saveToken, saveUserData } from '../../utils/loginUtil'
+import { APPS } from '../../constants'
+import Loading from '../../widgets/Loading'
+
 import styles from './index.module.scss'
-import { APP_NAME } from '../../constants'
 
 function AuthCallback() {
   const { t } = useTranslation('common')
-  const [curLogin, loginDispatch] = useContext(CurrentLoginContext)
+  const [curLogin, _] = useContext(CurrentLoginContext)
   const router = useRouter()
 
   const useQuery = () => {
@@ -26,19 +27,21 @@ function AuthCallback() {
     if (!ready) return null
     return router.query
   }
+
   const query = useQuery()
 
   useEffect(() => {
-    // login owl with mixin access token
+    // login InfoWoods with mixin access token
     const ctx = getMixinContext()
 
-    const loginOwl = async (token) => {
+    const login = async (token) => {
       const params = {
-        app: APP_NAME,
+        app: APPS.current,
         mixin_access_token: token,
         conversation_id: ctx.conversation_id,
       }
-      const data = await owlSignIn(params)
+
+      const data = await signIn_withMixin(params)
 
       if (data?.access_token) {
         curLogin.token = data.access_token
@@ -63,10 +66,9 @@ function AuthCallback() {
       }
     }
 
-    //
     const getMixinToken_andLoginOwl = async () => {
       const token = await mixinApi.getAccessToken(query.code)
-      token && loginOwl(token)
+      token && login(token)
     }
 
     if (query?.code) {
@@ -76,11 +78,13 @@ function AuthCallback() {
         window.location.href = '/' //refresh page
       })
     }
-  }, [query])
+    // else, no code, waiting page
+  }, [query, curLogin, t])
 
   return (
     <div className={styles.main}>
-      <OwlToast />
+      <Loading size={'lg'} />
+      <Toast />
     </div>
   )
 }
