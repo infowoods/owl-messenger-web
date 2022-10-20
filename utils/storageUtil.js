@@ -8,7 +8,11 @@ const storageUtil = {
     const value = localStorage.getItem(key)
     if (!value) return
     if (value === 'undefined') return
-    return JSON.parse(value)
+    try {
+      return JSON.parse(value)
+    } catch {
+      return
+    }
   },
   del: function (key) {
     localStorage.removeItem(key)

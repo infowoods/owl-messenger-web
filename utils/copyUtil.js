@@ -1,36 +1,17 @@
-function fallbackCopyText(text, toast, t) {
-  var textArea = document.createElement('textarea')
-  textArea.value = text
+import toast from 'react-hot-toast'
+import { copyTextToClipboard } from '../services/copy-text-to-clipboard'
 
-  // Avoid scrolling to bottom
-  textArea.style.top = '0'
-  textArea.style.left = '0'
-  textArea.style.position = 'fixed'
-
-  document.body.appendChild(textArea)
-  // textArea.focus()
-  textArea.select()
-
-  try {
-    const successful = document.execCommand('copy')
-    successful ? toast.success(t('copy_success')) : toast.error(t('try_again'))
-  } catch (err) {
-    toast.error(t('try_again'))
-  }
-  document.body.removeChild(textArea)
-}
-
-export function copyText(text, toast, t) {
-  if (!navigator.clipboard) {
-    fallbackCopyText(text, toast, t)
+export function copyText(text, t) {
+  if (!text) {
+    toast.error(t('no_text'), { icon: '🈳️', duration: 3000 })
     return
   }
-  navigator.clipboard.writeText(text).then(
-    () => {
-      toast.success(t('copy_success'))
-    },
-    (err) => {
-      fallbackCopyText(text, toast, t)
-    }
-  )
+  copyTextToClipboard(text)
+    .then(() => {
+      toast.success(t('copy_successful'))
+    })
+    .catch((err) => {
+      console.log('copyText error :>> ', err)
+      toast.error(t('copy_failed'), { duration: 3000 })
+    })
 }

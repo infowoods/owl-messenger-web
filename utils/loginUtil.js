@@ -1,6 +1,16 @@
 import AuthMixin from './auth/AuthMixin'
 import storageUtil from './storageUtil'
 
+import { APPS } from '../constants'
+
+function genKey(conversation_id, sub_key = '') {
+  if (conversation_id) {
+    return `${APPS.current}_login_${conversation_id}_${sub_key}`
+  } else {
+    return `${APPS.current}_login__${sub_key}`
+  }
+}
+
 export function toLogin() {
   AuthMixin.requestCode(true)
 }
@@ -9,14 +19,6 @@ export function logout(conversation_id) {
   storageUtil.del(genKey(conversation_id, 'token'))
   storageUtil.del(genKey(conversation_id, 'user'))
   storageUtil.del(genKey(conversation_id, 'group'))
-}
-
-function genKey(conversation_id, sub_key = '') {
-  if (conversation_id) {
-    return `owl_login_${conversation_id}_${sub_key}`
-  } else {
-    return `owl_login__${sub_key}`
-  }
 }
 
 export function saveGroupData(conversation_id, data) {

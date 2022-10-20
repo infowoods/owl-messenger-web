@@ -37,3 +37,7 @@ export function reloadTheme() {
       return
   }
 }
+
+export function ignoreEvent(event) {
+  event.preventDefault()
+}

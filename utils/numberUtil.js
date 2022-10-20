@@ -1,9 +1,9 @@
-export function formatNum(val) {
+export function formatNum(val, decimal = 8) {
   return Number(val)
-    .toFixed(8)
+    .toFixed(decimal)
     .replace(/\.?0+$/, '')
 }
 
-export function formatAdd(a, b) {
-  return (Number(a) + Number(b)).toFixed(8).replace(/\.?0+$/, '')
+export function formatAdd(a, b, decimal = 8) {
+  return formatNum(Number(a) + Number(b), decimal)
 }

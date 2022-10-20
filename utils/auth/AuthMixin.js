@@ -1,6 +1,13 @@
-import { MIXIN_OAUTH_HOST } from '../../constants'
+'use strict'
 
 const crypto = require('crypto')
+
+const OAUTH_HOST = 'https://www.mixin.one'
+const CN_OAUTH_HOST = 'https://mixin-www.zeromesh.net'
+
+function get_oauth_host() {
+  return CN_OAUTH_HOST
+}
 
 class OAuth {
   sha256(buffer) {
@@ -27,8 +34,10 @@ class OAuth {
     // const randomCode = crypto.randomBytes(32)
     // const verifier = this.base64URLEncode(randomCode)
     // const challenge = this.base64URLEncode(this.sha256(randomCode))
-    // let url = `${MIXIN_OAUTH_HOST}/oauth/authorize?client_id=${process.env.MIXIN_CLIENT_ID}&scope=PROFILE%3AREAD&code_challenge=${challenge}`
-    let url = `${MIXIN_OAUTH_HOST}/oauth/authorize?client_id=${process.env.MIXIN_CLIENT_ID}&scope=PROFILE%3AREAD`
+    // let url = `${get_oauth_host()}/oauth/authorize?client_id=${process.env.MIXIN_CLIENT_ID}&scope=PROFILE%3AREAD&code_challenge=${challenge}`
+    let url = `${get_oauth_host()}/oauth/authorize?client_id=${
+      process.env.MIXIN_CLIENT_ID
+    }&scope=PROFILE%3AREAD`
     if (state) {
       const str = encodeURIComponent(JSON.stringify(state))
       url += `&state=${str}`
