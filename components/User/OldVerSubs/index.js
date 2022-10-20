@@ -1,18 +1,23 @@
 import useSWR from 'swr'
 import { useState, useEffect, useContext } from 'react'
 import { useTranslation } from 'next-i18next'
+import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import toast from 'react-hot-toast'
+import { RiFileCopyLine, RiArrowLeftSLine } from 'react-icons/ri'
 import { TbMailbox } from 'react-icons/tb'
+import { Collapse } from '@nextui-org/react'
 
-import { handelOwlApiError } from '../../../utils/apiUtils'
-import { oldVer_GetFollows, oldVer_Unfollow } from '../../../services/api/owl'
+import {
+  oldVer_GetFollows,
+  oldVer_Unfollow,
+} from '../../../services/api/infowoods'
+import { handleInfowoodsApiError } from '../../../utils/apiUtils'
 
-import Collapse from '../../../widgets/Collapse'
 import Loading from '../../../widgets/Loading'
 import Empty from '../../../widgets/Empty'
 import { CurrentLoginContext } from '../../../contexts/currentLogin'
-const OwlToast = dynamic(() => import('../../../widgets/OwlToast'))
+const Toast = dynamic(() => import('../../../widgets/Toast'))
 
 import styles from './index.module.scss'
 
@@ -24,7 +29,7 @@ function Subscriptions() {
     const { data, error } = useSWR('old-ver-get-follows', oldVer_GetFollows)
     if (error) {
       if (error) {
-        handelOwlApiError(error, t, curLogin)
+        handleInfowoodsApiError(error, t, curLogin)
       }
     }
     return {
@@ -34,7 +39,7 @@ function Subscriptions() {
     }
   }
 
-  function toUnfollow(event, t, topic_id) {
+  function toUnfollow(event, topic_id) {
     // event.target.innerHTML = t('unsubscribing')
     event.target.innerHTML = t('unsubscribing')
 
@@ -48,9 +53,9 @@ function Subscriptions() {
         card.style.display = 'none'
       })
       .catch((error) => {
-        if (error) {
-          handelOwlApiError(error, t, curLogin)
-        }
+        handleInfowoodsApiError(error, t, curLogin)
+      })
+      .finally(() => {
         event.target.disabled = false
         event.target.innerHTML = t('unsubscribe')
       })
@@ -63,7 +68,7 @@ function Subscriptions() {
       <p className={styles.sectionTitle}>
         <TbMailbox /> {t('old-ver-subs')}
       </p>
-      {myFollows.isLoading && <Loading size={36} className={styles.loading} />}
+      {myFollows.isLoading && <Loading size="lg" />}
       {myFollows.data && (
         <>
           {myFollows?.data?.follows?.length === 0 && (
@@ -74,54 +79,56 @@ function Subscriptions() {
               textClass={styles.emptyText}
             />
           )}
-          {myFollows?.data?.follows?.length > 0 &&
-            myFollows.data.follows.map((item, index) => {
-              return (
-                <Collapse
-                  className={styles.channelCard}
-                  title={item.title}
-                  key={item.tid}
-                  data_id={item.tid}
-                >
-                  <>
-                    {item.description && (
-                      <p className={styles.channelDesc}>
+          {myFollows?.data?.follows?.length > 0 && (
+            <Collapse.Group splitted>
+              {myFollows.data.follows.map((item, index) => {
+                return (
+                  <Collapse
+                    className={styles.collapse}
+                    title={item.title}
+                    key={index}
+                    data_id={item.id}
+                    arrowIcon={<RiArrowLeftSLine />}
+                  >
+                    <>
+                      {item.description && (
+                        <p className={styles.channelDesc}>
+                          <span>
+                            {t('desc')}
+                            {t('colon')}
+                          </span>
+                          {item.description}
+                        </p>
+                      )}
+
+                      <p className={styles.expiry_time}>
                         <span>
-                          {t('desc')}
+                          {t('expiry_time')}
                           {t('colon')}
                         </span>
-                        {item.description}
+                        {item.expiry_time}
                       </p>
-                    )}
 
-                    <p className={styles.expiry_time}>
-                      <span>
-                        {t('expiry_time')}
-                        {t('colon')}
-                      </span>
-                      {item.expiry_time}
-                    </p>
-
-                    <div
-                      className={`${styles.detail} ${styles.increaseMargin}`}
-                    >
-                      <button
-                        className={styles.button}
-                        onClick={(event) => {
-                          toUnfollow(event, t, item.tid, index)
-                        }}
-                      >
-                        {t('unsubscribe')}
-                      </button>
-                    </div>
-                  </>
-                </Collapse>
-              )
-            })}
+                      <div className={styles.buttons}>
+                        <button
+                          className={styles.button}
+                          onClick={(event) => {
+                            toUnfollow(event, item.tid)
+                          }}
+                        >
+                          {t('unsubscribe')}
+                        </button>
+                      </div>
+                    </>
+                  </Collapse>
+                )
+              })}
+            </Collapse.Group>
+          )}
         </>
       )}
 
-      <OwlToast />
+      <Toast />
     </div>
   )
 }

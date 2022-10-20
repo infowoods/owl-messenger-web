@@ -1,31 +1,7 @@
-.loading {
-  margin-top: 2em;
-  opacity: 0.8;
-}
-
 .btnLoading {
   padding: 1px 18px;
   div {
     border-width: 2px;
-  }
-}
-
-.empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  align-content: center;
-
-  .emptyImage {
-    path {
-      fill: $contentSecondary;
-    }
-  }
-  .emptyText {
-    font-size: 1em;
-    margin-top: 0.5em;
-    margin-left: -1em;
-    color: $contentSecondary;
   }
 }
 
@@ -42,69 +18,56 @@
   }
 }
 
-.channelCard {
-  .button {
-    background: transparent;
-    margin-top: 0.5em;
-    padding: 0.5em 1em;
-    border-radius: 8px;
-    color: $notice;
-    border: 1px solid $notice;
-    cursor: pointer;
-    &:hover {
-      background: $notice;
-      color: $backgroundPrimary;
-    }
-  }
-  .button:disabled {
-    background: transparent;
-    color: $contentSecondary;
-    border: 1px solid $contentSecondary;
-    cursor: default;
-    pointer-events: none;
+.collapse {
+  h3 {
+    font-size: 1.2rem;
   }
 
-  .detail {
+  .description {
+    margin: 0 0 1em 0;
+  }
+
+  .uri {
+    margin: 0.25em 0;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    p {
-      span {
-        color: $contentPrimary;
-      }
-      &:nth-child(2) {
-        padding-top: 4px;
-      }
-      &:nth-child(3) {
-        padding: 4px 0;
-      }
-    }
-  }
-  .increaseMargin {
-    margin-top: 10px;
-  }
+    overflow-wrap: anywhere;
 
-  .channelDesc {
-    line-height: 18px;
-    span {
-      color: $contentPrimary;
+    svg {
+      min-width: 1em;
+      min-height: 1em;
+      max-width: 1em;
+      max-height: 1em;
+      color: $contentSecondary;
+      margin-right: 0.25em;
+    }
+    > span {
+      cursor: pointer;
     }
   }
 
-  .copy {
-    margin-top: 12px;
-    overflow-x: hidden;
-    span {
-      &:first-child {
-        color: $contentPrimary;
+  .buttons {
+    margin: 1em 0 0 0;
+
+    .button {
+      padding: 0.25em 0.8em;
+      background: transparent;
+
+      border-radius: 8px;
+      color: $notice;
+      border: 1px solid $notice;
+      cursor: pointer;
+      &:hover {
+        background: $notice;
+        color: $backgroundPrimary;
       }
-      &:last-child {
-        cursor: pointer;
-        i {
-          color: $contentSecondary;
-          vertical-align: middle;
-        }
-      }
+    }
+    .button:disabled {
+      background: transparent;
+      color: $contentSecondary;
+      border: 1px solid $contentSecondary;
+      cursor: default;
+      pointer-events: none;
     }
   }
 }

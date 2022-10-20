@@ -4,18 +4,22 @@ import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import toast from 'react-hot-toast'
-import { RiFileCopyLine } from 'react-icons/ri'
+import { RiFileCopyLine, RiArrowLeftSLine } from 'react-icons/ri'
 import { TbMailbox } from 'react-icons/tb'
+import { Collapse } from '@nextui-org/react'
 
-import { handelOwlApiError } from '../../../utils/apiUtils'
-import { getSubscriptions, unsubscribeChannel } from '../../../services/api/owl'
+import {
+  getSubscriptions,
+  unsubscribeChannel,
+} from '../../../services/api/infowoods'
+import { handleInfowoodsApiError } from '../../../utils/apiUtils'
+
 import { copyText } from '../../../utils/copyUtil'
-
+import SourceIcon from '../../../widgets/SourceIcon'
 import Empty from '../../../widgets/Empty'
-import Collapse from '../../../widgets/Collapse'
 import Loading from '../../../widgets/Loading'
 import { CurrentLoginContext } from '../../../contexts/currentLogin'
-const OwlToast = dynamic(() => import('../../../widgets/OwlToast'))
+const Toast = dynamic(() => import('../../../widgets/Toast'))
 
 import styles from './index.module.scss'
 
@@ -27,7 +31,7 @@ function Subscriptions() {
     const { data, error } = useSWR('subscriptions?enabled', getSubscriptions)
     if (error) {
       if (error) {
-        handelOwlApiError(error, t, curLogin)
+        handleInfowoodsApiError(error, t, curLogin)
       }
     }
     return {
@@ -52,7 +56,7 @@ function Subscriptions() {
       })
       .catch((error) => {
         if (error) {
-          handelOwlApiError(error, t, curLogin)
+          handleInfowoodsApiError(error, t, curLogin)
         }
         event.target.disabled = false
         event.target.innerHTML = t('unsubscribe')
@@ -66,9 +70,7 @@ function Subscriptions() {
       <p className={styles.sectionTitle}>
         <TbMailbox /> {t('my-subscriptions')}
       </p>
-      {mySubscriptions.isLoading && (
-        <Loading size={40} className={styles.loading} />
-      )}
+      {mySubscriptions.isLoading && <Loading size="lg" />}
       {mySubscriptions.data && (
         <>
           {mySubscriptions.data?.subscriptions?.length === 0 && (
@@ -79,58 +81,54 @@ function Subscriptions() {
               textClass={styles.emptyText}
             />
           )}
-          {mySubscriptions?.data?.subscriptions?.length > 0 &&
-            mySubscriptions.data.subscriptions.map((item, index) => {
-              return (
-                <Collapse
-                  className={styles.channelCard}
-                  title={item.channel.title}
-                  key={item.channel.id}
-                  data_id={item.channel.id}
-                >
-                  <>
-                    {item.channel.description && (
-                      <p className={styles.channelDesc}>
-                        <span>
-                          {t('desc')}
-                          {t('colon')}
+          {mySubscriptions?.data?.subscriptions?.length > 0 && (
+            <Collapse.Group splitted>
+              {mySubscriptions.data.subscriptions.map((item, index) => {
+                return (
+                  <Collapse
+                    className={styles.collapse}
+                    title={item.channel.title}
+                    key={index}
+                    data_id={item.channel.id}
+                    arrowIcon={<RiArrowLeftSLine />}
+                  >
+                    <>
+                      <div className={styles.description}>
+                        {item.channel.description && item.channel.description}
+                      </div>
+                      <div className={styles.uri}>
+                        <SourceIcon uri={item.channel.uri} />
+                        <span onClick={() => copyText(item.channel.uri, t)}>
+                          {item.channel.uri}
                         </span>
-                        {item.channel.description}
-                      </p>
-                    )}
-                    <div className={styles.copy}>
-                      <p>
-                        <span>
-                          {t('channel_uri')}
-                          {t('colon')}
-                        </span>
-                        <span
-                          onClick={() => copyText(item.channel.uri, toast, t)}
-                        >
-                          {item.channel.uri} <RiFileCopyLine />
-                        </span>
-                      </p>
-                    </div>
-                    <div
-                      className={`${styles.detail} ${styles.increaseMargin}`}
-                    >
-                      <button
-                        className={styles.button}
-                        onClick={(event) => {
-                          toUnsubscribeChannel(event, t, item.channel.id, index)
-                        }}
-                      >
-                        {t('unsubscribe')}
-                      </button>
-                    </div>
-                  </>
-                </Collapse>
-              )
-            })}
+                      </div>
+                      <div className={styles.buttons}>
+                        <div>
+                          <button
+                            className={styles.button}
+                            onClick={(event) => {
+                              toUnsubscribeChannel(
+                                event,
+                                t,
+                                item.channel.id,
+                                index
+                              )
+                            }}
+                          >
+                            {t('unsubscribe')}
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  </Collapse>
+                )
+              })}
+            </Collapse.Group>
+          )}
         </>
       )}
 
-      <OwlToast />
+      <Toast />
     </div>
   )
 }
