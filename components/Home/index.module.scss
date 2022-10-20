@@ -1,207 +1,18 @@
-.search {
-  margin: 3em 0 1em 0;
-  padding: 0;
+.main {
+  padding: 1em 0em;
   display: flex;
-
-  .input {
-    margin: 0 auto;
-    padding: 0.25em 1em;
-    flex: 1;
-
-    input {
-      padding: 1em 1em 1em 0.5em;
-      font-size: 1em;
-    }
-  }
-
-  .searchIcon {
-    color: $borderSelected;
-    font-size: 1.5em;
-    margin-right: 0.5em;
-  }
-
-  .clearIcon {
-    font-size: 2em;
-  }
-}
-
-.options {
-  display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
   align-items: center;
-  color: $contentPrimary;
-  margin-top: 46px;
-  @include responsive(xs) {
-    margin-top: 32px;
-  }
-  > span {
-    margin-right: 12px;
-
-    color: $contentPrimary;
-  }
-  div {
-    padding: 4px 12px;
-    height: 45px;
-    border: 2px solid $borderOpaque;
-    border-radius: 8px;
-    line-height: 33px;
-    cursor: pointer;
-
-    color: $accent;
-    .curIcon {
-      vertical-align: middle;
-      margin-right: 8px;
-      margin-left: 4px;
-      line-height: 33px;
-    }
-    .triangle {
-      vertical-align: middle;
-
-      margin-left: 18px;
-      transform: rotate(180deg);
-      color: $contentSecondary;
-    }
-  }
-}
-
-.optionsActive {
-  border: 2px solid $borderSelected !important;
-}
-
-.triangleActive {
-  transform: rotate(0deg) !important;
-  color: $borderSelected !important;
-}
-
-.loadingWrap {
-  // max-width: 520px;
-  margin: 14px auto;
-  padding: 16px;
-  border-radius: 8px;
-  background: $backgroundSecondary;
-  display: flex;
-  align-items: center;
-  .loading {
-    margin-left: 12px;
-    margin-right: 18px;
-  }
-  .loadingHint {
-    color: $contentSecondary;
-  }
-}
-
-.parsingResult {
-  // max-width: 520px;
-  margin: 14px auto 12px auto;
-  padding: 16px;
-  border-radius: 8px;
-  background: $backgroundSecondary;
-
-  .channelDesc {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    > div {
-      max-width: 68%; // description may very long
-
-      p {
-        font-weight: bold;
-        margin: 4px 0;
-        color: $contentPrimary;
-        overflow-wrap: break-word;
-
-        &:nth-child(2) {
-          font-weight: normal;
-
-          line-height: 18px;
-          border-left: 2px solid $borderSelected;
-          padding: 6px 8px;
-          background: $backgroundTertiary;
-          border-radius: 0 6px 6px 0;
-          margin-top: 10px;
-        }
-      }
-    }
-  }
-
-  button {
-    background: $accent;
-    border: none;
-    padding: 8px 16px;
-    margin-left: 14px;
-    border-radius: 8px;
-    color: $backgroundPrimary;
-
-    cursor: pointer;
-    white-space: nowrap;
-    &:hover {
-      opacity: 0.7;
-    }
-    &:active {
-      opacity: 0.7;
-    }
-  }
-
-  button:disabled {
-    background: transparent;
-    color: $contentSecondary;
-    border: 1px solid $contentSecondary;
-    cursor: default;
-    pointer-events: none;
-  }
-}
-
-.errorInfo {
-  // max-width: 520px;
-  margin: 0.25em auto 1em auto;
-  padding: 16px;
-  border-radius: 8px;
-  background: $backgroundSecondary;
-  color: $contentNotice;
-  display: flex;
-  align-items: center;
-
-  svg {
-    margin-right: 0.5em;
-  }
-}
-
-.feedPrice {
-  // max-width: 520px;
-  margin: 0 auto;
-  padding: 0 14px;
-  cursor: default;
-
-  > .price {
-    // display: flex;
-    // align-items: center;
-    color: $contentPrimary;
-  }
-
-  > .how_to_charge {
-    color: $contentSecondary;
-    margin-top: 6px;
-    margin-bottom: 6px;
-
-    p {
-      margin: 0.25em 0;
-    }
-  }
-}
-
-.help {
-  color: $contentSecondary;
-  white-space: nowrap;
+  justify-content: center;
 }
 
 .intro_to_discovery {
-  font-style: italic;
+  margin: 1em auto;
+  padding: 1em;
 
+  font-style: italic;
   color: $contentAccent;
-  margin: 12px auto 0 auto;
-  padding: 0 16px;
-  // max-width: 520px;
+
   > a {
     cursor: pointer;
     &:hover,
@@ -212,20 +23,4 @@
       opacity: 0.7;
     }
   }
-}
-
-.followLoading {
-  padding: 0 12px;
-  div {
-    border: 2px solid $backgroundPrimary;
-    border-left-color: transparent;
-  }
-}
-
-.tip_err {
-  font-style: italic;
-  color: $contentNegative;
-  margin: 12px auto 0 auto;
-  padding: 0 16px;
-  // max-width: 520px;
 }
