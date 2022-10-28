@@ -100,7 +100,7 @@ function User() {
         t={t}
         curLogin={curLogin}
         myWallets={myWallets}
-        handelOwlApiErrorP={(error) => {
+        handleInfowoodsApiErrorP={(error) => {
           handleInfowoodsApiError(error, t, curLogin)
         }}
         showTopupSheet={showTopupSheet}

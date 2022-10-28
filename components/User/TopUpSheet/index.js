@@ -93,6 +93,7 @@ function TopUpSheet(props) {
         } else {
           params.mm_trace_id = orderTraceID
         }
+
         const rsp = await checkOrder(params)
         if (!rsp || !rsp.status) {
           setOrderStatus(t('waiting_transfer'))
@@ -110,7 +111,7 @@ function TopUpSheet(props) {
           setOrderStatus(t('checking'))
         }
       } catch (err) {
-        if (tryCount > 10) {
+        if (tryCount > 9) {
           //timeout
           setStepName(STEP_NAMES.IS_ERROR)
           clearInterval(tmr)
@@ -178,12 +179,12 @@ function TopUpSheet(props) {
                     {
                       label: t('pay_by_mixin'),
                       value: d.payment_links.mm,
-                      image: '/mixin-logo.png',
+                      image: '/images/mixin-logo.png',
                     },
                     {
                       label: t('pay_by_mixpay'),
                       value: `${d.payment_links.mixpay}`,
-                      image: '/mixpay-logo.png',
+                      image: '/images/mixpay-logo.png',
                     },
                   ]
                   setPayLinks(links)
@@ -252,7 +253,7 @@ function TopUpSheet(props) {
 
         {stepName === STEP_NAMES.IS_ERROR && (
           <div className={styles.notice}>
-            <spa>{orderStatus}</spa>
+            <span>{orderStatus}</span>
           </div>
         )}
 
