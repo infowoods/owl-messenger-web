@@ -23,7 +23,7 @@ function Layout({ setActiveTheme, children }) {
 
   const [showApps, setShowApps] = useState(false)
   const [barColor, setBarColor] = useState('transparent') //#999999
-  const navHref = ['/', '/discovery', '/user']
+  const navHref = APPS[APPS.current].bottom_nav_href
 
   const backPath = (curPath) => {
     if (curPath.startsWith('/user/') && curPath.length > 6) {
