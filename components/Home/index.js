@@ -9,7 +9,7 @@ import { CurrentLoginContext } from '../../contexts/currentLogin'
 const Toast = dynamic(() => import('../../widgets/Toast'))
 
 const UriParsing = dynamic(() => import('./UriParsing'))
-// import UriParsing from './UriParsing'
+
 import UriSample from './UriSample'
 
 import styles from './index.module.scss'

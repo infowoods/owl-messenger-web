@@ -2,14 +2,14 @@ import Image from 'next/image'
 
 function Avatar(props) {
   const { isGroup = false, imgSrc, ...others } = props
-  const defalutAvatar = '/images/default-avatar.png'
+  const defaultAvatar = '/images/default-avatar.png'
 
   return (
     <Image
-      src={isGroup ? defalutAvatar : imgSrc ? imgSrc : defalutAvatar}
+      src={isGroup ? defaultAvatar : imgSrc ? imgSrc : defaultAvatar}
       alt="avatar"
-      width={38}
-      height={38}
+      width={28}
+      height={28}
       {...others}
     />
   )

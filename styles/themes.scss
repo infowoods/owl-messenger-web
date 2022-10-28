@@ -56,7 +56,7 @@
     ),
     #f8e0b3;
 
-  // [data-theme='dark']
+  // html[color-theme]='dark'
   @media screen and (prefers-color-scheme: dark) {
     --primary: #36aca0;
     --secondary: #0d796a;

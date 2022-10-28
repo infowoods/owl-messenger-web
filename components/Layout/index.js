@@ -20,8 +20,9 @@ function Layout({ setActiveTheme, children }) {
   const router = useRouter()
   const [curLogin, _] = useContext(CurrentLoginContext)
   const [ctx, setCtx] = useState({})
+
   const [showApps, setShowApps] = useState(false)
-  const [barColor, setBarColor] = useState('#999999')
+  const [barColor, setBarColor] = useState('transparent') //#999999
   const navHref = ['/', '/discovery', '/user']
 
   const backPath = (curPath) => {
@@ -64,13 +65,15 @@ function Layout({ setActiveTheme, children }) {
       }
       reloadTheme()
     }
-    updateTheme()
+
     // To watch for theme changes:
     window
       .matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', (event) => {
+      .addEventListener('change', async (event) => {
         updateTheme()
       })
+
+    updateTheme()
 
     if (
       ctx?.locale &&
@@ -88,20 +91,21 @@ function Layout({ setActiveTheme, children }) {
       curLogin.user = loadUserData(ctx?.conversation_id)
       curLogin.group = loadGroupData(ctx?.conversation_id)
     }
-
-    reloadTheme()
   }, [curLogin, router, setActiveTheme])
 
   return (
     <>
-      <div className={styles.wrap}>
+      <div className={`${styles.wrap}`}>
         <Head>
-          <title>{t(APPS.oak.title)}</title>
+          <title>{t(APPS[APPS.current].title)}</title>
           <meta
             name="viewport"
             content="width=device-width,initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no"
           />
-          <meta name="description" content={t(APPS.oak.description)} />
+          <meta
+            name="description"
+            content={t(APPS[APPS.current].description)}
+          />
           <meta name="theme-color" content={barColor} />
           <link rel="icon" href="/favicon.png" />
         </Head>

@@ -7,6 +7,9 @@
   left: calc(50vw - 340px);
   background-color: $backgroundPrimary;
 
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+
   @include responsive(xs) {
     left: 0;
   }

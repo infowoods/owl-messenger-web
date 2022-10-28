@@ -29,10 +29,10 @@ const STEP_NAMES = {
   FINISH_ALL: 'FINISH_ALL',
 }
 
-function useGoodsList(handelOwlApiErrorP) {
+function useGoodsList(handleInfowoodsApiErrorP) {
   const { data, error } = useSWR('goods', listGoods)
   if (error) {
-    handelOwlApiErrorP(error)
+    handleInfowoodsApiErrorP(error)
   }
 
   return {
@@ -48,7 +48,7 @@ function TopUpSheet(props) {
     t,
     curLogin,
     myWallets,
-    handelOwlApiErrorP,
+    handleInfowoodsApiErrorP,
     showTopupSheet,
     setShowTopupSheet,
   } = props
@@ -62,7 +62,7 @@ function TopUpSheet(props) {
   const [qrCodeValue, setQrCodeValue] = useState(null)
   const [theTimer, setTheTimer] = useState(null)
   const [paymentURI, setPaymentURI] = useState(null)
-  const goodsList = useGoodsList(handelOwlApiErrorP)
+  const goodsList = useGoodsList(handleInfowoodsApiErrorP)
   const goodsOptions = []
   if (goodsList.data) {
     for (var item of goodsList.data) {
@@ -75,7 +75,6 @@ function TopUpSheet(props) {
     setOrderTraceID(null)
     setOrderStatus(null)
     setStepName(STEP_NAMES.SELECT_GOODS)
-    console.log('close to reset order trace id: ', orderTraceID)
     setShowTopupSheet(false)
   }
 
@@ -86,7 +85,6 @@ function TopUpSheet(props) {
         clearInterval(tmr)
         return
       }
-      console.log('trace_id :>> ', orderTraceID)
       try {
         tryCount += 1
         let params = { app: APPS.current }
@@ -117,7 +115,7 @@ function TopUpSheet(props) {
           setStepName(STEP_NAMES.IS_ERROR)
           clearInterval(tmr)
           setOrderStatus(err.message)
-          handelOwlApiErrorP(err)
+          handleInfowoodsApiErrorP(err)
         }
       }
     }, 5000)
@@ -194,7 +192,7 @@ function TopUpSheet(props) {
                 setPayLinks(null)
                 setStepName(STEP_NAMES.SELECT_GOODS)
                 setShowTopupSheet(false)
-                handelOwlApiErrorP(error)
+                handleInfowoodsApiErrorP(error)
               }
             }}
           ></BottomSelection>
