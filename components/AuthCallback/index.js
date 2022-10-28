@@ -34,49 +34,55 @@ function AuthCallback() {
     // login InfoWoods with mixin access token
     const ctx = getMixinContext()
 
-    const login = async (token) => {
-      const params = {
-        app: APPS.current,
-        mixin_access_token: token,
-        conversation_id: ctx.conversation_id,
+    const handleError = (error) => {
+      var msg = t('login_failed')
+      if (error.message) {
+        msg = error.message
       }
-
-      const data = await signIn_withMixin(params)
-
-      if (data?.access_token) {
-        curLogin.token = data.access_token
-        saveToken(ctx.conversation_id, data.access_token)
-
-        const user_data = {
-          // expiry_time: data.expiry_time,
-          user_name: data.user_name,
-          avatar: data.avatar,
-        }
-        curLogin.user = user_data
-        saveUserData(ctx.conversation_id, user_data)
-
-        if (ctx?.locale && ctx.locale !== 'zh-CN' && i18n.language !== 'en') {
-          i18n.changeLanguage('en')
-          // router.push('/', '/', { locale: 'en' })
-          window.location.href = '/en' //refresh page
-        } else {
-          // router.push('/')
-          window.location.href = '/' //refresh page
-        }
-      }
-    }
-
-    const getMixinToken_andLoginOwl = async () => {
-      const token = await mixinApi.getAccessToken(query.code)
-      token && login(token)
+      toast.error(msg, { duration: 4500 })
+      router.push('/')
     }
 
     if (query?.code) {
-      getMixinToken_andLoginOwl().catch((err) => {
-        console.log('err :>> ', err)
-        toast.error(t('login_failed'))
-        window.location.href = '/' //refresh page
-      })
+      mixinApi
+        .getAccessToken(query.code)
+        .then((mixin_token) => {
+          const params = {
+            app: APPS.current,
+            mixin_access_token: mixin_token,
+            conversation_id: ctx.conversation_id,
+          }
+          signIn_withMixin(params)
+            .then((data) => {
+              curLogin.token = data.access_token
+              saveToken(ctx.conversation_id, data.access_token)
+
+              const user_data = {
+                // expiry_time: data.expiry_time,
+                user_name: data.user_name,
+                avatar: data.avatar,
+              }
+              curLogin.user = user_data
+              saveUserData(ctx.conversation_id, user_data)
+
+              if (
+                ctx?.locale &&
+                ctx.locale !== 'zh-CN' &&
+                i18n.language !== 'en'
+              ) {
+                i18n.changeLanguage('en')
+                router.push('/', '/', { locale: 'en' })
+              } else {
+                router.push('/')
+              }
+            })
+            .catch((error) => {
+              handleError(error)
+            })
+        })
+        .catch((error) => {
+          handleError(error)
+        })
     }
     // else, no code, waiting page
   }, [query, curLogin, t])
