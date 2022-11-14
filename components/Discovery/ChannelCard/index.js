@@ -78,12 +78,12 @@ function ChannelCard(props) {
               </div>
             </div>
 
-            <div className={styles.uri}>
+            {/* <div className={styles.uri}>
               <RiLinksLine />
               <span onClick={() => copyText(channel.uri, t)}>
                 {channel.uri}
               </span>
-            </div>
+            </div> */}
 
             <div className={styles.buttons}>
               {channel.subscription?.enabled ? (

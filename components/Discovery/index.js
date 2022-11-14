@@ -43,6 +43,19 @@ function Discovery() {
 
   const hotCollection = useHotCollection()
 
+  function useRandomCollection() {
+    const { data, error } = useSWR('random', getCollection)
+    if (error) {
+      handleInfowoodsApiError(error, t, curLogin)
+    }
+    return {
+      data: data,
+      isLoading: !error && !data,
+      isError: error,
+    }
+  }
+  const randomCollection = useRandomCollection()
+
   const placeholder = (type) => {
     switch (type) {
       case 'channel':
@@ -89,7 +102,7 @@ function Discovery() {
 
   return (
     <div className={styles.main}>
-      {/* <div className={styles.sectionTitle}>{t('discovery')}</div> */}
+      <div className={styles.sectionTitle}>{t('search')}</div>
 
       <div className={styles.findWrap}>
         {/* type radio */}
@@ -174,6 +187,24 @@ function Discovery() {
             ))}
           </div>
         </>
+      )}
+
+      {/* random collection */}
+      <p className={styles.sectionTitle}>{t('random_oak_channels')}</p>
+      {randomCollection?.isLoading ? (
+        <Loading size="xl" />
+      ) : (
+        <div className={styles.collection}>
+          {randomCollection?.data?.channels &&
+            randomCollection.data.channels.map((item) => (
+              <ChannelCard
+                key={item.id}
+                curLogin={curLogin}
+                t={t}
+                channel={item}
+              />
+            ))}
+        </div>
       )}
 
       {/* hot collection */}

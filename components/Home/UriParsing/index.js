@@ -92,6 +92,7 @@ function UriParsing(props) {
 
   return (
     <div className={styles.wrap}>
+      <p className={styles.sectionTitle}>{t('parsing_uri')}</p>
       <form
         action="#"
         onBlur={ignoreEvent}

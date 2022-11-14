@@ -39,13 +39,12 @@
   }
 
   .description {
-    // max-width: 68%;
     overflow-wrap: anywhere;
-    color: $contentSecondary;
   }
 
   .uri {
     width: 100%;
+    color: $contentSecondary;
 
     display: flex;
     align-items: center;
@@ -64,8 +63,9 @@
 
   .price {
     margin-top: 1em;
+
     .numbers {
-      color: $contentPrimary;
+      color: $contentSecondary;
       display: flex;
       align-items: center;
 
